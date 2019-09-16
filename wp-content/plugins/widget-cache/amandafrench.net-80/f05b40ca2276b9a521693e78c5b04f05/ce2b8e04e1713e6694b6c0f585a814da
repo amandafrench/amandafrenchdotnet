@@ -1,0 +1,15 @@
+a:1:{s:10:"__output__";s:624:"<li id="text-319754231" class="widget widget_text"><h2 class="widgettitle">Twitter</h2>
+			<div class="textwidget"><!--[if IE]>
+<ul><li><a href="http://twitter.com/amandafrench">See my latest posts on Twitter.</a></li></ul>
+<![endif]--> 
+<!--[if !IE]>-->
+<div id="twitter_div">
+<ul id="twitter_update_list">
+<li><script type="text/javascript" src="http://twitter.com/javascripts/blogger.js" defer="defer"></script>
+<script type="text/javascript" src="http://twitter.com/statuses/user_timeline/amandafrench.json?callback=twitterCallback2&amp;count=1" defer="defer"></script></li>
+</ul>
+</div>
+<!--<![endif]-->
+</div>
+		</li>
+";}

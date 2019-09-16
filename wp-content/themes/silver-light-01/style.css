@@ -1,0 +1,198 @@
+/*
+Theme Name: Silver Light
+Theme URI: http://www.blogohblog.com/
+Description: Silver Light is a 2 columns Wordpress theme. A part of my previous theme (simple la bob). I love to hear of my work being used :). This work is licensed under a <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 License</a>. This means you may use it for any purpose, and make any changes you like. Just leave my Bob link under your footer :)
+Version: 0.1
+Author: Bob
+Author URI: http://www.blogohblog.com/
+
+This theme was designed and built by Bob of <a href="http://www.blogohblog.com/">Blog Oh Blog</a> based on the famous <a href="http://binarybonsai.com/kubrick/">Kubrick</a>.
+*/
+
+/* General styles */
+
+body{font-family:Verdana, Tahoma, Arial, Helvetica,sans-serif;font-size:13px;color:#000;margin: 5px;padding:2% 6%; line-height:18px;}
+h2{font-size:15px;line-height:20px;color:#000;margin-top:20px;padding:0;}
+h3{font-size:13px;line-height:16px;color:#000;margin-top:16px;margin-bottom:-8px;padding:0;}
+h4{font-size:12px;line-height:14px;color:#000;margin-top:14px;margin-bottom:-6px;padding:0}
+.h2{font-family:Arial, Helvetica, sans-serif;line-height:18px;font-size:12px;color:#312E2E;font-weight:700;}
+a:link,a:active{color:#333399;text-decoration:none;}
+a:visited{color:#660066;text-decoration:none;}
+a:hover{color:#333399;text-decoration:underline;}
+.nowrap {white-space:nowrap !important;}
+/* ul {list-style-image: url('images/bullet_orange.png');} */
+li {font-style: normal; line-height: 1.5em; padding: 0 0 0 20px; margin-bottom: 8px;}
+
+/** Citation handling 
+
+.citation,.course,.job,.project{font-style: normal; line-height: 1.5em;background:transparent url(images/bullet_orange.png) no-repeat top left;padding: 0 0 0 20px;}
+.book, .journal{font-style: italic;}
+.article, .paper, .poem, .quotation {font-style: normal; quotes: '"' '"' "'" "'"}
+.article:before, .paper:before, .poem:before, .quotation:before {content: open-quote;}
+.article:after, .paper:after, .poem:after, .quotation:after  {content: close-quote;}
+.description {line-height: 1.5em; margin-left:3em; margin-top:-.75em;}
+.pdf {background:transparent url(images/pdf_13.gif) no-repeat top left;padding: 0 0 0 15px;}
+#vita p.citation{background:none;padding:0;}
+#vita p.course{background:none;padding:0;}
+#vita p.job{background:none;padding:0;}
+#vita p.project{background:none;padding:0;}
+
+**/
+
+/* Header */
+#header {height:65px;margin:0 auto;padding-top:20px;padding-left:25px;background-color:#663300;}
+h1.blogtitle, a.blogtitle {font-family:Arial, Helvetica, sans-serif;color:#ffffcc;margin:0;padding:0;}
+p.desc{font-family:Verdana, Arial, Helvetica, sans-serif;color:#cc9966;font-size:14px;margin:10px 0 0 0;padding:0;line-height:16px;}
+p.rss{float:right; background:transparent url(images/rss.png) no-repeat center left;border:0;margin:0;padding:0 0 0 5px;}
+#top{margin:0px auto;height:10px;}
+h1.posttitle{line-height:1.3em;}
+
+/* Site navigation */
+
+#ddnav{background-color:#cc9966;height:30px;margin:0 auto;padding:10px 0px 0px 10px;}
+#nav{height:26px;font-weight:700;margin:0 auto;padding:0;}
+ul.nav{height:20px;line-height:20px;float:left;list-style:none;font-size:12px;text-transform:inherit;margin:0;padding:0;white-space:nowrap;}
+ul.nav li{float:left; margin:0;padding:0;}
+ul.nav li a:link{color:#ffffcc;float:left;display:block;text-decoration:none;padding:0 15px;}
+ul.nav li a:visited{color:#ffffcc;float:left;display:block;text-decoration:none;padding:0 15px;}
+ul.nav li a:hover,ul.nav li a:active {color:#ffffcc;text-decoration:underline;}
+ul.nav li.current_page_item a{color:#ffffcc;text-decoration:underline;}
+ul.nav li ul{float:left;margin:0;padding:0;}
+
+/* Main content */
+
+#main{width:98%;margin:0 auto;padding:0;}
+#content{float:left;width:70%;margin:0 auto;padding:0;}
+.entry{font-size:medium;float:left;width:98%;border:1px solid #dadada;background:#fff url(images/box.gif) repeat-x left top;margin:0 0 10px;padding:10px;}
+.postmetadata{border-top:1px #eee solid;font-size:10px;margin:0;padding:5px;}
+.boxcomments{border-top:5px solid #ddd;border-bottom:5px solid #ddd;margin-bottom:20px;width:600px;}
+abbr{border-bottom:0;text-decoration:none;font-size:10px;}
+.entry h3 {font-size:large;line-height:16px;color:#000;margin-top:16px;margin-bottom:0px;padding:0;}
+
+/* Sidebars */
+
+#sidebar{float:right;width:28%;margin:0 auto;padding:0;overflow:hidden;}
+#twitter_div {list-style-type:none;margin:0;padding:0;}
+#twitter_update_list {list-style-type:none;margin:0 0 10px;padding:0;}
+.rsidebar{float:right;width:90%;border:1px solid #dadada;background:#fff url(images/box.gif) repeat-x left top;margin:0 auto;padding:10px;}
+.rsidebar h2{font-size:12px;border-bottom:#eee 1px solid;margin:0 0 5px;padding:0;}
+.rsidebar h2.rss {font-size:12px;border-bottom:#eee 1px solid;margin:0 0 5px;padding:0 0 0 20px; background:transparent url(images/rss.png) no-repeat center left;}
+.rsidebar h2.email {font-size:12px;border-bottom:#eee 1px solid;margin:0 0 5px;padding:0 0 0 20px; background:transparent url(images/email.png) no-repeat center left;}
+.rsidebar ul{list-style-type:none;margin:0;padding:0;}
+.rsidebar ul li{list-style-type:none;margin:0 0 10px;padding:0;}
+.rsidebar ul li ul{list-style-type:square;margin:0;padding:0 3px;}
+.rsidebar ul li ul li{list-style-type:none;background:transparent url(images/bullet_yellow.png) no-repeat;border:0;margin:0;padding:0 0 5px 20px;}
+.LT_powered{display:none;}
+
+/* Post navigation */
+
+.navigation{width:100%;float:left;color:#666;margin:0;}
+.alignright{float:right;margin:10px 10px 10px 25px;}
+.alignleft{float:left;margin:10px 25px 10px 10px;}
+.aligncenter{display:block; margin-left:auto; margin-right:auto;}
+span.cmt{background:transparent url(images/comment.gif) no-repeat;border:0;margin:0;padding:0 0 5px 20px;}
+span.cty{background:transparent url(images/category.gif) no-repeat;border:0;margin:0;padding:0 0 5px 20px;}
+span.next{background:transparent url(images/next.gif) no-repeat;border:0;margin:0;padding:0 0 5px 20px;}
+span.prev{background:transparent url(images/prev.gif) no-repeat;border:0;margin:0;padding:0 0 5px 20px;}
+
+/* Comments */
+
+#commentform{border-top:1px solid #eee;margin:0;padding:15px 15px 1px;}
+#commentform label{display:block;margin:0;}
+#commentform input{width:80%;margin:0 5px 10px 0;padding:1px;}
+#commentform textarea{width:80%;margin:0 0 10px;padding:0;}
+#commentform #submit{width:140px;margin:0 0 20px;}
+#commentform p{margin:5px 0;}
+ol.commentlist{margin:0 0 1px;padding:0;}
+ol.commentlist :hover{background:#eee;}
+ol.commentlist li{border-top:1px solid #eee;display:block;list-style:none;margin:0;padding:15px 15px 1px;}
+ol.commentlist li :hover{background:none;}
+ol.commentlist li.commenthead{display:block;list-style:none;margin:0;padding:5px 15px;}
+ol.commentlist li.commenthead h2{margin:0;}
+ol.tblist{border-top:1px solid #fff;list-style:none;margin:0 0 1px;padding:15px;}
+ol.tblist li{display:block;list-style:none;background:transparent url(images/c.gif) 0 2px no-repeat;padding-left:15px;margin:0 0 5px;}
+
+/* Footer */
+
+#footer{clear:both;margin:0px auto 5px;height:20px;border-bottom:1px dotted #663300;}
+#footerbox{clear:both;margin:0 auto;background-color:#cc9966;line-height:12px;padding:5px 25px;}
+.footer{color:#000;font-size:10px;line-height:12px;margin:0 auto;padding:0;text-align:center;}
+.footer a:link, .footer a:visited{text-decoration:none;color:#663300;border:none;}
+.footer a:hover,.footer a:active{text-decoration:underline;color:#663300;border:none;}
+
+/* Sociable */
+
+div.sociable { margin: 16px 0; }
+
+span.sociable_tagline { position: relative; }
+span.sociable_tagline span { display: none; width: 14em; }
+span.sociable_tagline:hover span {
+	position: absolute;
+	display: block;
+	top: -5em;
+	background: #ffe;
+	border: 1px solid #ccc;
+	color: black;
+	line-height: 1.25em;
+}
+.sociable span {
+	display: block;
+}
+.sociable ul {
+	display: inline;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+.sociable ul li {
+	background: none;
+	display: inline;
+	list-style-type: none;
+	margin: 0;
+	padding: 5px;
+}
+.sociable ul li:before { content: ""; }
+.sociable img {
+	float: none;
+	width: 16px;
+	height: 16px;
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+
+.sociable-hovers {
+	opacity: .6;
+	-moz-opacity: .6;
+	filter: alpha(opacity=60);
+}
+.sociable-hovers:hover {
+	opacity: 1;
+	-moz-opacity: 1;
+	filter: alpha(opacity=100);
+}
+
+.printlink {
+display: inline;
+float: right;
+}
+
+#juiz_last_tweet_widget-2 ul li ul {
+list-style-type: none;
+}
+
+#juiz_last_tweet_widget-2 img {
+display: inline;
+float: left;
+margin-right: 5px;
+}
+
+.juiz_last_tweet_metadata {
+display:block;
+margin-bottom: 10px;
+}
+
+.summary-box {
+width:350px; 
+}
+
+
