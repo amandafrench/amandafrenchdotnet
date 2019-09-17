@@ -45,7 +45,7 @@ function GetCitationsBlockNonStaticHTML($post, $isDynamic, $hasPopup) {
     if ($isDynamic) // Append dynamic method
         $html .= '<a class="citation-manual-dynamic" onclick="ManualLoad(' . $post->ID . ')">Cite this blog post</a>';
     else // Append manual load link
-        $html .= '<a class="citation-manual" href="' . get_permalink_citations($post) . '" rel="nofollow">Cite this blog post</a>';
+        $html .= '<a class="citation-manual" href="' . get_permalink_citations($post) . '" rel="nofollow">Cite this</a>';
 
 /*     if ($hasPopup) // Append popup link
         $html .= ' &nbsp;<a class="citation-new-window" href="' . get_permalink_citations_new_window($post) . '" rel="nofollow">Cite this blog post (new window)</a>'; */
