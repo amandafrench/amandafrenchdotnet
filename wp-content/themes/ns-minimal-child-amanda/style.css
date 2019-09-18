@@ -13,6 +13,8 @@ Text Domain: ns-minimal
 Domain Path: /languages/
 */
 
+/* General Site Styles */
+
 body,
 button,
 input,
@@ -22,20 +24,25 @@ textarea {
   font-size: 17px;
 }
 
-.site-info {
-font-size: 14px;
+.site-content {
+	padding-top:0;
 }
 
-.site-info a {
-font-size: 14px;
+.column.three-fourths {
+  width: 100%;
 }
 
-#search-3 .search-field {
-padding: 2px;
-height:18px;
+div.pdfemb-viewer {
+margin: 0px auto !important;
 }
 
- .site-title {
+.button-primary {
+color: #FFFFFF;
+}
+
+/* Header Styles */
+
+.site-title {
 	font-size:4em;
 	 font-family: garamond;
 }
@@ -50,17 +57,14 @@ height:18px;
   color: #fff4e6;	
 }
 
-.mpp li {
-	padding-left: 2em;
-	text-indent: -2em;
+/* Footer Styles */
+
+.site-info {
+font-size: 14px;
 }
 
-.column.three-fourths {
-  width: 100%;
-}
-
-div.pdfemb-viewer {
-margin: 0px auto !important;
+.site-info a {
+font-size: 14px;
 }
 
 .widget-title {
@@ -68,19 +72,29 @@ margin: 0px auto !important;
 	margin-top: 1.5em;
 }
 
+#search-3 .search-field {
+padding: 2px;
+height:18px;
+}
+
+.mpp li {
+	padding-left: 2em;
+	text-indent: -2em;
+}
+
+/* Print and Citation Link Styles */
+
 .printlink {
 	display: block; 
 	margin-top: .25em;
 	float: right;
 }
 
-.button-primary {
-color: #FFFFFF;
-}
-
 .type-page .citations {
 display:none;
 }
+
+/* Work Page Styles */ 
 
 .toc-work ul {
 list-style-type: none;
@@ -90,4 +104,22 @@ font-size: 20px;
 .work-top-link {
 float:right;
 }
+
+.wp-block-column ul {
+margin-bottom:0px;
+}
+
+.wp-block-column ul li {
+margin-bottom:0px;
+}
+
+h6 {
+  font-size: 16px;
+	font-weight: inherit;
+  margin-top: 0px;
+  margin-bottom: 0px;
+	line-height: 1.8;
+}
+
+
 
