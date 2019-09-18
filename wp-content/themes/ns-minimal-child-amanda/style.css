@@ -73,3 +73,11 @@ margin: 0px auto !important;
 	margin-top: .25em;
 	float: right;
 }
+
+button {
+color: #FFFFFF;
+}
+
+.type-page .citations {
+display:none;
+}
