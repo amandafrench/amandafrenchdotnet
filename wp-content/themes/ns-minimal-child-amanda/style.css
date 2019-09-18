@@ -81,3 +81,9 @@ color: #FFFFFF;
 .type-page .citations {
 display:none;
 }
+
+.toc-work ul {
+list-style-type: none;
+font-size: 20px;
+}
+
