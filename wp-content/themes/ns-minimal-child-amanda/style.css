@@ -13,3 +13,63 @@ Text Domain: ns-minimal
 Domain Path: /languages/
 */
 
+body,
+button,
+input,
+select,
+textarea {
+  color: #000000;
+  font-size: 17px;
+}
+
+.site-info {
+font-size: 14px;
+}
+
+.site-info a {
+font-size: 14px;
+}
+
+#search-3 .search-field {
+padding: 2px;
+height:18px;
+}
+
+ .site-title {
+	font-size:4em;
+	 font-family: garamond;
+}
+
+.site-branding {
+  background-color: #673300;
+	padding-top: 1px;
+	padding-bottom: 15px;
+}
+
+.site-description {
+  color: #fff4e6;	
+}
+
+.mpp li {
+	padding-left: 2em;
+	text-indent: -2em;
+}
+
+.column.three-fourths {
+  width: 100%;
+}
+
+div.pdfemb-viewer {
+margin: 0px auto !important;
+}
+
+.widget-title {
+	margin-bottom: .5em;
+	margin-top: 1.5em;
+}
+
+.printlink {
+	display: block; 
+	margin-top: -2em;
+	float: right;
+}
