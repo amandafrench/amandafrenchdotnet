@@ -16,7 +16,6 @@ Domain Path: /languages/
 /* General Site Styles */
 
 body,
-button,
 input,
 select,
 textarea {
@@ -121,6 +120,5 @@ h6 {
   margin-bottom: 0px;
 	line-height: 1.8;
 }
-
 
 
