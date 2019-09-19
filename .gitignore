@@ -30,3 +30,6 @@ wp-content/debug.log
 # Exclude theme file that GitHub doesn't like
 
 wp-content/themes/twentynineteen/package-lock.json 
+
+# Exclude naughty files directory
+files/*
