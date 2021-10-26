@@ -27,9 +27,5 @@ PHP_errors.log
 wp-admin/error_log
 wp-content/debug.log
 
-# Exclude theme file that GitHub doesn't like
-
-wp-content/themes/twentynineteen/package-lock.json 
-
-# Exclude naughty files directory
+# Exclude rebellious files directory
 files/*
