@@ -20,6 +20,7 @@ class zotpressLib
 	private $order = false;
 	private $citeable = false;
 	private $downloadable = false;
+	private $showtags = false;
 	private $showimage = false;
 	private $is_admin = false;
 	private $urlwrap = false;
@@ -112,6 +113,14 @@ class zotpressLib
 		$this->downloadable = $download;
 	}
 
+	public function setShowTags($showtags)
+	{
+		if ( $showtags == "yes" || $showtags == "true" || $showtags == true ) $showtags = true;
+		else $showtags = false;
+
+		$this->showtags = $showtags;
+	}
+
 	public function setShowImage($showimage)
 	{
 		if ( $showimage == "yes" || $showimage == "true" || $showimage == true ) $showimage = true;
@@ -198,13 +207,18 @@ class zotpressLib
 
 		global $collection_name;
 
-		if (isset($_GET['collection_name']))
+		if ( isset($_GET['collection_name']) )
 			if ( strpos( $_GET['collection_name'], "- " ) == 0 )
-				$collection_name = stripslashes(htmlentities(strip_tags(preg_replace( "/- /", "", $_GET['collection_name'], 1 ))));
+				$collection_name = stripslashes(htmlentities(strip_tags(preg_replace( "/- /", "", urldecode($_GET['collection_name']), 1 ))));
 			else
-				$collection_name = stripslashes(htmlentities(strip_tags(trim($_GET['collection_name']))));
+				$collection_name = stripslashes(htmlentities(strip_tags(urldecode(trim($_GET['collection_name'])))));
 		else
 			$collection_name = false;
+
+
+		// Top Level
+		if ( isset($_GET['toplevel']) )
+			$this->toplevel = "toplevel";
 
 
 		// Tag Name
@@ -219,18 +233,30 @@ class zotpressLib
 
         $content .= "<div id=\"zp-Browse\">\n";
         $content .= '<span id="ZP_API_USER_ID" style="display: none;">' .$api_user_id . '</span>';
+		$content .= "\n";
 		if ( $collection_id ) $content .= '<span id="ZP_COLLECTION_ID" style="display: none;">'.$collection_id.'</span>';
 		if ( $collection_name ) $content .= '<span id="ZP_COLLECTION_NAME" style="display: none;">'.$collection_name.'</span>';
 		if ( $tag_id ) $content .= '<span id="ZP_TAG_ID" style="display: none;">'.$tag_id.'</span>';
+		$content .= "\n";
 		$content .= '<span id="ZP_MAXTAGS" style="display: none;">'.$this->maxtags.'</span>';
+		$content .= "\n";
 		$content .= '<span id="ZP_STYLE" style="display: none;">'.$this->style.'</span>';
+		$content .= "\n";
 		$content .= '<span id="ZP_SORTBY" style="display: none;">'.$this->sortby.'</span>';
+		$content .= "\n";
 		$content .= '<span id="ZP_ORDER" style="display: none;">'.$this->order.'</span>';
+		$content .= "\n";
 		$content .= '<span id="ZP_CITEABLE" style="display: none;">'.$this->citeable.'</span>';
+		$content .= "\n";
 		$content .= '<span id="ZP_DOWNLOADABLE" style="display: none;">'.$this->downloadable.'</span>';
+		$content .= "\n";
+		$content .= '<span id="ZP_SHOWTAGS" style="display: none;">'.$this->showtags.'</span>';
+		$content .= "\n";
 		$content .= '<span id="ZP_SHOWIMAGE" style="display: none;">'.$this->showimage.'</span>';
+		$content .= "\n";
 		if ( $this->toplevel ) $content .= '<span id="ZP_TOPLEVEL" style="display: none;">'.$this->toplevel.'</span>';
 		$content .= '<span id="ZP_TARGET" style="display: none;">'.$this->target.'</span>';
+		$content .= "\n";
 		$content .= '<span id="ZP_URLWRAP" style="display: none;">'.$this->urlwrap.'</span>';
 		if ( $this->is_admin ) $content .= '<span id="ZP_ISADMIN" style="display: none;">'.$this->is_admin.'</span>';
         $content .= "\n";
@@ -246,8 +272,11 @@ class zotpressLib
                         // Set default option
                         $content .= "<option class='loading' value='loading'>".__('Loading','zotpress')." ...</option>";
                         if ( $tag_id ) $content .= "<option value='blank'>--".__('No Collection Selected','zotpress')."--</option>";
-                        if ( ! $tag_id && ! $collection_id ) $content .= "<option value='toplevel'>".__('Top Level','zotpress')."</option>";
-
+						// if ( ! $tag_id && ! $collection_id ) $content .= "<option value='toplevel'>".__('Top Level','zotpress')."</option>";
+						// REVIEW: Uhhhh
+						if ( ! $tag_id && ! $collection_id )
+							if ( $this->toplevel == "toplevel" || $this->toplevel === false ) $content .= "<option value='blank' class='blank'>".__('Top Level','zotpress')."</option>";
+							else if ( $this->toplevel != "toplevel" ) $content .= "<option value='blank' class='blank'>".__('Default Collection','zotpress')."</option>";
                         $content .= "</select>\n";
                         $content .= "</div>\n\n";
                     $content .= '</div><!-- #zp-Browse-Collections -->';
@@ -355,7 +384,11 @@ class zotpressLib
                 }
                 else
                 {
-                    $content .= "<div class='zp-Collection-Title'>".__('Top Level Items','zotpress')."</div>\n";
+					// REVIEW
+					if ( $this->toplevel == "toplevel" || $this->toplevel === false )
+						$content .= "<div class='zp-Collection-Title'>".__('Top Level Items','zotpress')."</div>\n";
+					else
+						$content .= "<div class='zp-Collection-Title'>".__('Default Collection Items','zotpress')."</div>\n";
                 }
             }
 

@@ -49,7 +49,8 @@
     $zotero_authorize_endpoint = 'https://www.zotero.org/oauth/authorize';
 
     //require("../../../wp-includes/wp-db.php");
-    require("../../../../../wp-load.php");
+    // require("../../../../../wp-load.php");
+    require(dirname(__FILE__) . '/../../../../../wp-load.php');
     $wp_did_header = false;
     wp();
     global $wpdb;

@@ -1,5 +1,12 @@
 <?php
 
+function zpStripQuotes($string)
+{
+    // Strip quotes and decode
+    $string = str_replace("”", "", str_replace('"','', html_entity_decode( $string )));
+    return $string;
+}
+
 function Zotpress_zotpressInText ($atts)
 {
     /*
@@ -29,28 +36,26 @@ function Zotpress_zotpressInText ($atts)
     ), $atts));
 
 
-
     // PREPARE ATTRIBUTES
+    if ( $items )         $items = zpStripQuotes( str_replace(" ", "", $items ));
+    else if ( $item )     $items = zpStripQuotes( str_replace(" ", "", $item ));
 
-    if ($items) $items = str_replace(" ", "", str_replace('"','',html_entity_decode($items)));
-    else if ($item) $items = str_replace(" ", "", str_replace('"','',html_entity_decode($item)));
+    $pages =              zpStripQuotes( $pages );
+    $format =             zpStripQuotes( $format );
+    $brackets =           zpStripQuotes( $brackets );
 
-    $pages = str_replace('"','',html_entity_decode($pages));
-    $format = str_replace('"','',html_entity_decode($format));
-    $brackets = str_replace('"','',html_entity_decode($brackets));
+    $etal =               zpStripQuotes( $etal );
+    if ( $etal == "default" ) $etal = false;
 
-    $etal = str_replace('"','',html_entity_decode($etal));
-    if ($etal == "default") { $etal = false; }
+    $separator =          zpStripQuotes( $separator );
+    if ( $separator == "default" ) $separator = false;
 
-    $separator = str_replace('"','',html_entity_decode($separator));
-    if ($separator == "default") { $separator = false; }
+    $and =                zpStripQuotes( $and );
+    if ( $and == "default" ) $and = false;
 
-    $and = str_replace('"','',html_entity_decode($and));
-    if ($and == "default") { $and = false; }
-
-    if ($userid) { $api_user_id = str_replace('"','',html_entity_decode($userid)); }
-    if ($nickname) { $nickname = str_replace('"','',html_entity_decode($nickname)); }
-    if ($nick) { $nickname = str_replace('"','',html_entity_decode($nick)); }
+    if ( $userid )        $api_user_id = zpStripQuotes( $userid );
+    if ( $nickname )      $nickname = zpStripQuotes( $nickname );
+    if ( $nick )          $nickname = zpStripQuotes( $nick );
 
 
 
@@ -154,9 +159,11 @@ function Zotpress_zotpressInText ($atts)
         }
     }
 
+    // REVIEW: Replace ndashes and mdashes with dashes (7.3)
+    $items = str_replace("–", "-", str_replace("–", "-", $items));
+
     // Remove pages from item key/s
     $items = preg_replace( "/(((,))+([\w\d-]+(})+))++/", "}", $items );
-
     unset($temp_items);
 
 
@@ -191,8 +198,9 @@ function Zotpress_zotpressInText ($atts)
     // return '<span id="zp-InText-'.$instance_id."-".count($GLOBALS['zp_shortcode_instances'][get_the_ID()]).'"
 	// 				class="zp-InText-Citation loading"
 	// 				rel="{ \'api_user_id\': \''.$api_user_id.'\', \'pages\': \''.$pages.'\', \'items\': \''.$items.'\', \'format\': \''.$format.'\', \'brackets\': \''.$brackets.'\', \'etal\': \''.$etal.'\', \'separator\': \''.$separator.'\', \'and\': \''.$and.'\' }"></span>';
-    return '<span class="'.$instance_id.' zp-InText-Citation loading"
-		rel="{ \'pages\': \''.implode("--", $all_page_instances).'\', \'items\': \''.$items.'\', \'format\': \''.$format.'\', \'brackets\': \''.$brackets.'\', \'etal\': \''.$etal.'\', \'separator\': \''.$separator.'\', \'and\': \''.$and.'\' }"></span>';
+    $output = '<span class="'.$instance_id.' zp-InText-Citation loading" rel="{ \'pages\': \''.implode("--", $all_page_instances).'\', \'items\': \''.$items.'\', \'format\': \''.$format.'\', \'brackets\': \''.$brackets.'\', \'etal\': \''.$etal.'\', \'separator\': \''.$separator.'\', \'and\': \''.$and.'\' }"></span>';
+
+    return $output;
 }
 
 

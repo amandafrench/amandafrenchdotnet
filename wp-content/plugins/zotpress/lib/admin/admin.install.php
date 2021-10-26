@@ -2,9 +2,10 @@
 
 // INSTALL -----------------------------------------------------------------------------------------
 
-    function Zotpress_install()
+    function Zotpress_install( $taskType="install" )
     {
         global $wpdb;
+        global $current_user;
 
         $Zotpress_main_db_version = "5.2";
         $Zotpress_oauth_db_version = "5.0.5";
@@ -15,16 +16,52 @@
 
 
 		// REMOVE OLD DATABASES AND CHECKS - since 6.0
-        $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroItems;");
-        $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroCollections;");
-        $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroTags;");
-        $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroRelItemColl;");
-        $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroRelItemTags;");
-        delete_option( 'Zotpress_zoteroItems_db_version' );
-        delete_option( 'Zotpress_zoteroCollections_db_version' );
-        delete_option( 'Zotpress_zoteroTags_db_version' );
-        delete_option( 'Zotpress_zoteroRelItemColl_db_version' );
-        delete_option( 'Zotpress_zoteroRelItemTags_db_version' );
+        // CHANGED (7.3): We don't want to delete everything when updating,
+        // so a task type (install or update) check is added
+
+        if ( $taskType == "install" )
+        {
+            // kfeuerherm: added next two lines 15 November 2019
+            $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress;");
+            $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_oauth;");
+
+            $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroItems;");
+            $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroCollections;");
+            $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroTags;");
+            $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroRelItemColl;");
+            $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroRelItemTags;");
+
+            // kfeuerherm: added next two lines 15 November 2019
+            $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_cache;");
+            $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroItemImages;");
+
+            // kfeuerherm: added next nine lines 15 November 2019
+            delete_option( 'Zotpress_cache_version' );
+            delete_option( 'Zotpress_DefaultCPT' );
+            delete_option( 'Zotpress_DefaultAccount' );
+            delete_option( 'Zotpress_DefaultEditor' );
+            delete_option( 'Zotpress_DefaultStyle' );
+            delete_option( 'Zotpress_StyleList' );
+            delete_option( 'Zotpress_update_version' );
+            delete_option( 'Zotpress_main_db_version' );
+            delete_option( 'Zotpress_oauth_db_version' );
+
+            delete_option( 'Zotpress_zoteroItems_db_version' );
+            delete_option( 'Zotpress_zoteroCollections_db_version' );
+            delete_option( 'Zotpress_zoteroTags_db_version' );
+            delete_option( 'Zotpress_zoteroRelItemColl_db_version' );
+            delete_option( 'Zotpress_zoteroRelItemTags_db_version' );
+
+            // kfeuerherm: added next three lines 15 November 2019
+            delete_option( 'Zotpress_zoteroItemImages_db_version' );
+            delete_option( 'Zotpress_update_notice_dismissed' );
+            delete_option( 'Zotpress_zoteroItemImages_db_version' );
+
+            // kfeuerherm: next two are in the reset code; not sure needed yet
+            delete_user_meta( $current_user->ID, 'zotpress_5_2_ignore_notice' );
+            delete_user_meta( $current_user->ID, 'zotpress_survey_notice_ignore' );
+
+        } // taskType check
 
 
         // ZOTERO ACCOUNTS TABLE
@@ -33,7 +70,7 @@
 		 * For each table, the basic check is:
 		 *
 		 * If the table version option doesn't exist, OR
-		 * If the table version is not the same as the update version (variables defined above)
+		 * If the table version is not the same as the update version (vars defined above)
 		 *
 		 * Then add/update the table and add/update the option
 		 */
@@ -60,7 +97,7 @@
         }
 
 
-        // OAUTH CACHE TABLE
+        // OAUTH TABLE
 
         if ( ! get_option("Zotpress_oauth_db_version")
                 || get_option("Zotpress_oauth_db_version") != $Zotpress_oauth_db_version
@@ -140,7 +177,7 @@
 
 // UNINSTALL --------------------------------------------------------------------------------------
 
-    function Zotpress_deactivate()
+    function Zotpress_uninstall()
     {
         global $wpdb;
         global $current_user;
@@ -178,7 +215,7 @@
         delete_user_meta( $current_user->ID, 'zotpress_survey_notice_ignore' );
     }
 
-    register_uninstall_hook( ZOTPRESS_PLUGIN_FILE, 'Zotpress_deactivate' );
+    register_uninstall_hook( ZOTPRESS_PLUGIN_FILE, 'Zotpress_uninstall' );
 
 // UNINSTALL ---------------------------------------------------------------------------------------
 
@@ -197,7 +234,7 @@
     if ( ! get_option( "Zotpress_update_version" )
 			|| get_option("Zotpress_update_version") != $GLOBALS['Zotpress_update_db_by_version'] )
     {
-        Zotpress_install();
+        Zotpress_install("update");
 
         // Add or update version number
         if ( !get_option( "Zotpress_update_version" ) )

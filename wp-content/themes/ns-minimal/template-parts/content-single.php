@@ -19,7 +19,9 @@
 
 		<?php if ( has_post_thumbnail() && ! post_password_required() && ! is_attachment() ) : ?>
 		<div class="entry-thumbnail">
-			<?php the_post_thumbnail(); ?>
+			<a href="<?php echo esc_url( get_permalink() ); ?>">
+				<?php the_post_thumbnail(); ?>
+			</a>
 		</div>
 		<?php endif; ?>
 	</header><!-- .entry-header -->

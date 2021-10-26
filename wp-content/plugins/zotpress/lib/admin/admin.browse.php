@@ -45,7 +45,7 @@
 			{
 				$zp_account_temp = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."zotpress LIMIT 1");
 
-                if ( ( is_array($zp_account_temp) || $zp_account_temp instanceof Countable )
+                if ( ( is_array($zp_account_temp) || is_object($zp_account_temp) || $zp_account_temp instanceof Countable )
                         && count((array)$zp_account_temp) > 0 )
                 {
                     $zp_account = $zp_account_temp;
@@ -56,7 +56,6 @@
 
 
 		// Use Browse class
-
 		$zpLib = new zotpressLib;
 		$zpLib->setAccount($zp_account);
 		$zpLib->setType("dropdown");

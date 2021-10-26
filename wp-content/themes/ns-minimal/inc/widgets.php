@@ -66,6 +66,8 @@ class ns_minimal_social extends WP_Widget {
 		if ( $title )
 			echo wp_kses_post($before_title) . esc_html($title) . wp_kses_post($after_title);
 
+		echo '<div class="widget-social-icons-itens">';
+
 		if ( $feed )
 			echo '<span><a href="' . esc_url($feed) . '" title="' . esc_attr( 'Feed', 'ns-minimal' ) . '" class="social social-feed" target="' . esc_attr( '_blank', 'ns-minimal' ) . '"></a></span>';
 		// @codingStandardsIgnoreStart
@@ -126,6 +128,8 @@ class ns_minimal_social extends WP_Widget {
 		if ( $snapchat )
 			echo '<span><a href="' . esc_url($snapchat) . '" title="' . esc_attr( 'Snapchat', 'ns-minimal' ) . '" class="social social-snapchat" target="' . esc_attr( '_blank', 'ns-minimal' ) . '"></a></span>';
 
+		echo '</div>';
+
 		/* After widget (defined by themes). */
 		echo wp_kses_post($after_widget);
 	}
@@ -141,7 +145,7 @@ class ns_minimal_social extends WP_Widget {
 		$instance['title'] = ( ! empty( $new_instance['title'] ) ) ? sanitize_text_field( $new_instance['title'] ) : '';
 
 		$instance['feed'] = ( ! empty( $new_instance['feed'] ) ) ? esc_url_raw( $new_instance['feed'] ) : '';
-		$instance['email'] = ( ! empty( $new_instance['email'] ) ) ? esc_url_raw( $new_instance['email'] ) : '';
+		$instance['email'] = ( ! empty( $new_instance['email'] ) ) ? esc_attr( $new_instance['email'] ) : '';
 		$instance['linkedin'] = ( ! empty( $new_instance['linkedin'] ) ) ? esc_url_raw( $new_instance['linkedin'] ) : '';
 		$instance['bloglovin'] = ( ! empty( $new_instance['bloglovin'] ) ) ? esc_url_raw( $new_instance['bloglovin'] ) : '';
 		$instance['twitter'] = ( ! empty( $new_instance['twitter'] ) ) ? esc_url_raw( $new_instance['twitter'] ) : '';
@@ -206,7 +210,7 @@ class ns_minimal_social extends WP_Widget {
 
 		<p>
 			<label for="<?php echo esc_attr( $this->get_field_id( 'email' ) ); ?>"><?php esc_html_e('Email:','ns-minimal'); ?></label>
-			<input id="<?php echo esc_attr( $this->get_field_id( 'email' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'email' ) ); ?>" value="<?php echo esc_url( $email ); ?>" style="width:100%;" />
+			<input type="email" id="<?php echo esc_attr( $this->get_field_id( 'email' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'email' ) ); ?>" value="<?php echo esc_attr( $email ); ?>" style="width:100%;" />
 		</p>
 
 		<p>
@@ -286,7 +290,7 @@ class ns_minimal_social extends WP_Widget {
     <?php // @codingStandardsIgnoreStart ?>
 		<p>
 			<label for="<?php echo esc_attr( $this->get_field_id( 'wordpress' ) ); ?>"><?php esc_html_e('WordPress:','ns-minimal'); ?></label>
-			<input id="<?php echo esc_attr( $this->get_field_id( 'wordpress' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'WordPress' ) ); ?>" value="<?php echo esc_url( $wordpress ); ?>" style="width:100%;" />
+			<input id="<?php echo esc_attr( $this->get_field_id( 'wordpress' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'wordpress' ) ); ?>" value="<?php echo esc_url( $wordpress ); ?>" style="width:100%;" />
 		</p>
 		<?php // @codingStandardsIgnoreEnd ?>
 		<p>

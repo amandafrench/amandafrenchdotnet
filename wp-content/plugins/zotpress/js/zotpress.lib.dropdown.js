@@ -6,7 +6,7 @@ jQuery(document).ready(function()
 	//
 	///////////////////////////////////////////////
 
-	// TODO: notes, abstract, target, showtags
+	// TODO: notes, abstract
 
 	if ( jQuery("#zp-Browse-Collections-Select").length > 0 )
 	{
@@ -14,15 +14,18 @@ jQuery(document).ready(function()
 
 		var zpCollectionId = false; if ( jQuery("#ZP_COLLECTION_ID", zpThisLib).length > 0 ) zpCollectionId = jQuery("#ZP_COLLECTION_ID", zpThisLib).text();
 		var zpTagId = false; if ( jQuery("#ZP_TAG_ID", zpThisLib).length > 0 ) zpTagId = jQuery("#ZP_TAG_ID", zpThisLib).text();
+		var zpShowTags = false; if ( jQuery("#ZP_SHOWTAGS").length > 0 && parseInt( jQuery("#ZP_SHOWTAGS").text() ) == "1" ) zpShowTags = true;
 		var zpShowImages = false; if ( jQuery("#ZP_SHOWIMAGE", zpThisLib).length > 0 &&  ( jQuery("#ZP_SHOWIMAGE", zpThisLib).text() == "yes" || jQuery("#ZP_SHOWIMAGE", zpThisLib).text() == "true" ||  jQuery("#ZP_SHOWIMAGE", zpThisLib).text() == "1" ) ) zpShowImages = true;
 		var zpIsAdmin = false; if ( jQuery("#ZP_ISADMIN", zpThisLib).length > 0 ) zpIsAdmin = true;
-		var zpTarget = false; if ( jQuery("#ZP_TARGET", zpThisLib).length > 0 ) zpTarget = true;
+		var zpTarget = false; if ( jQuery("#ZP_TARGET", zpThisLib).length > 0 && jQuery("#ZP_TARGET").text().length > 0 ) zpTarget = true;
 		var zpTopLevel = false; if ( jQuery("#ZP_TOPLEVEL", zpThisLib).length > 0 )
 		{
 			zpTopLevel = jQuery("#ZP_TOPLEVEL", zpThisLib).text();
 
-			if ( zpTopLevel != 'toplevel' )
+			if ( zpCollectionId === false )
 				zpCollectionId = zpTopLevel;
+			// if ( zpCollectionId != zpTopLevel )
+			// 	zpCollectionId = zpTopLevel;
 		}
 		var zpURLWrap = false; if ( jQuery("#ZP_URLWRAP", zpThisLib).length > 0 ) zpURLWrap = jQuery("#ZP_URLWRAP", zpThisLib).text();
 		var zpItemsFlag = true;
@@ -89,21 +92,23 @@ jQuery(document).ready(function()
 				if ( update === false ) jQuery("select#zp-Browse-Collections-Select", zpThisLib).addClass("used_cache");
 				if ( update === true && ! jQuery("select#zp-Browse-Collections-Select", zpThisLib).hasClass("updating") )
 				{
-					jQuery("select#zp-Browse-Collections-Select", zpThisLib).empty().addClass("updating");
+					jQuery("select#zp-Browse-Collections-Select", zpThisLib).find('*').not('.blank').remove();
+					jQuery("select#zp-Browse-Collections-Select", zpThisLib).addClass("updating");
 
 					if ( zpTagId ) jQuery("select#zp-Browse-Collections-Select", zpThisLib).append( "<option value='blank'>--"+zpShortcodeAJAX.txt_nocollsel+"--</option>" );
-					if ( ! zpTagId && ! zpCollectionId ) jQuery("select#zp-Browse-Collections-Select", zpThisLib).append( "<option value='toplevel'>"+zpShortcodeAJAX.txt_toplevel+"</option>" );
+					// if ( ! zpTagId && ! zpCollectionId ) jQuery("select#zp-Browse-Collections-Select", zpThisLib).append( "<option value='toplevel'>"+zpShortcodeAJAX.txt_toplevel+"</option>" );
 				}
 
 				// Add Top Level Collection option to the select
 				if ( zpCollectionId
-						&& jQuery("#zp-Browse-Collections-Select option.toplevel", zpThisLib).length == 0 )
+						&& jQuery("#zp-Browse-Collections-Select option.blank", zpThisLib).length == 0 )
+						// && jQuery("#zp-Browse-Collections-Select option.toplevel", zpThisLib).length == 0 )
 					if ( jQuery("#ZP_COLLECTION_NAME", zpThisLib).length > 0 )
 						jQuery("select#zp-Browse-Collections-Select", zpThisLib)
 							.append( "<option value='blank' class='blank'>"+jQuery("#ZP_COLLECTION_NAME", zpThisLib).text()+"</option>\n" );
-					else
-						jQuery("select#zp-Browse-Collections-Select", zpThisLib)
-							.append( "<option value='blank' class='blank'>Default Collection</option>\n" );
+					// else
+					// 	jQuery("select#zp-Browse-Collections-Select", zpThisLib)
+					// 		.append( "<option value='blank' class='blank'>Default Collection</option>\n" );
 
 				if ( zp_collections != "0"
 						&& zp_collections.data.length > 0
@@ -133,11 +138,12 @@ jQuery(document).ready(function()
 							zp_get_collections ( 0, 0, true );
 				}
 
+				// Add "Back" if not Toplevel
 				if ( zpCollectionId
+						&& zpCollectionId != "toplevel"
 						&& jQuery("#zp-Browse-Collections-Select option.toplevel", zpThisLib).length == 0 )
-				{
-					jQuery("select#zp-Browse-Collections-Select", zpThisLib).append( "<option value='toplevel' class='toplevel'>"+zpShortcodeAJAX.txt_backtotop+"</option>\n" );
-				}
+					jQuery("select#zp-Browse-Collections-Select", zpThisLib).append( "<option value='toplevel' class='toplevel'>&larr; "+zpShortcodeAJAX.txt_backtotop+"</option>\n" );
+
 				// Remove loading indicator
 				jQuery("select#zp-Browse-Collections-Select", zpThisLib).removeClass("loading").find(".loading").remove();
 			},
@@ -183,7 +189,7 @@ jQuery(document).ready(function()
 				var zp_tags = jQuery.parseJSON( data );
 
 				var zp_tag_options = "<option id='zp-List-Tags-Select' name='zp-List-Tags-Select'>--"+zpShortcodeAJAX.txt_notagsel+"--</option>\n";
-				if ( zpTagId ) zp_tag_options = "<option value='toplevel' class='toplevel'>--"+zpShortcodeAJAX.txt_backtotop+"--</option>\n";
+				if ( zpTagId ) zp_tag_options = "<option value='toplevel' class='toplevel'>--"+zpShortcodeAJAX.txt_unsettag+"--</option>\n";
 
 
 
@@ -270,7 +276,9 @@ jQuery(document).ready(function()
 
 				'citeable': jQuery("#ZP_CITEABLE", zpThisLib).text(),
 				'downloadable': jQuery("#ZP_DOWNLOADABLE", zpThisLib).text(),
-				'showimage': jQuery("#ZP_SHOWIMAGE", zpThisLib).text(),
+				'showtags': zpShowTags,
+				// 'showimage': jQuery("#ZP_SHOWIMAGE", zpThisLib).text(),
+				'showimage': zpShowImages,
 
 				'target': zpTarget,
 				'urlwrap': zpURLWrap,
@@ -321,77 +329,101 @@ jQuery(document).ready(function()
 							+ " out of " + (parseInt(zp_items.meta.request_last)+50) + "..." );
 					}
 
-					jQuery.each(zp_items.data, function( index, item )
+					// CHANGED (7.3): Make sure that there are items ...
+					if ( zp_items.data != 0 )
 					{
-						var tempItem = "";
-
-						// Determine item reference
-						var $item_ref = jQuery("div.zp-List #zp-ID-"+item.library.id+"-"+item.key, zpThisLib);
-
-						// Year
-						var tempItemYear = "0000"; if ( item.meta.hasOwnProperty('parsedDate') ) tempItemYear = item.meta.parsedDate.substring(0, 4);
-
-						// Author
-						var tempAuthor = item.data.title;
-						if ( item.meta.hasOwnProperty('creatorSummary') )
-							tempAuthor = item.meta.creatorSummary.replace( / /g, "-" );
-
-						tempItem += "<div id='zp-ID-"+item.library.id+"-"+item.key+"' class='zp-Entry zpSearchResultsItem hidden";
-
-						// Add update class to item
-						if ( update === true ) tempItem += " zp_updated";
-
-						tempItem += "' data-zp-author-year='"+tempAuthor+"-"+tempItemYear+"'";
-						tempItem += "' data-zp-year-author='"+tempItemYear+"-"+tempAuthor+"'";
-						tempItem += ">\n";
-
-						if ( zpIsAdmin
-								|| ( zpShowImages && item.hasOwnProperty('image') ) )
+						jQuery.each(zp_items.data, function( index, item )
 						{
-							tempItem += "<div id='zp-Citation-"+item.key+"' class='zp-Entry-Image";
-							if ( item.hasOwnProperty('image') ) tempItem += " hasImage";
-							tempItem += "' rel='"+item.key+"'>\n";
+							var tempItem = "";
 
-							if ( item.hasOwnProperty('image') ) tempItem += "<img class='thumb' src='"+item.image[0]+"' alt='image' />\n";
+							// Determine item reference
+							var $item_ref = jQuery("div.zp-List #zp-ID-"+item.library.id+"-"+item.key, zpThisLib);
+
+							// Year
+							var tempItemYear = "0000"; if ( item.meta.hasOwnProperty('parsedDate') ) tempItemYear = item.meta.parsedDate.substring(0, 4);
+
+							// Author
+							var tempAuthor = item.data.title;
+							if ( item.meta.hasOwnProperty('creatorSummary') )
+								tempAuthor = item.meta.creatorSummary.replace( / /g, "-" );
+
+							tempItem += "<div id='zp-ID-"+item.library.id+"-"+item.key+"' class='zp-Entry zpSearchResultsItem hidden";
+
+							// Add update class to item
+							if ( update === true ) tempItem += " zp_updated";
+
+							tempItem += "' data-zp-author-year='"+tempAuthor+"-"+tempItemYear+"'";
+							tempItem += "' data-zp-year-author='"+tempItemYear+"-"+tempAuthor+"'";
+							tempItem += ">\n";
+
+							if ( zpIsAdmin
+									|| ( zpShowImages && item.hasOwnProperty('image') ) )
+							{
+								tempItem += "<div id='zp-Citation-"+item.key+"' class='zp-Entry-Image";
+								if ( item.hasOwnProperty('image') ) tempItem += " hasImage";
+								tempItem += "' rel='"+item.key+"'>\n";
+
+								if ( item.hasOwnProperty('image') ) tempItem += "<img class='thumb' src='"+item.image[0]+"' alt='image' />\n";
+								if ( zpIsAdmin )
+	                                if ( item.hasOwnProperty('image') ) tempItem += "<a title='Change Image' class='upload' rel='"+item.key+"' href='#'>"+zpShortcodeAJAX.txt_changeimg+"</a>\n";
+	                                else tempItem += "<a title='Set Image' class='upload' rel='"+item.key+"' href='#'>"+zpShortcodeAJAX.txt_setimg+"</a>\n";
+								if ( zpIsAdmin && item.hasOwnProperty('image') ) tempItem += "<a title='Remove Image' class='delete' rel='"+item.key+"' href='#'>&times;</a>\n";
+
+								tempItem += "</div><!-- .zp-Entry-Image -->\n";
+							}
+
+							tempItem += item.bib;
+
+							// Show Tags
+							if ( zpShowTags
+							 		&& item.data.tags.length > 0 )
+							{
+								tempItem += "<span class='item_key'>Tag(s): ";
+
+								jQuery.each( item.data.tags, function ( tindex, tagval )
+								{
+									if ( tindex != 0 ) tempItem += ", ";
+									tempItem += tagval.tag;
+								});
+							}
+
+							// Show item key if admin
 							if ( zpIsAdmin )
-                                if ( item.hasOwnProperty('image') ) tempItem += "<a title='Change Image' class='upload' rel='"+item.key+"' href='#'>"+zpShortcodeAJAX.txt_changeimg+"</a>\n";
-                                else tempItem += "<a title='Set Image' class='upload' rel='"+item.key+"' href='#'>"+zpShortcodeAJAX.txt_setimg+"</a>\n";
-							if ( zpIsAdmin && item.hasOwnProperty('image') ) tempItem += "<a title='Remove Image' class='delete' rel='"+item.key+"' href='#'>&times;</a>\n";
+	                            tempItem += "<label for='item_key'>"+zpShortcodeAJAX.txt_itemkey+":</label><input type='text' name='item_key' class='item_key' value='"+item.key+"'>\n";
 
-							tempItem += "</div><!-- .zp-Entry-Image -->\n";
-						}
-
-						tempItem += item.bib;
-
-						// Show item key if admin
-						if ( zpIsAdmin )
-                            tempItem += "<label for='item_key'>"+zpShortcodeAJAX.txt_itemkey+":</label><input type='text' name='item_key' class='item_key' value='"+item.key+"'>\n";
-
-						tempItem += "</div><!-- .zp-Entry -->\n";
+							tempItem += "</div><!-- .zp-Entry -->\n";
 
 
-						// Add this item to the list
-						// Replace or skip duplicates
-						if ( $item_ref.length > 0
-								&& update === true ) {
-							$item_ref.replaceWith( jQuery( tempItem ) );
-						}
-						else {
-							tempItems += tempItem;
-						}
+							// Add this item to the list
+							// Replace or skip duplicates
+							if ( $item_ref.length > 0
+									&& update === true ) {
+								$item_ref.replaceWith( jQuery( tempItem ) );
+							}
+							else {
+								tempItems += tempItem;
+							}
 
-					});
+						}); // Display items
+					} // check that there's items
 
-
-					if ( update === false ) jQuery("#zpSearchResultsContainer", zpThisLib).append( tempItems );
+					// If no updates, then append items
+					if ( update === false )
+						jQuery("#zpSearchResultsContainer", zpThisLib).append( tempItems );
 
 
 					// Then, continue with other requests, if they exist
+					// CHANGED (7.3): Rather than calling requests that may not be
+					// viewed, let the user manually load as needed
+					// TODO: Load up until the next page each time?
 					if ( zp_items.meta.request_next != false
 							&& zp_items.meta.request_next != "false" )
 					{
-						if ( zpItemsFlag == true ) window.zpACPagination(zpItemsFlag, false);
-						else window.zpACPagination(zpItemsFlag, true);
+						// Update the pagination flag
+						if ( zpItemsFlag == true )
+							window.zpACPagination(zpItemsFlag, false);
+						else
+							window.zpACPagination(zpItemsFlag, true);
 						zpItemsFlag = false;
 
 						// Update the paging
@@ -405,13 +437,13 @@ jQuery(document).ready(function()
 							if ( jQuery("#zpSearchResultsPagingScroller", zpThisLib).length == 0 )
 							{
 								// Update the width of the crop
-								// Note: Based on five page numbers shown
+								// NOTE: Based on five page numbers shown
 								jQuery("#zpSearchResultsPagingCrop", zpThisLib).width( jQuery("#zpSearchResultsPaging a.selected", zpThisLib).outerWidth() * 5 );
 
 								// Add the scroller
 								jQuery("#zpSearchResultsPagingContainer", zpThisLib).append( '<div id="zpSearchResultsPagingScroller"><span id="zpSearchResultsPagingBack">&#8249;</span><span id="zpSearchResultsPagingForward">&#8250;</span></div>' );
 
-								// Add event handler for back
+								// Add event handler for "back"
 								jQuery("#zpSearchResultsPagingContainer", zpThisLib).on( 'click', '#zpSearchResultsPagingBack', function()
 								{
 									var leftPos = parseInt( jQuery("#zpSearchResultsPaging", zpThisLib).css('left') );
@@ -422,7 +454,7 @@ jQuery(document).ready(function()
 										jQuery("#zpSearchResultsPaging", zpThisLib).css('left', leftPos+shiftW+'px');
 								});
 
-								// Add event handler for forward
+								// Add event handler for "forward"
 								jQuery("#zpSearchResultsPagingContainer", zpThisLib).on( 'click', '#zpSearchResultsPagingForward', function()
 								{
 									var leftPos = parseInt( jQuery("#zpSearchResultsPaging", zpThisLib).css('left') );
@@ -433,7 +465,7 @@ jQuery(document).ready(function()
 										jQuery("#zpSearchResultsPaging", zpThisLib).css('left', leftPos-shiftW+'px');
 								});
 							}
-						}
+						} // Update pagination
 
                         // If numeric, update numbers
                         zp_relabel_numbers();
@@ -441,7 +473,7 @@ jQuery(document).ready(function()
 						// Then, continue with the next set in the request
 						zp_get_items( zp_items.meta.request_next, zp_items.meta.request_last, update );
 					}
-					else
+					else // No further requests
 					{
 						window.zpACPagination(zpItemsFlag);
 						zpItemsFlag = false;
@@ -453,9 +485,10 @@ jQuery(document).ready(function()
 						// Check for updates
 						if ( ! jQuery(".zp-List", zpThisLib).hasClass("updating") )
 						{
+							// Parameters: request_start, request_last, update
 							zp_get_items ( 0, 0, true );
 						}
-						else
+						else // If none, then re/sort and re/number
 						{
 							var sortby = jQuery("#ZP_SORTBY", zpThisLib).text();
 							var orderby = jQuery("#ZP_ORDER", zpThisLib).text();

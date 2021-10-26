@@ -7,7 +7,7 @@ jQuery(document).ready(function()
      *
      ****************************************************************************************/
 
-	// TODO: notes, abstract, target, showtags
+	// TODO: notes, abstract, target
 	// TODO: Always updates rather than checking the cache ... don't see an easy way around this ...
 
 	if ( jQuery("#zp-Zotpress-SearchBox").length > 0 )
@@ -17,6 +17,7 @@ jQuery(document).ready(function()
 		var zpLastTerm = "";
 		var zpSearchBarParams = "";
 		var zpSearchBarSource = zpShortcodeAJAX.ajaxurl + "?action=zpRetrieveViaShortcode&zpShortcode_nonce="+zpShortcodeAJAX.zpShortcode_nonce;
+		var zpShowTags = false; if ( jQuery("#ZP_SHOWTAGS").length > 0 && parseInt( jQuery("#ZP_SHOWTAGS").text() ) == "1" ) zpShowTags = true;
 		var zpShowImages = false; if ( jQuery("#ZOTPRESS_AC_IMAGES").length > 0 ) zpShowImages = true;
 
 
@@ -45,6 +46,9 @@ jQuery(document).ready(function()
 			// Deal with possible max results
 			if ( jQuery("#ZOTPRESS_AC_MAXRESULTS").val().length > 0 )
 				zpSearchBarParams += "&maxresults=" + jQuery("#ZOTPRESS_AC_MAXRESULTS").val();
+
+			// Deal with possible showtags
+			if ( zpShowTags ) zpSearchBarParams += "&showtags=true";
 
 			// Deal with possible showimage
 			if ( zpShowImages ) zpSearchBarParams += "&showimage=true";
@@ -166,13 +170,14 @@ jQuery(document).ready(function()
 					{
 						jQuery.each(ui.content[3], function( index, item )
 						{
-							var temp = "<div id='zp-Entry-"+item.key+"' class='zp-Entry zpSearchResultsItem hidden'>\n";
+							var tempItem = "<div id='zp-Entry-"+item.key+"' class='zp-Entry zpSearchResultsItem hidden'>\n";
 
-							if ( zpShowImages && item.hasOwnProperty('image') )
+							if ( zpShowImages
+									&& item.hasOwnProperty('image') )
 							{
-								temp += "<div id='zp-Citation-"+item.key+"' class='zp-Entry-Image hasImage' rel='"+item.key+"'>\n";
-								temp += "<img class='thumb' src='"+item.image[0]+"' alt='image' />\n";
-								temp += "</div><!-- .zp-Entry-Image -->\n";
+								tempItem += "<div id='zp-Citation-"+item.key+"' class='zp-Entry-Image hasImage' rel='"+item.key+"'>\n";
+								tempItem += "<img class='thumb' src='"+item.image[0]+"' alt='image' />\n";
+								tempItem += "</div><!-- .zp-Entry-Image -->\n";
 							}
 
 							// Replace num due to style
@@ -183,20 +188,23 @@ jQuery(document).ready(function()
 							}
 
 							// Bibliography entry
-							temp += item.bib;
+							tempItem += item.bib;
 
-							if ( jQuery("input#tag[name=zpSearchFilters]:checked").length > 0 )
+							if ( ( zpShowTags
+									|| jQuery("input#tag[name=zpSearchFilters]:checked").length > 0 )
+									&& item.data.tags.length > 0 )
 							{
-								temp += "<span class='item_key'>Tag(s): ";
+								tempItem += "<span class='item_key'>Tag(s): ";
+								// console.log(item);
 
 								jQuery.each( item.data.tags, function ( tindex, tagval )
 								{
-									if ( tindex != 0 ) temp += ", ";
-									temp += tagval.tag;
+									if ( tindex != 0 ) tempItem += ", ";
+									tempItem += tagval.tag;
 								});
 							}
 
-							jQuery("#zpSearchResultsContainer").append(temp+"</div><!-- .zp-Entry -->\n");
+							jQuery("#zpSearchResultsContainer").append(tempItem+"</div><!-- .zp-Entry -->\n");
 						});
 
 

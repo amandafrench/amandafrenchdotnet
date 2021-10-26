@@ -7,8 +7,8 @@ Tags: zotero, zotpress, citation manager, citations, citation, cite, citing, bib
 Author URI: http://katieseaborn.com/
 Author: Katie Seaborn
 Requires at least: 3.5
-Tested up to: 5.2.3
-Stable tag: 7.1.4
+Tested up to: 5.8.1
+Stable tag: 7.3
 License: Apache2.0
 
 Zotpress displays your Zotero citations on WordPress.
@@ -26,7 +26,9 @@ Zotpress displays your Zotero citations on WordPress.
 
 Compatible with Firefox, Safari, Chrome, and IE9. Made with jQuery, jQuery UI, jQuery doTimeout, Live Query, OAuth, and [Open Library](https://openlibrary.org/ "Open Library").
 
-Special thanks to Joe Alberts for substantial contributions to the code, comprehensive testing, and design ideation. Thanks also to contributors Christopher Cheung and Jason S. for their development support and advice. Finally, my sincere gratitude goes out to all who have donated in support of this plugin.
+Special thanks to Joe Alberts for substantial contributions to the code, comprehensive testing, and design ideation. Thanks also to contributors Christopher Cheung, Jason S., Chris Wentzloff, and Karljürgen Feuerherm for their code contributions and guidance. Finally, my sincere gratitude goes out to all who have donated in support of this plugin.
+
+Please note that this plugin is on semi-hiatus, with updates expected about 1-3 times a year.
 
 = Requirements =
 jQuery included in your theme (Zotpress will do this for you if it isn't already included), and an HTTP request method supported by WordPress enabled on your server: cURL, fopen with Streams (PHP 5), or fsockopen. In your server config file, X-Frame-Options should be set to SAMEORIGIN. Optional: OAuth enabled on your server.
@@ -37,7 +39,7 @@ jQuery included in your theme (Zotpress will do this for you if it isn't already
 1. Activate the plugin through the 'Plugins' menu in WordPress.
 1. Go to the `Zotpress` page through the admin menu.
 1. Add the Zotero API information for each Zotero account you'd like to use.
-1. On the `Browse` page, look up the keys of the items, collections, or tags that you wish to display. Or, use the Zotpress Reference Widget to generate shortcodes.
+1. Use the Zotpress Shortcode option in the Gutenberg editor to serach for items and build a shortcode. Or, look up the keys of items, collections, and tags on the `Browse` page. Or, use the Zotpress Reference Meta Box to generate shortcodes.
 1. Place the shortcodes in your blog post or page, or enable the Zotpress sidebar widget. Below are a few examples to get you started. Look at the `Help` page for more examples and the full details about all use options and shortcodes.
 
 = Shortcode =
@@ -62,12 +64,58 @@ The F.A.Q. can be found on the "Help" page of every Zotpress installation. If yo
 == Screenshots ==
 
 1. Display items from individual or group Zotero libraries on your WordPress website. Special characters are supported.
-2. Search for items using the autocomplete feature. Generate shortcodes for bibliographies and in-text citations using the "Zotpress Reference" widget on edit screens.
-3. Give your citation an image using WordPress's Media Library or Open Library.
-4. Share your library through your website. Allow visitors to browse by collection or tag.
-5. Allow visitors to search your library by item metadata or tag, or both.
+2. Search for items and generate shortcodes for bibliographies and in-text citations using the "Zotpress Reference" meta box on edit screens.
+3. Find the shortcode builder in the Gutenberg toolbar. Search for items and create bibliographies and in-text citations.
+4. Give your citation an image using WordPress's Media Library or Open Library.
+5. Share your library through your website. Allow visitors to browse by collection or tag.
+6. Allow visitors to search your library by item metadata or tag, or both.
 
 == Changelog ==
+
+= 7.3 =
+
+* New! Target attribute for Zotpress Library.
+* Fixed task separation between install and update.
+* Fixed caching issue for multiple collections.
+* Fixed multipart names and apostrophes.
+* Fixed some request errors.
+* Fixed mdash/ndash bug.
+* Fixed hardcoded paths.
+* Added localizable error messages.
+* Added error checks when collections or tags are empty.
+
+= 7.2 =
+
+* New! Added Gutenberg editor toolbar shortcode builder.
+* New! Can now retrieve items by itemtype.
+* Added disambiguation for in-text citations.
+* Added new screenshot.
+* Added brackets attribute to in-text shortcode builder/reference.
+* Added support for more itemtypes for the title attribute, which should fix incorrect sorting.
+* Changed download filename to original filename.
+* Fixed shortcode builder bug for order by DESC.
+* Fixed non-author types bug for in-text citations.
+* Fixed media library set image bug.
+* Fixed multisite install/reset bug.
+* Fixed highlight-on-scroll issue.
+* Updated Help page.
+* Minor style and text formatting corrections.
+
+= 7.1.6 =
+
+* New! Can use the "showtags" attribute with the Library shortcodes.
+* Refined "download" attribute to include linked URL downloads.
+* Fixed "false" error for author names and the "highlight" attribute.
+* Fixed Browse page error when there are no default accounts.
+* Optimized for the Twenty Twenty theme.
+
+= 7.1.5 =
+
+* Fixed bug with shortcodes that use collections and tags.
+* Fixed cite/RIS bug.
+* Updated notifications to only display if Zotpress accounts exist.
+* Updated Account page styles and notifications.
+* Several improvements and fixes for Library Dropdown navigation.
 
 = 7.1.4 =
 

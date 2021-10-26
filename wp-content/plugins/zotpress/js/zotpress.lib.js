@@ -77,7 +77,7 @@ jQuery(document).ready(function()
 
 		// NAVIGATE BY COLLECTION
 
-		jQuery('div#zp-Browse-Bar').delegate("select#zp-Browse-Collections-Select", "change", function()
+		jQuery('div#zp-Browse-Bar').delegate("select#zp-Browse-Collections-Select", "change", function() // .change
 		{
 			var zpHref = window.location.href.split("?");
 
@@ -97,7 +97,8 @@ jQuery(document).ready(function()
 
 					var temp = jQuery("option:selected", this).text().split(" (");
 
-					var new_location = zpHref[0] + "?collection_id=" + jQuery("option:selected", this).val() + "&collection_name=" + temp[0].replace( / /g, "+" ) + zp_extra_params;
+					// var new_location = zpHref[0] + "?collection_id=" + jQuery("option:selected", this).val() + "&collection_name=" + temp[0].replace( / /g, "+" ) + zp_extra_params;
+					var new_location = zpHref[0] + "?collection_id=" + jQuery("option:selected", this).val() + "&collection_name=" + encodeURI(encodeURIComponent(temp[0])) + zp_extra_params;
 
 					if ( api_user_id.length > 0 ) {
 						new_location = new_location + api_user_id;
@@ -107,7 +108,8 @@ jQuery(document).ready(function()
 				}
 				else // Toplevel
 				{
-					if ( zp_extra_params.length > 0 ) { zp_extra_params = "?"+zp_extra_params; }
+					if ( zp_extra_params.length > 0 )
+						zp_extra_params = "?" + zp_extra_params;
 
 					var api_user_id = "";
 					if ( jQuery("#zp-FilterByAccount").length > 0 ) {
@@ -115,7 +117,18 @@ jQuery(document).ready(function()
 					}
 
 					var new_location = zpHref[0] + zp_extra_params;
-					if ( api_user_id.length > 0 ) { new_location = new_location + api_user_id; }
+					if ( api_user_id.length > 0 )
+						new_location = new_location + api_user_id;
+
+					// REVIEW: Force toplevel
+					if ( jQuery("#ZP_COLLECTION_ID").length === 0 )
+					{
+						if ( zp_extra_params.length > 0 )
+							new_location += "&";
+						else
+							new_location += "?"
+						new_location += "toplevel=toplevel";
+					}
 
 					window.location = new_location;
 				}

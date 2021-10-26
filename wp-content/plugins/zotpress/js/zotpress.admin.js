@@ -282,7 +282,9 @@ jQuery(document).ready( function()
 				{
 					if ( jQuery('result', xml).attr('success') == "true" )
 					{
-						alert( zpAccountsAJAX.txt_cachecleared );
+						// alert( zpAccountsAJAX.txt_cachecleared );
+                        jQuery("#zp-ManageAccounts").prepend("<div class='notice notice-success Zotpress_update_notice'><p>"+zpAccountsAJAX.txt_cachecleared+"</p></div>");
+                        jQuery("#zp-ManageAccounts .notice").delay(2000).animate({ height: 'toggle', opacity: 'toggle' }, 'fast', function() { jQuery(this).remove(); } )
 					}
 					else
 					{
@@ -735,12 +737,25 @@ jQuery(document).ready( function()
 
 					if ( $result == "true" )
 					{
-						if ( $this.parent().find(".thumb").length > 0 ) {
-							$this.parent().find(".thumb").attr("src", attachment.sizes.thumbnail.url);
+                        console.log("zp: Found image to set.");
+
+                        // NOTE: Sometimes WP doesn't provide a thumbnail, just full
+                        // Maybe because some images are so small they are thumbnail-sized
+
+                        var thumbURL = "";
+                        if ( attachment.sizes.hasOwnProperty("thumbnail") )
+                            thumbURL = attachment.sizes.thumbnail.url;
+                        else if ( attachment.sizes.hasOwnProperty("full") )
+                            thumbURL = attachment.sizes.full.url;
+
+						if ( $this.parent().find(".thumb").length > 0 ) // update existing
+                        {
+							$this.parent().find(".thumb").attr("src", thumbURL);
 						}
-						else {
+						else // set image
+                        {
 							$this.parent().addClass("hasImage");
-							$this.parent().prepend("<img class='thumb' src='"+attachment.sizes.thumbnail.url+"' alt='image' />");
+							$this.parent().prepend("<img class='thumb' src='"+thumbURL+"' alt='image' />");
 						}
 					}
 					else // Show errors

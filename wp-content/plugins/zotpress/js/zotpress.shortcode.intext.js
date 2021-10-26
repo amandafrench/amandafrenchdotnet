@@ -1,10 +1,10 @@
 jQuery(document).ready(function()
 {
-	///////////////////////////////////////////////
-	//
-	//   ZOTPRESS IN-TEXT
-	//
-	///////////////////////////////////////////////
+	//////////////////////////
+	//						//
+	//   ZOTPRESS IN-TEXT   //
+	//						//
+	//////////////////////////
 
 	if ( jQuery(".zp-Zotpress-InTextBib").length > 0 )
 	{
@@ -429,16 +429,23 @@ jQuery(document).ready(function()
 					if ( item_data[item.key].data.hasOwnProperty("creators") )
 					{
 						var tempAuthorCount = 0;
+						var tempAuthorTypeExists = false;
 
-						jQuery.each ( item_data[item.key].data.creators, function ( ai, author )
+						// First, check if there are any Author types
+						jQuery.each( item_data[item.key].data.creators, function( ai, author )
 						{
-							// var specialContentTypes = [ "bookSection", "encyclopediaArticle" ];
-							//
-							// if ( [ "bookSection", "encyclopediaArticle" ].indexOf( item_data[item.key].data.itemType ) !== false
-							// // 	&& author.creatorType == "editor" )
-							// {
-							// // return true;
-							// }
+							if ( author.creatorType == "author" ) {
+								tempAuthorTypeExists = true;
+								return false;
+							}
+						});
+
+						// Continue, only including non-Author types if no Author types
+						jQuery.each( item_data[item.key].data.creators, function( ai, author )
+						{
+							if ( tempAuthorTypeExists
+									&& author.creatorType != "author" )
+								return true;
 
 							tempAuthorCount++;
 
@@ -508,8 +515,8 @@ jQuery(document).ready(function()
 						item_year = "n.d.";
 
 					// Format anchor title attribute
-					window.zpIntextCitations["post-"+item.post_id][item.key]["intexttitle"] = "title='"+JSON.stringify(item_authors).replace( "<em>et al.</em>", "et al." ).replace( /\"/g, "" ).replace( "[", "" ).replace( "]", "" ) + " (" + item_year + "). " + item_data[item.key].data.title + ".' ";
-					//item_title_attr = JSON.stringify(item_authors).replace( "<em>et al.</em>", "et al." ).replace( /\"/g, "" ).replace( "[", "" ).replace( "]", "" ) + " (" + item_year + "). " + item_data[item.key].data.title + ".";
+					// Apostrophe fix by Chris Wentzloff
+					window.zpIntextCitations["post-"+item.post_id][item.key]["intexttitle"] = "title='"+JSON.stringify(item_authors).replace( "<em>et al.</em>", "et al." ).replace( /\"/g, "" ).replace( "[", "" ).replace( "]", "" ).replace(/’/g,'&#39;').replace(/'/g,'&#39;') + " (" + item_year + "). " + item_data[item.key].data.title + ".' ";
 
 				} // if item_data.hasOwnProperty(item.key)
 				//}); // each request data item
@@ -664,6 +671,10 @@ jQuery(document).ready(function()
 		var zpPostID = jQuery(".ZP_POSTID", $instance).text();
 		var itemNumOrderArr = []; // NOTE: 0 index always empty
 
+		// Disambiguation by Chris Wentzloff
+		var authDateArray = [];
+		var alphaArray = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
+
 		jQuery.each( zp_items.data, function( index, item )
 		{
 			var tempItem = "";
@@ -699,10 +710,56 @@ jQuery(document).ready(function()
 				tempItem += "<h3>"+tempTitle+"</h3>\n";
 			}
 
+			// Disambiguation by Chris Wentzloff
+			//Store some temp variables to search, count, and then replace
+			var authDateStr = tempAuthor+'-'+tempItemDate;
+			var originalTempItemDate = tempItemDate;
+			//Add the value to the array so it can be counted
+			authDateArray.push(authDateStr);
+			// console.log(authDateArray);
+			//Find out how many are there
+			var authDateInstances = authDateArray.filter((v) => (v === authDateStr)).length;
+			// console.log(authDateInstances);
+			//If there's more than one, add a letter to subsequent author-year combinations that match
+			if ( authDateInstances > 1 )
+			   tempItemDate = tempItemDate + alphaArray[authDateInstances-1];
+			// console.log(tempItemDate);
+
 			tempItem += "<div id='zp-ID-"+jQuery(".ZP_POSTID", $instance).text()+"-"+item.library.id+"-"+item.key+"'";
 			tempItem += " data-zp-author-date='"+tempAuthor+"-"+tempItemDate+"'";
 			tempItem += " data-zp-date-author='"+tempItemDate+"-"+tempAuthor+"'";
 			tempItem += " class='zp-Entry zpSearchResultsItem zp-Num-"+window.zpIntextCitations["post-"+zpPostID][item.key]["num"];
+
+			// Disambiguation by Chris Wentzloff
+			// Be sure to get the first one if it's the second one
+			if ( authDateInstances == 2 )
+			{
+				//Need to replace the year with the new year-letter string
+				var newTempItemDate = originalTempItemDate + alphaArray[authDateInstances-2];
+
+				zp_items.data[index-1].bib = zp_items.data[index-1].bib.replace( originalTempItemDate, newTempItemDate );
+
+				var $tempEntry = jQuery("#"+zp_items.instance+" .zp-List .zp-Entry[data-zp-author-date='"+tempAuthor+"-"+originalTempItemDate.replace(" ","-")+"']");
+
+				$tempEntry
+					.attr("data-zp-author-date", tempAuthor+"-"+newTempItemDate.replace(" ","-"))
+					.attr("data-zp-date-author", tempItemDate + alphaArray[authDateInstances-2] + "-" + tempAuthor);
+
+				jQuery(".csl-entry", $tempEntry).html(
+					jQuery(".csl-entry", $tempEntry).html().replace( originalTempItemDate, newTempItemDate )
+				);
+
+				//Find all instances of the in-text citation, and update the year
+				jQuery('a[href="#zp-ID-'+jQuery(".ZP_POSTID", $instance).text()+'-'+zp_items.data[index-1].library.id+'-'+zp_items.data[index-1].key+'"]').each(function(){
+				   this.text = this.text.replace( originalTempItemDate, newTempItemDate );
+				});
+			}
+			//Need to replace the year with the new year-letter string
+			item.bib = item.bib.replace( originalTempItemDate, tempItemDate );
+			//Find all instances of the in-text citation, and update the year
+			jQuery('a[href="#zp-ID-'+jQuery(".ZP_POSTID", $instance).text()+'-'+item.library.id+'-'+item.key+'"]').each(function(){
+			   this.text = this.text.replace( originalTempItemDate, tempItemDate );
+			});
 
 			// Add update class to item
 			if ( update === true ) tempItem += " zp_updated";

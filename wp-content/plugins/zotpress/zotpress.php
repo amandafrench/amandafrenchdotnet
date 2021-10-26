@@ -6,7 +6,7 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Bringing Zotero and scholarly blogging to your WordPress website.
     Author: Katie Seaborn
-    Version: 7.1.4
+    Version: 7.3
     Author URI: http://katieseaborn.com
     Text Domain: zotpress
     Domain Path: /languages/
@@ -15,7 +15,7 @@
 
 /*
 
-    Copyright 2019 Katie Seaborn
+    Copyright 2021 Katie Seaborn
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -38,8 +38,8 @@
     define('ZOTPRESS_PLUGIN_FILE',  __FILE__ );
     define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( ZOTPRESS_PLUGIN_FILE ));
     define('ZOTPRESS_PLUGIN_DIR', dirname( __FILE__ ));
-    define('ZOTPRESS_VERSION', '7.1.4' );
-    define('ZOTPRESS_LIVEMODE', true ); // NOTE: REMEMBER to set to TRUE
+    define('ZOTPRESS_VERSION', '7.3' );
+    define('ZOTPRESS_LIVEMODE', true ); // NOTE: Remember to set to TRUE
 
     $GLOBALS['zp_is_shortcode_displayed'] = false;
     $GLOBALS['zp_shortcode_instances'] = array();
@@ -99,27 +99,41 @@
 
 
 
-// WIDGETS -----------------------------------------------------------------------------------------
+// WIDGET & METABOX -----------------------------------------------------------------------------
 
     include( dirname(__FILE__) . '/lib/widget/widget.sidebar.php' );
 	include( dirname(__FILE__) . '/lib/widget/widget.php' );
 
-    // TODO: Have to re-write in JS for Gutenberg
-    // function zp_gutenberg_sidebar_register() {
-    //     wp_register_script(
-    //         'zotpress-gutenberg-sidebar-js',
-    //         ZOTPRESS_PLUGIN_URL . 'js/zotpress-gutenberg-sidebar.js',
-    //         array( 'wp-plugins', 'wp-edit-post', 'wp-element' )
-    //     );
-    // }
-    // add_action( 'init', 'zp_gutenberg_sidebar_register' );
-    //
-    // function zp_gutenberg_sidebar_script_enqueue() {
-    //     wp_enqueue_script( 'zotpress-gutenberg-sidebar-js' );
-    // }
-    // add_action( 'enqueue_block_editor_assets', 'zp_gutenberg_sidebar_script_enqueue' );
+    function Zotpress_format_script_register()
+    {
+        $minify = ''; if ( ZOTPRESS_LIVEMODE ) $minify = '.min';
 
-// WIDGETS -----------------------------------------------------------------------------------------
+        wp_register_script(
+            'zotpress.gutenberg'.$minify.'.js',
+            ZOTPRESS_PLUGIN_URL . 'js/zotpress.gutenberg'.$minify.'.js',
+            array( 'wp-rich-text', 'wp-element', 'wp-editor', 'jquery' )
+        );
+    }
+    add_action( 'init', 'Zotpress_format_script_register' );
+
+    function Zotpress_format_enqueue_assets_editor()
+    {
+        $minify = ''; if ( ZOTPRESS_LIVEMODE ) $minify = '.min';
+
+        wp_enqueue_script( 'jquery' );
+        wp_enqueue_script( 'zotpress.gutenberg'.$minify.'.js' );
+        wp_localize_script(
+			'zotpress.gutenberg'.$minify.'.js',
+			'zpTranslate',
+			array(
+                'txt_insertsc' => __('Insert Shortcode','zotpress'),
+                'txt_generatesc' => __('Generate Shortcode','zotpress')
+			)
+		);
+    }
+    add_action( 'enqueue_block_editor_assets', 'Zotpress_format_enqueue_assets_editor' );
+
+// WIDGET & METABOX -----------------------------------------------------------------------------
 
 
 
@@ -185,17 +199,18 @@
                     'txt_default' => __('Default','zotpress')
 				)
 			);
-			wp_enqueue_script( 'zotpress.admin.notices'.$minify.'.js', plugin_dir_url( __FILE__ ) . 'js/zotpress.admin.notices'.$minify.'.js', array( 'jquery' ) );
-			wp_localize_script(
-				'zotpress.admin.notices'.$minify.'.js',
-				'zpNoticesAJAX',
-				array(
-					'ajaxurl' => admin_url( 'admin-ajax.php' ),
-					'zpNoticesAJAX_nonce' => wp_create_nonce( 'zpNoticesAJAX_nonce_val' ),
-					'action' => 'zpNoticesViaAJAX'
-				)
-			);
-		}
+		} // Zotpress pages only
+
+        wp_enqueue_script( 'zotpress.admin.notices'.$minify.'.js', plugin_dir_url( __FILE__ ) . 'js/zotpress.admin.notices'.$minify.'.js', array( 'jquery' ) );
+        wp_localize_script(
+        	'zotpress.admin.notices'.$minify.'.js',
+        	'zpNoticesAJAX',
+        	array(
+        		'ajaxurl' => admin_url( 'admin-ajax.php' ),
+        		'zpNoticesAJAX_nonce' => wp_create_nonce( 'zpNoticesAJAX_nonce_val' ),
+        		'action' => 'zpNoticesViaAJAX'
+        	)
+        );
 	}
     add_action( 'admin_enqueue_scripts', 'Zotpress_enqueue_admin_ajax' );
 
@@ -299,7 +314,9 @@
 			array(
 				'ajaxurl' => admin_url( 'admin-ajax.php' ),
 				'zpShortcode_nonce' => wp_create_nonce( 'zpShortcode_nonce_val' ),
-				'action' => 'zpRetrieveViaShortcode'
+				'action' => 'zpRetrieveViaShortcode',
+                'txt_zperror' => __('There was a Zotpress error:', 'zotpress'),
+                'txt_noitemsfound' => __( 'No items found.', 'zotpress' )
 			)
 		);
 	}
@@ -318,7 +335,9 @@
 			array(
 				'ajaxurl' => admin_url( 'admin-ajax.php' ),
 				'zpShortcode_nonce' => wp_create_nonce( 'zpShortcode_nonce_val' ),
-				'action' => 'zpRetrieveViaShortcode'
+				'action' => 'zpRetrieveViaShortcode',
+                'txt_zperror' => __('There was a Zotpress error:', 'zotpress'),
+                'txt_noitemsfound' => __( 'No items found.', 'zotpress' )
 			)
 		);
 	}
@@ -348,7 +367,8 @@
                 'txt_nocitations' => __( 'There are no citations to display.', 'zotpress' ),
                 'txt_toplevel' => __( 'Top Level', 'zotpress' ),
                 'txt_nocollsel' => __( 'No Collection Selected', 'zotpress' ),
-                'txt_backtotop' => __( 'Back to Top', 'zotpress' ),
+                'txt_backtotop' => __( 'Back', 'zotpress' ),
+                'txt_unsettag' => __( 'Unset Tag', 'zotpress' ),
                 'txt_notagsel' => __( 'No Tag Selected', 'zotpress' ),
                 'txt_notags' => __( 'No tags to display', 'zotpress' )
 			)
@@ -407,7 +427,8 @@
 
     if ( in_array( ZOTPRESS_VERSION, array( "6.2.1", "6.2.2", "7.1.4" ) ) )
     {
-        if ( ! get_option( 'Zotpress_update_notice_dismissed' ) )
+        if ( zp_get_total_accounts() > 0
+                && ! get_option( 'Zotpress_update_notice_dismissed' ) )
             add_action( 'admin_notices', 'Zotpress_update_notice' );
 
         function Zotpress_update_notice()
@@ -415,7 +436,7 @@
         ?>
             <div class="notice update-nag Zotpress_update_notice is-dismissible" >
                 <p><?php echo __( '<strong>Warning:</strong> Due to major updates in this version of Zotpress, you may need to clear the cache of each synced Zotero account.', 'zotpress' ); ?></p>
-                <p>&raquo; <a href="admin.php?page=Zotpress&accounts=true"><?php echo __( 'Acccounts'); ?></a> | <a class="notice-dismiss text">Dismiss</a></p>
+                <p>&raquo; <a href="admin.php?page=Zotpress&accounts=true"><?php echo __( 'Acccounts'); ?></a></p>
             </div>
         <?php
         }

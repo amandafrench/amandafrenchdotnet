@@ -5,6 +5,7 @@
  *  ZOTPRESS REQUEST CLASS
  *
  *  Based on Sean Huber's CURL library with additions by Mike Purvis.
+ *  Checks for updates every 10 minutes.
  *
  *  Requires: request url (e.g. https://api.zotero.org/...), api user id (can be accessed from request url)
  *  Returns: array with json and headers (json-formatted)
@@ -15,15 +16,13 @@ if ( ! class_exists('ZotpressRequest') )
 {
     class ZotpressRequest
     {
-        // TIME: 300 seconds = 5 minutes; 3600 seconds = 60 minutes
         var $update = false,
             $request_error = false,
-            $timelimit = 3600,
-            $timeout = 300,
+            $checkEveryMin = 10, // minutes
             $api_user_id,
             $request_type = 'item';
 
-        // TODO: This is causing problems for some people
+        // REVIEW: This was causing problems for some people ...
         // Could it be how the database is set up?
         // e.g., https://stackoverflow.com/questions/36028844/warning-gzdecode-data-error-in-php
         function zp_gzdecode( $data )
@@ -40,7 +39,9 @@ if ( ! class_exists('ZotpressRequest') )
         function set_request_meta( $url, $update, $request_type = 'item' )
         {
             $this->update = $update;
-            if ( $request_type != 'item' ) $this->request_type = $request_type;
+
+            if ( $request_type != 'item' )
+                $this->request_type = $request_type;
 
             // Get and set api user id
             $divider = "users/";
@@ -52,6 +53,7 @@ if ( ! class_exists('ZotpressRequest') )
         }
 
 
+        // NOTE: used by shortcode.request.php
         function get_request_cache( $url, $update, $request_type = 'item' )
         {
             $this->set_request_meta( $url, $update, $request_type );
@@ -80,14 +82,32 @@ if ( ! class_exists('ZotpressRequest') )
         }
 
 
-        // Limit Zotero request to every 10 mins
+        // Limit Zotero request calls based on elapsed time
         function checkTime( $last_time )
         {
-            $last_time = explode( " ", $last_time );
-            $last_time = strtotime( $last_time[1] );
-            $now = strtotime( date('h:i:s') );
+            // Set time zone based on WP installation
+            date_default_timezone_set( wp_timezone_string() );
 
-            if ( round(abs($now - $last_time) / 60,2) > 10 )
+            // Set up the dates to compare
+            $last_time = date_create($last_time);
+            $now = date_create();
+
+            // OLD:
+            // $last_time = explode( " ", $last_time );
+            // $last_time = strtotime( $last_time[1] );
+            // $now = strtotime( date('h:i:s') );
+            // if ( round(abs($now - $last_time) / 60,2) > 10 )
+
+            $timeElapsed = date_diff($last_time, $now);
+
+            // Convert to total minutes difference
+            $timeElapsedMin = ( $timeElapsed->y * 525600 )
+                + ( $timeElapsed->m * 43800 )
+                + ( $timeElapsed->d * 1440 )
+                + ( $timeElapsed->i )
+                + ( $timeElapsed->s * 0.0166667 );
+
+            if ( $timeElapsedMin > $this->checkEveryMin )
                 return true;
             else // Not time yet
                 return false;
@@ -146,6 +166,7 @@ if ( ! class_exists('ZotpressRequest') )
                         ";
                 $zp_results = $wpdb->get_results( $zp_query, OBJECT ); unset($zp_query);
 
+                // Cache exists
                 if ( count($zp_results) != 0 )
                 {
                     $json = $this->zp_gzdecode($zp_results[0]->json);
@@ -165,7 +186,7 @@ if ( ! class_exists('ZotpressRequest') )
                 $wpdb->flush();
             }
 
-            else // Normal
+            else // Normal or RIS
             {
                 $regular = $this->getRegular( $wpdb, $url );
 
@@ -190,12 +211,12 @@ if ( ! class_exists('ZotpressRequest') )
                     ";
             $zp_results = $wpdb->get_results($zp_query, OBJECT); unset($zp_query);
 
-
             // Then, if no cached version, proceed and save one.
             // Or, if cached version exists, check to see if it's out of date,
             // and return whichever is newer (and cache the newest).
             if ( count($zp_results) == 0
-                    || ( isset($zp_results[0]->retrieved) && $this->checkTime($zp_results[0]->retrieved) ) )
+                    || ( isset($zp_results[0]->retrieved)
+                            && $this->checkTime($zp_results[0]->retrieved) ) )
             {
                 $headers_arr = array ( "Zotero-API-Version" => "3" );
                 if ( count($zp_results) > 0 )
@@ -215,11 +236,11 @@ if ( ! class_exists('ZotpressRequest') )
                 // Proceed if no cached version or to check server for newer
                 if ( count($zp_results) == 0
                         || ( isset($response["response"]["code"])
-                                && $response["response"]["code"] != "304" )
-                )
+                                && $response["response"]["code"] != "304" ) )
                 {
                     // Deal with errors
-                    if ( is_wp_error($response) || ! isset($response['body']) )
+                    if ( is_wp_error($response)
+                            || ! isset($response['body']) )
                     {
                         $this->request_error = $response->get_error_message();
 
@@ -323,6 +344,7 @@ if ( ! class_exists('ZotpressRequest') )
                                     $tags[$item->key] = $data[$id]->data->tags;
                                     unset($data[$id]->data->tags);
                                 }
+
                                 // if ( ! $this->showtags
                                 //         && property_exists($data[$id], 'data->tags') )
                                 //     unset($data[$id]->data->tags);
@@ -330,31 +352,40 @@ if ( ! class_exists('ZotpressRequest') )
 
                             $json = json_encode($data);
                             $tags = json_encode($tags);
+
+                            $wpdb->query( $wpdb->prepare(
+                                "
+                                    INSERT INTO ".$wpdb->prefix."zotpress_cache
+                                    ( request_id, api_user_id, json, tags, headers, libver, retrieved )
+                                    VALUES ( %s, %s, %s, %s, %s, %d, %s )
+                                    ON DUPLICATE KEY UPDATE
+                                    json = VALUES(json),
+                                    tags = VALUES(tags),
+                                    headers = VALUES(headers),
+                                    libver = VALUES(libver),
+                                    retrieved = VALUES(retrieved)
+                                ",
+                                array
+                                (
+                                    md5( $url ),
+                                    $this->api_user_id,
+                                    gzencode($json),
+                                    gzencode($tags), // 7.1.4: separated from $data
+                                    $headers,
+                                    $response["headers"]["last-modified-version"],
+                                    date('m/d/Y h:i:s a')
+                                )
+                            ) );
                         }
 
-                        $wpdb->query( $wpdb->prepare(
-                            "
-                                INSERT INTO ".$wpdb->prefix."zotpress_cache
-                                ( request_id, api_user_id, json, tags, headers, libver, retrieved )
-                                VALUES ( %s, %s, %s, %s, %s, %d, %s )
-                                ON DUPLICATE KEY UPDATE
-                                json = VALUES(json),
-                                tags = VALUES(tags),
-                                headers = VALUES(headers),
-                                libver = VALUES(libver),
-                                retrieved = VALUES(retrieved)
-                            ",
-                            array
-                            (
-                                md5( $url ),
-                                $this->api_user_id,
-                                gzencode($json),
-                                gzencode($tags), // 7.1.4: separated from $data
-                                $headers,
-                                $response["headers"]["last-modified-version"],
-                                date('m/d/Y h:i:s a')
-                            )
-                        ) );
+                        else // assume 'ris'
+                        {
+                            // REVIEW: Eventually cache?
+                            // NOTE: $data is everything / the RIS
+                            $json = $data;
+                            $tags = false;
+                            // $headers = $response["headers"];
+                        }
                     }
 
                     else // If not an item, e.g., if attachment, PDF, etc.

@@ -167,6 +167,8 @@ function ns_minimal_scripts() {
 
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 		wp_enqueue_script( 'comment-reply' );
+		wp_enqueue_script( 'placeholders', get_template_directory_uri() . '/js/placeholders.min.js', array(), '4.0.1', true );
+
 	}
 }
 add_action( 'wp_enqueue_scripts', 'ns_minimal_scripts' );
@@ -251,6 +253,17 @@ function ns_minimal_fonts_url() {
 }
 endif;
 
+
+/**
+ * Author credits
+ */
+if ( ! function_exists( 'ns_minimal_author_text_credit' ) ) :
+function ns_minimal_author_text_credit(){
+	echo '<a class="sr-only" href="https://www.nuno-sarmento.com" title="WordPress theme development by whois: Nuno Sarmento">whois: Nuno Sarmento Freelance WordPress Developer London</a>';
+}
+endif;
+
+
 /**
  * Add Google Fonts
  */
@@ -283,4 +296,55 @@ function ns_minimal_paging_nav() {
 		'before_page_number' => '<span class="meta-nav screen-reader-text"></span>'
 	));
 }
+endif;
+
+
+/**
+ * Add HTML5 Placeholders to the WordPress Comment Form
+ */
+if ( ! function_exists( 'ns_minimal_update_comment_fields' ) ) :
+function ns_minimal_update_comment_fields( $fields ) {
+
+	$commenter = wp_get_current_commenter();
+	$req       = get_option( 'require_name_email' );
+	$label     = $req ? '*' : ' ' . __( '(optional)', 'ns-minimal' );
+	$aria_req  = $req ? "aria-required='true'" : '';
+
+	$fields['author'] =
+		'<p class="comment-form-author">
+			<label class="author-label" for="author">' . __( "Name", "ns-minimal" ) . $label . '</label>
+			<input id="author" name="author" type="text" placeholder="' . esc_attr__( "Name *", "ns-minimal" ) . '" value="' . esc_attr( $commenter['comment_author'] ) .
+		'" size="30" ' . $aria_req . ' />
+		</p>';
+
+	$fields['email'] =
+		'<p class="comment-form-email">
+			<label class="author-email" for="email">' . __( "Email", "ns-minimal" ) . $label . '</label>
+			<input id="email" name="email" type="email" placeholder="' . esc_attr__( "Email *", "ns-minimal" ) . '" value="' . esc_attr( $commenter['comment_author_email'] ) .
+		'" size="30" ' . $aria_req . ' />
+		</p>';
+
+	$fields['url'] =
+		'<p class="comment-form-url">
+			<label class="author-url" for="url">' . __( "Website", "ns-minimal" ) . '</label>
+			<input id="url" name="url" type="url"  placeholder="' . esc_attr__( "Website", "ns-minimal" ) . '" value="' . esc_attr( $commenter['comment_author_url'] ) .
+		'" size="30" />
+			</p>';
+
+	return $fields;
+}
+add_filter( 'comment_form_default_fields', 'ns_minimal_update_comment_fields' );
+endif;
+
+if ( ! function_exists( 'ns_minimal_update_comment_field' ) ) :
+function ns_minimal_update_comment_field( $comment_field ) {
+  $comment_field =
+    '<p class="comment-form-comment">
+            <label class="author-comment" for="comment">' . __( "Comment", "ns-minimal" ) . '</label>
+            <textarea required id="comment" name="comment" placeholder="' . esc_attr__( "Enter comment here ...", "ns-minimal" ) . '" cols="45" rows="8" aria-required="true"></textarea>
+        </p>';
+
+  return $comment_field;
+}
+add_filter( 'comment_form_field_comment', 'ns_minimal_update_comment_field' );
 endif;

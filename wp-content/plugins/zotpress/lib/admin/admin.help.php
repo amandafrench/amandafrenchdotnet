@@ -146,10 +146,22 @@
                             <div class="description"><p>Alternative: <code>year</code>. Display a list of citations from a particular year or years. <strong>Note:</strong> You <em>can</em> display by Author and Year together.</p></div>
                             <div class="example"><p><code>[zotpress year="1990"]</code></p><p><code>[zotpress years="1990,1998,2013"]</code></p></div>
                         </div>
+                        <div class="zp-Zotero-API-Attribute" data-keywords="itemtype,item type,type">
+                            <h4>Data > <strong>itemtype</strong></h4>
+                            <div class="description"><p>Display a list of citations of a particular item type. <strong>Options:
+                                book, bookSection, journalArticle, conferencePaper, thesis, report, encyclopediaArticle,
+                                newspaperArticle, magazineArticle, presentation, interview,
+                                dictionaryEntry, document, manuscript, patent, map, blogPost,
+                                webpage, artwork, film, audioRecording, statute, bill, case,
+                                hearing, forumPost, letter, email, instantMessage, software,
+                                podcast, radioBroadcast, tvBroadcast, videoRecording, attachment, note </strong>
+                            </p></div>
+                            <div class="example"><p><code>[zotpress itemtype="bookSection"]</code></p></div>
+                        </div>
 
                         <div class="zp-Zotero-API-Attribute" data-keywords="inclusive,exclusive,limit,filter">
                             <h4>Filtering > <strong>inclusive</strong></h4>
-                            <div class="description"><p>Used with the author attribute and multiple authors. By default, include all items that match ANY author. If set to "no," exclude items that don't have all authors. <strong>Options: yes [default], no.</strong></p></div>
+                            <div class="description"><p>Used with the author and tag attributes. By default, include all items that match ANY listed author/tag (inclusive "OR"). If set to "no," exclude items that don't have all listed authors/tags (exclusive "AND"). <strong>Options: yes [default], no.</strong></p></div>
                             <div class="example"><p><code>[zotpress author="Carl Sagan, Ada Lovelace" inclusive="no"]</code></p></div>
                         </div>
                         <div class="zp-Zotero-API-Attribute" data-keywords="sort,sort by,order,order by">
@@ -417,6 +429,11 @@
                             <h4>Display > <strong>cite</strong></h4>
                             <div class="description"><p>Alternative: <code>citeable</code> Make the displayed citations citable by generating RIS links. <strong>Options: yes, no [default].</strong></p></div>
                             <div class="example"><p><code>[zotpressLib userid="00000" cite="yes"]</code></p></div>
+                        </div>
+                        <div class="zp-Zotero-API-Attribute" data-keywords="target,_blank,blank,new window,window,open">
+                            <h4>Display > <strong>target</strong></h4>
+                            <div class="description"><p>Links open up in a new window or tab. Applies to citation links, e.g. "retrieved from." Compliant with HTML5 but not XHTML Strict. <strong>Options: new, no [default].</strong></p></div>
+                            <div class="example"><p><code>[zotpressLib userid="00000" target="new"]</code></p></div>
                         </div>
                         <div class="zp-Zotero-API-Attribute" data-keywords="toplevel,default,collection,dropdown">
                             <h4>Display > <strong>toplevel</strong></h4>

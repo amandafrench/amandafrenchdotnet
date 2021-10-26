@@ -20,7 +20,7 @@
 							<p>
                                 <?php echo sprintf(
                                     wp_kses(
-                                        __( 'The API User ID for <strong>User</strong> (individual, personal) accounts can be found on the <a href="%s" target="_blank">Zotero Settings > Keys</a> page, right above where you create a new key.', 'zotpress' ),
+                                        __( 'The API User ID for <strong>User</strong> (individual, personal) accounts can be found on the <a href="%s" target="_blank">Zotero Settings > Keys</a> page, right above where you create a new key. ', 'zotpress' ),
                                         array(
                                             'a' => array(
                                                 'href' => array()
@@ -51,13 +51,13 @@
                         <input id="public_key" name="public_key" type="text" tabindex="3" />
 						<aside>
 							<p>
-                                <?php _e('A private key is required for Zotpress to make requests to Zotero from WordPress.','zotpress');
+                                <?php _e('A private key is required for Zotpress to make requests to Zotero from WordPress. ','zotpress');
 
                                 if ( isset( $oauth_is_not_installed )
                                         && $oauth_is_not_installed === false )
                                 {
                                     echo wp_kses(
-                                            __( "<strong>You can create a key using OAuth <u>after</u> you've added your account.</strong>", 'zotpress' ),
+                                            __( "<strong>You can create a key using OAuth <u>after</u> you've added your account.</strong> ", 'zotpress' ),
                                             array(
                                                 'u' => array(),
                                                 'strong' => array()
@@ -68,7 +68,7 @@
                                 {
                                     echo sprintf(
                                         wp_kses(
-                                            __( 'Go to the <a href="%s" target="_blank">Zotero Settings > Keys</a> page and choose "Create new private key."</strong>', 'zotpress' ),
+                                            __( 'Go to the <a href="%s" target="_blank">Zotero Settings > Keys</a> page and choose "Create new private key."</strong> ', 'zotpress' ),
                                             array(
                                                 'a' => array(
                                                     'href' => array()
@@ -81,7 +81,7 @@
 
                                 echo sprintf(
                                     wp_kses(
-                                        __( 'If you\'ve already created a key, you can find it on the <a href="%s" target="_blank">Zotero Settings > Keys</a> page. Make sure that <strong>"Allow library access"</strong> is checked. For groups, make sure the Default Group Permissions or Specific Group Permissions are set to "<strong>Read Only</strong>" or "Read/Write."', 'zotpress' ),
+                                        __( 'If you\'ve already created a key, you can find it on the <a href="%s" target="_blank">Zotero Settings > Keys</a> page. Make sure that <strong>"Allow library access"</strong> is checked. For groups, make sure the Default Group Permissions or Specific Group Permissions are set to "<strong>Read Only</strong>" or "Read/Write." ', 'zotpress' ),
                                         array(
                                             'a' => array(
                                                 'href' => array()

@@ -224,7 +224,8 @@ function Zotpress_shortcode_request( $checkcache = false )
 
 
 					// Stop and let JS Ajax take over
-					if ( $checkcache && ! $zp_usecache )
+					if ( $checkcache
+							&& ! $zp_usecache )
 						continue;
 
 
@@ -270,10 +271,9 @@ function Zotpress_shortcode_request( $checkcache = false )
 				}
 
 				// Stop and let JS Ajax take over
-				if ( $checkcache &&
-						! $zp_usecache )
+				if ( $checkcache
+						&& ! $zp_usecache )
 					continue;
-
 
 				// Deal with possible error
 				if ( gettype($zp_imported) == "string"
@@ -281,6 +281,7 @@ function Zotpress_shortcode_request( $checkcache = false )
 				{
 					$zp_error = substr($zp_imported, 7, -1);
 				}
+
 				else
 				{
 					// Create all-requests json if doesn't exists
@@ -296,8 +297,7 @@ function Zotpress_shortcode_request( $checkcache = false )
 				}
 			}
 		} // Request the data
-	}
-
+	} // If no error
 
 	// Fix formatting quirk
 	if ( ( ! $checkcache && ! $zp_error )
@@ -353,7 +353,6 @@ function Zotpress_shortcode_request( $checkcache = false )
 		*	 Format the data:
 		*
 		*/
-
 		if ( count($temp_data) > 0 )
 		{
 			// If single, place the object into an array
@@ -377,7 +376,8 @@ function Zotpress_shortcode_request( $checkcache = false )
 				// Author filtering: skip non-matching authors
 				// TODO: Breaking with multi name
 				// EVENTUAL TODO: Zotero API 3 searches title and author, so wrong authors can appear
-				if ( $zpr["author"] && count($item->data->creators) > 0 )
+				if ( $zpr["author"]
+						&& count($item->data->creators) > 0 )
 				{
 					$zp_authors_check = false;
 
@@ -412,7 +412,7 @@ function Zotpress_shortcode_request( $checkcache = false )
 					}
 
 					if ( $zp_authors_check === false ) continue;
-				}
+				} // author
 
 				// Year filtering: skip non-matching years
 				if ( $zpr["year"] && isset($item->meta->parsedDate) )
@@ -599,11 +599,15 @@ function Zotpress_shortcode_request( $checkcache = false )
 
 				// Highlight text
 				if ( $zpr["highlight"] )
+				{
 					$item->bib = str_ireplace( $zpr["highlight"], "<strong>".$zpr["highlight"]."</strong>", $item->bib );
+				}
 
 				// Downloads, notes
-				if ( $zpr["downloadable"] || $zpr["shownotes"] )
+				if ( $zpr["downloadable"]
+						|| $zpr["shownotes"] )
 				{
+
 					// Check if item has children that could be downloads
 					if ( $item->meta->numChildren > 0 )
 					{
@@ -621,67 +625,86 @@ function Zotpress_shortcode_request( $checkcache = false )
 						$zp_child_request = $zp_import_child->get_request_contents( $zp_child_url, $zpr["update"] );
 						$zp_children = json_decode( $zp_child_request["json"] );
 
-						$zp_download_meta = false;
-						$zp_notes_meta = array();
-
-						foreach ( $zp_children as $zp_child )
+						// If the item changes and no longer exists on
+						// the Zotero side, it will return an error message
+						if ( $zp_children != "Item not found" )
 						{
-							// Check for downloads
-							if ( $zpr["downloadable"] )
+							$zp_download_meta = false;
+							$zp_notes_meta = array();
+
+							foreach ( $zp_children as $zp_child )
 							{
-								if ( isset($zp_child->data->linkMode)
-                                    && ( $zp_child->data->linkMode == "imported_file"
-                                        || $zp_child->data->linkMode == "imported_url")
-                                    && preg_match('(pdf|doc|docx|ppt|pptx|latex|rtf|odt|odp)', $zp_child->data->filename) === 1
-                                )
+								// Check for downloads
+								if ( $zpr["downloadable"] )
 								{
-									$zp_download_meta = array (
-											"dlkey" => $zp_child->key,
-											"contentType" => $zp_child->data->contentType
-										);
+									// Check for downloadable file (attached)
+									if ( isset($zp_child->data->linkMode)
+	                                    && ( ( $zp_child->data->linkMode == "imported_file"
+	                                			|| $zp_child->data->linkMode == "imported_url" )
+	                            			&& preg_match('(pdf|doc|docx|ppt|pptx|latex|rtf|odt|odp)', $zp_child->data->filename) === 1 )
+	                                )
+									{
+										$zp_download_meta = array (
+												"dlkey" => $zp_child->key,
+												"contentType" => $zp_child->data->contentType
+											);
+
+										// Display download link if file exists
+										if ( $zp_download_meta )
+											$item->bib = preg_replace('~(.*)' . preg_quote( '</div>', '~') . '(.*?)~', '$1' . " <a title='Download' class='zp-DownloadURL' href='".ZOTPRESS_PLUGIN_URL."lib/request/request.dl.php?api_user_id=".$zpr["api_user_id"]."&amp;dlkey=".$zp_download_meta["dlkey"]."&amp;content_type=".$zp_download_meta["contentType"]."'>Download</a></div>" . '$2', $item->bib, 1 );
+									}
+
+									// Check for link to downloadable file (third-party)
+									else if ( isset($zp_child->data->linkMode)
+										&& ( $zp_child->data->linkMode == "linked_url"
+												&& preg_match('(pdf|doc|docx|ppt|pptx|latex|rtf|odt|odp)', $zp_child->data->url) === 1 )
+									)
+									{
+										$item->bib = preg_replace('~(.*)' . preg_quote( '</div>', '~') . '(.*?)~', '$1' . " <a title='Download' class='zp-DownloadURL' href='".$zp_child->data->url."'>Download</a></div>" . '$2', $item->bib, 1 );
+									}
+								}
+
+								// Check for notes
+								if ( $zpr["shownotes"] )
+								{
+									if ( isset($zp_child->data->itemType) && $zp_child->data->itemType == "note" )
+										$zp_notes_meta[count($zp_notes_meta)] = $zp_child->data->note;
 								}
 							}
 
-							// Check for notes
-							if ( $zpr["shownotes"] )
+							// // Display download link if file exists
+							// if ( $zp_download_meta )
+							// 	$item->bib = preg_replace('~(.*)' . preg_quote( '</div>', '~') . '(.*?)~', '$1' . " <a title='Download' class='zp-DownloadURL' href='".ZOTPRESS_PLUGIN_URL."lib/request/request.dl.php?api_user_id=".$zpr["api_user_id"]."&amp;dlkey=".$zp_download_meta["dlkey"]."&amp;content_type=".$zp_download_meta["contentType"]."'>Download</a></div>" . '$2', $item->bib, 1 );
+
+							// Display notes, if any
+							if ( count($zp_notes_meta) > 0 )
 							{
-								if ( isset($zp_child->data->itemType) && $zp_child->data->itemType == "note" )
-									$zp_notes_meta[count($zp_notes_meta)] = $zp_child->data->note;
+								$temp_notes = "<li id=\"zp-Note-".$item->key."\">\n";
+
+								if ( count($zp_notes_meta) == 1 )
+								{
+									$temp_notes .= $zp_notes_meta[0]."\n";
+								}
+								else // multiple
+								{
+									$temp_notes .= "<ul class='zp-Citation-Item-Notes'>\n";
+
+									foreach ($zp_notes_meta as $zp_note_meta)
+										$temp_notes .= "<li class='zp-Citation-note'>" . $zp_note_meta . "\n</li>\n";
+
+									$temp_notes .= "\n</ul><!-- .zp-Citation-Item-Notes -->\n\n";
+								}
+
+								// Add to item
+								$item->notes = $temp_notes . "</li>\n";
+
+								// Add note reference to citation
+								$note_class = "zp-Notes-Reference"; if ( is_admin_bar_showing() ) $note_class .= " zp-Admin-Bar-Showing";
+								$item->bib = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <sup class=\"".$note_class."\"><a href=\"#zp-Note-".$item->key."\">".$zp_notes_num."</a></sup> </div>" . '$2', $item->bib, 1);
+								$zp_notes_num++;
 							}
-						}
-
-						// Display download link if file exists
-						if ( $zp_download_meta )
-							$item->bib = preg_replace('~(.*)' . preg_quote( '</div>', '~') . '(.*?)~', '$1' . " <a title='Download' class='zp-DownloadURL' href='".ZOTPRESS_PLUGIN_URL."lib/request/request.dl.php?api_user_id=".$zpr["api_user_id"]."&amp;dlkey=".$zp_download_meta["dlkey"]."&amp;content_type=".$zp_download_meta["contentType"]."'>Download</a></div>" . '$2', $item->bib, 1 );
-
-						// Display notes, if any
-						if ( count($zp_notes_meta) > 0 )
-						{
-							$temp_notes = "<li id=\"zp-Note-".$item->key."\">\n";
-
-							if ( count($zp_notes_meta) == 1 )
-							{
-								$temp_notes .= $zp_notes_meta[0]."\n";
-							}
-							else // multiple
-							{
-								$temp_notes .= "<ul class='zp-Citation-Item-Notes'>\n";
-
-								foreach ($zp_notes_meta as $zp_note_meta)
-									$temp_notes .= "<li class='zp-Citation-note'>" . $zp_note_meta . "\n</li>\n";
-
-								$temp_notes .= "\n</ul><!-- .zp-Citation-Item-Notes -->\n\n";
-							}
-
-							// Add to item
-							$item->notes = $temp_notes . "</li>\n";
-
-							// Add note reference to citation
-							$note_class = "zp-Notes-Reference"; if ( is_admin_bar_showing() ) $note_class .= " zp-Admin-Bar-Showing";
-							$item->bib = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <sup class=\"".$note_class."\"><a href=\"#zp-Note-".$item->key."\">".$zp_notes_num."</a></sup> </div>" . '$2', $item->bib, 1);
-							$zp_notes_num++;
-						}
-					}
+						} // Children exist; not "Item not found"
+					} // Check if item has children
 				} // $zpr["downloadable"]
 
 				array_push( $zp_all_the_data, $item);
@@ -700,7 +723,7 @@ function Zotpress_shortcode_request( $checkcache = false )
 				foreach ( $zp_all_the_data as $id => $data )
 				{
 					// Tags are connected to item key
-					if ( array_key_exists($data->key, $zp_tags) )
+					if ( property_exists( $zp_tags, $data->key ) )
 						$zp_all_the_data[$id]->data->tags = $zp_tags->{$data->key};
 				}
 			}
@@ -805,7 +828,6 @@ function Zotpress_shortcode_request( $checkcache = false )
 	{
 		$zp_all_the_data = ""; // Necessary?
 	}
-
 
 
 	/**

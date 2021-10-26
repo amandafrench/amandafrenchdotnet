@@ -1,22 +1,24 @@
 jQuery(document).ready(function()
 {
-	///////////////////////////////////////////////
-	//
-	//   ZOTPRESS BIBLIOGRAPHY
-	//
-	///////////////////////////////////////////////
+	///////////////////////////////
+	//							 //
+	//   ZOTPRESS BIBLIOGRAPHY   //
+	//							 //
+	///////////////////////////////
 
 	if ( jQuery(".zp-Zotpress-Bib").length > 0 )
 	{
+		var zp_collections = {};
+
 		jQuery(".zp-Zotpress-Bib").each( function( index, instance )
 		{
 			var $instance = jQuery(instance);
       		var zp_params = {};
 
 			zp_params.zpItemkey = false; if ( jQuery(".ZP_ITEM_KEY", $instance).text().trim().length > 0 ) zp_params.zpItemkey = jQuery(".ZP_ITEM_KEY", $instance).text();
+			zp_params.zpItemType = false; if ( jQuery(".ZP_ITEMTYPE", $instance).text().trim().length > 0 ) zp_params.zpItemType = jQuery(".ZP_ITEMTYPE", $instance).text();
 			zp_params.zpCollectionId = false; if ( jQuery(".ZP_COLLECTION_ID", $instance).text().trim().length > 0 ) zp_params.zpCollectionId = jQuery(".ZP_COLLECTION_ID", $instance).text();
 			zp_params.zpTagId = false; if ( jQuery(".ZP_TAG_ID", $instance).text().trim().length > 0 ) zp_params.zpTagId = jQuery(".ZP_TAG_ID", $instance).text();
-
 			zp_params.zpAuthor = false; if ( jQuery(".ZP_AUTHOR", $instance).text().trim().length > 0 ) zp_params.zpAuthor = jQuery(".ZP_AUTHOR", $instance).text();
 			zp_params.zpYear = false; if ( jQuery(".ZP_YEAR", $instance).text().trim().length > 0 ) zp_params.zpYear = jQuery(".ZP_YEAR", $instance).text();
 			zp_params.zpStyle = false; if ( jQuery(".ZP_STYLE", $instance).text().trim().length > 0 ) zp_params.zpStyle = jQuery(".ZP_STYLE", $instance).text();
@@ -35,6 +37,7 @@ jQuery(document).ready(function()
 			zp_params.zpHighlight = false; if ( jQuery(".ZP_HIGHLIGHT", $instance).text().trim().length > 0 ) zp_params.zpHighlight = jQuery(".ZP_HIGHLIGHT", $instance).text();
 
 			zp_params.zpForceNumsCount = 1;
+			zp_params.zpBibIndex = index;
 
 			// Deal with multiples
 			// Order of priority: collections, tags, authors, years
@@ -42,13 +45,19 @@ jQuery(document).ready(function()
 			if ( zp_params.zpCollectionId
 					&& zp_params.zpCollectionId.indexOf(',') != -1 )
 			{
-				var tempCollections = zp_params.zpCollectionId.split(',');
+				zp_collections[index] = zp_params.zpCollectionId.split(',');
 
-				jQuery.each( tempCollections, function (i, collection)
-				{
-					zp_params.zpCollectionId = collection;
-					zp_get_items ( 0, 0, $instance, zp_params, false ); // Get cached items first
-				});
+				// Set the initial collection
+				// var currentCollection = zp_collections[0];
+				zp_params.zpCollectionId = zp_collections[index][0];
+
+				zp_get_items ( 0, 0, $instance, zp_params, false );
+
+				// jQuery.each( zp_collections, function (i, collection)
+				// {
+				// 	zp_params.zpCollectionId = collection;
+				// 	zp_get_items ( 0, 0, $instance, zp_params, false ); // Get cached items first
+				// });
 			}
 			else
 			{
@@ -101,6 +110,7 @@ jQuery(document).ready(function()
 					}
 				}
 			}
+			// zp_params = JSON.stringify(zp_params);
 		});
 	} // Zotpress Bibliography
 
@@ -115,6 +125,7 @@ jQuery(document).ready(function()
 		if ( typeof(request_last) === "undefined" || request_last == "false" || request_last == "" )
 			request_last = 0;
 
+
 		jQuery.ajax(
 		{
 			url: zpShortcodeAJAX.ajaxurl,
@@ -126,10 +137,11 @@ jQuery(document).ready(function()
 				'item_type': jQuery(".ZP_ITEM_TYPE", $instance).text(),
 
 				'item_key': params.zpItemkey,
+				'itemtype': params.zpItemType,
 				'collection_id': params.zpCollectionId,
 				'tag_id': params.zpTagId,
 
-				'author': params.zpAuthor,
+				'author': encodeURI(params.zpAuthor).replace("'","%27"),
 				'year': params.zpYear,
 				'style': params.zpStyle,
 				'limit': params.zpLimit,
@@ -165,18 +177,18 @@ jQuery(document).ready(function()
 				// Account for Zotero errors
 				if ( zp_items.status == 'empty' )
 				{
-					var zp_msg = 'There was a Zotpress error: ';
+					var zp_msg = zpShortcodeAJAX.txt_zperror;
 
 					if ( zp_items.data == 0 )
 					{
-						zp_items.data = 'No items found.';
+						zp_items.data = zpShortcodeAJAX.txt_noitemsfound;
 						zp_msg = zp_items.data;
 					}
 					else {
 						zp_msg += zp_items.data;
 					}
 
-					console.log( zp_msg );
+					console.log( "Zotpress: " + zp_msg );
 
 					// Hide errors if something shown
 					var hideErrMsg = '';
@@ -202,7 +214,8 @@ jQuery(document).ready(function()
 							&& zp_items.data.length > 0 )
 					{
 						var tempItems = "";
-						if ( params.zpShowNotes == true ) var tempNotes = "";
+						if ( params.zpShowNotes == true )
+							var tempNotes = "";
 
 
 						// Indicate whether cache has been used:
@@ -224,120 +237,124 @@ jQuery(document).ready(function()
 						}
 
 
-						jQuery.each( zp_items.data, function( index, item )
+						// CHANGED (7.3): Make sure that there are items ...
+						if ( zp_items.data != 0 )
 						{
-							var tempItem = "";
-
-							// Determine item reference
-							var $item_ref = jQuery("#"+zp_items.instance+" .zp-List #zp-ID-"+jQuery(".ZP_POSTID", $instance).text()+"-"+jQuery(".ZP_API_USER_ID", $instance).text()+"-"+item.key);
-
-							// Replace or skip duplicates
-							if ( $item_ref.length > 0
-									&& update === false
-									&& ! jQuery("#"+zp_items.instance+" .zp-List").hasClass("used_cache") )
-								return false;
-
-							// Item Type
-							var tempItemType = "none";
-							if ( item.data.hasOwnProperty('itemType') )
-								tempItemType = item.data.itemType;
-
-							// Year and Date
-							var tempItemYear = "0000"; // yyyy
-							var tempItemDate = "0000"; // yyyy-mm-dd
-							if ( item.meta.hasOwnProperty('parsedDate') )
+							jQuery.each( zp_items.data, function( index, item )
 							{
-								tempItemYear = item.meta.parsedDate.substring(0, 4);
-								tempItemDate = item.meta.parsedDate;
-							}
+								var tempItem = "";
 
-							// Author
-							var tempAuthor = item.data.title;
-							if ( item.meta.hasOwnProperty('creatorSummary') )
-								tempAuthor = item.meta.creatorSummary.replace( / /g, "-" );
+								// Determine item reference
+								var $item_ref = jQuery("#"+zp_items.instance+" .zp-List #zp-ID-"+jQuery(".ZP_POSTID", $instance).text()+"-"+jQuery(".ZP_API_USER_ID", $instance).text()+"-"+item.key);
 
-							tempItem += "<div id='zp-ID-"+jQuery(".ZP_POSTID", $instance).text()+"-"+jQuery(".ZP_API_USER_ID", $instance).text()+"-"+item.key+"'";
-							tempItem += " data-zp-author-date='"+tempAuthor+"-"+tempItemDate+"'";
-							tempItem += " data-zp-date-author='"+tempItemDate+"-"+tempAuthor+"'";
-							tempItem += " data-zp-date='"+tempItemDate+"'";
-							tempItem += " data-zp-year='"+tempItemYear+"'";
-							tempItem += " data-zp-itemtype='"+tempItemType+"'";
-							tempItem += " class='zp-Entry zpSearchResultsItem";
+								// Replace or skip duplicates
+								if ( $item_ref.length > 0
+										&& update === false
+										&& ! jQuery("#"+zp_items.instance+" .zp-List").hasClass("used_cache") )
+									return false;
 
-							// Add update class to item
-							if ( update === true )
-								tempItem += " zp_updated";
+								// Item Type
+								var tempItemType = "none";
+								if ( item.data.hasOwnProperty('itemType') )
+									tempItemType = item.data.itemType;
 
-							// Image
-							if ( jQuery("#"+zp_items.instance+" .ZP_SHOWIMAGE").text().trim().length > 0 && item.hasOwnProperty('image') )
-							{
-								tempItem += " zp-HasImage'>\n";
-								tempItem += "<div id='zp-Citation-"+item.key+"' class='zp-Entry-Image hasImage' rel='"+item.key+"'>\n";
-
-								// URL wrap image if applicable
-								if ( params.zpURLWrap == "image" && item.data.url != "" )
+								// Year and Date
+								var tempItemYear = "0000"; // yyyy
+								var tempItemDate = "0000"; // yyyy-mm-dd
+								if ( item.meta.hasOwnProperty('parsedDate') )
 								{
-									tempItem += "<a href='"+item.data.url+"'";
-									if ( params.zpTarget ) tempItem += " target='_blank'";
-									tempItem += ">";
+									tempItemYear = item.meta.parsedDate.substring(0, 4);
+									tempItemDate = item.meta.parsedDate;
 								}
-								tempItem += "<img class='thumb' src='"+item.image[0]+"' alt='image' />\n";
-								if ( params.zpURLWrap == "image" && item.data.url != "" ) tempItem += "</a>";
+
+								// Author
+								var tempAuthor = item.data.title;
+								if ( item.meta.hasOwnProperty('creatorSummary') )
+									tempAuthor = item.meta.creatorSummary.replace( / /g, "-" );
+
+								tempItem += "<div id='zp-ID-"+jQuery(".ZP_POSTID", $instance).text()+"-"+jQuery(".ZP_API_USER_ID", $instance).text()+"-"+item.key+"'";
+								tempItem += " data-zp-author-date='"+tempAuthor+"-"+tempItemDate+"'";
+								tempItem += " data-zp-date-author='"+tempItemDate+"-"+tempAuthor+"'";
+								tempItem += " data-zp-date='"+tempItemDate+"'";
+								tempItem += " data-zp-year='"+tempItemYear+"'";
+								tempItem += " data-zp-itemtype='"+tempItemType+"'";
+								tempItem += " class='zp-Entry zpSearchResultsItem";
+
+								// Add update class to item
+								if ( update === true )
+									tempItem += " zp_updated";
+
+								// Image
+								if ( jQuery("#"+zp_items.instance+" .ZP_SHOWIMAGE").text().trim().length > 0 && item.hasOwnProperty('image') )
+								{
+									tempItem += " zp-HasImage'>\n";
+									tempItem += "<div id='zp-Citation-"+item.key+"' class='zp-Entry-Image hasImage' rel='"+item.key+"'>\n";
+
+									// URL wrap image if applicable
+									if ( params.zpURLWrap == "image" && item.data.url != "" )
+									{
+										tempItem += "<a href='"+item.data.url+"'";
+										if ( params.zpTarget ) tempItem += " target='_blank'";
+										tempItem += ">";
+									}
+									tempItem += "<img class='thumb' src='"+item.image[0]+"' alt='image' />\n";
+									if ( params.zpURLWrap == "image" && item.data.url != "" ) tempItem += "</a>";
+									tempItem += "</div>\n";
+								}
+								else
+								{
+									tempItem += "'>\n";
+								}
+
+								// Force numbers
+								if ( jQuery("#"+zp_items.instance+" .ZP_FORCENUM").text().length > 0
+										&& jQuery("#"+zp_items.instance+" .ZP_FORCENUM").text() == '1' )
+								{
+									if ( ! /csl-left-margin/i.test(item.bib) ) // if existing style numbering not found
+									{
+										item.bib = item.bib.replace( '<div class="csl-entry">', '<div class="csl-entry">'+params.zpForceNumsCount+". " );
+										params.zpForceNumsCount++;
+									}
+								}
+
+								tempItem += item.bib;
+
+								// Add abstracts, if any
+								if ( params.zpShowAbstracts == true &&
+										( item.data.hasOwnProperty('abstractNote') && item.data.abstractNote.length > 0 ) )
+									tempItem +="<p class='zp-Abstract'><span class='zp-Abstract-Title'>Abstract:</span> " +item.data.abstractNote+ "</p>\n";
+
+								// Add tags, if any
+								if ( params.zpShowTags == true &&
+										( item.data.hasOwnProperty('tags') && item.data.tags.length > 0 ) )
+								{
+									tempItem += "<p class='zp-Zotpress-ShowTags'><span class='title'>Tags:</span> ";
+
+									jQuery.each(item.data.tags, function ( tindex, tag )
+									{
+										tempItem += "<span class='tag'>" + tag.tag + "</span>";
+										if ( tindex != (item.data.tags.length-1) ) tempItem += "<span class='separator'>,</span> ";
+									});
+									tempItem += "</p>\n";
+								}
+
 								tempItem += "</div>\n";
-							}
-							else
-							{
-								tempItem += "'>\n";
-							}
 
-							// Force numbers
-							if ( jQuery("#"+zp_items.instance+" .ZP_FORCENUM").text().length > 0
-									&& jQuery("#"+zp_items.instance+" .ZP_FORCENUM").text() == '1' )
-							{
-								if ( ! /csl-left-margin/i.test(item.bib) ) // if existing style numbering not found
-								{
-									item.bib = item.bib.replace( '<div class="csl-entry">', '<div class="csl-entry">'+params.zpForceNumsCount+". " );
-									params.zpForceNumsCount++;
-								}
-							}
-
-							tempItem += item.bib;
-
-							// Add abstracts, if any
-							if ( params.zpShowAbstracts == true &&
-									( item.data.hasOwnProperty('abstractNote') && item.data.abstractNote.length > 0 ) )
-								tempItem +="<p class='zp-Abstract'><span class='zp-Abstract-Title'>Abstract:</span> " +item.data.abstractNote+ "</p>\n";
-
-							// Add tags, if any
-							if ( params.zpShowTags == true &&
-									( item.data.hasOwnProperty('tags') && item.data.tags.length > 0 ) )
-							{
-								tempItem += "<p class='zp-Zotpress-ShowTags'><span class='title'>Tags:</span> ";
-
-								jQuery.each(item.data.tags, function ( tindex, tag )
-								{
-									tempItem += "<span class='tag'>" + tag.tag + "</span>";
-									if ( tindex != (item.data.tags.length-1) ) tempItem += "<span class='separator'>,</span> ";
-								});
-								tempItem += "</p>\n";
-							}
-
-							tempItem += "</div>\n";
-
-							// Add notes, if any
-							if ( params.zpShowNotes == true && item.hasOwnProperty('notes') )
-								tempNotes += item.notes;
+								// Add notes, if any
+								if ( params.zpShowNotes == true && item.hasOwnProperty('notes') )
+									tempNotes += item.notes;
 
 
-							// Add this item to the list
-							// Replace or skip duplicates
-							if ( $item_ref.length > 0
-									&& update === true )
-								$item_ref.replaceWith( jQuery( tempItem ) );
-							else
-								tempItems += tempItem;
+								// Add this item to the list
+								// Replace or skip duplicates
+								if ( $item_ref.length > 0
+										&& update === true )
+									$item_ref.replaceWith( jQuery( tempItem ) );
+								else
+									tempItems += tempItem;
 
-						}); // each item
+							}); // each item
+						} // check that there are items
 
 
 						// Append cached/initial items to list:
@@ -395,7 +412,23 @@ jQuery(document).ready(function()
 
 							else // Otherwise, finish up and re-sort if needed
 							{
-								zp_bib_reformat( $instance, zp_items, params );
+								// If multiple collections, then go to next
+								if ( zp_collections[params.zpBibIndex]
+										&& zp_collections[params.zpBibIndex].length > 0
+										&& zp_collections[params.zpBibIndex][zp_collections[params.zpBibIndex].length-1] != params.zpCollectionId )
+								{
+									// Set the next collection
+									params.zpCollectionId = zp_collections[params.zpBibIndex][ zp_collections[params.zpBibIndex].indexOf(params.zpCollectionId)+1 ];
+
+									// Be sure to turn of update flag for this collection
+									jQuery("#"+zp_items.instance+" .zp-List").removeClass("updating");
+
+									// Start the item requests
+									zp_get_items ( 0, 0, $instance, params, false );
+								}
+								else {
+									zp_bib_reformat( $instance, zp_items, params );
+								}
 							}
 						}
 					}
@@ -470,7 +503,44 @@ jQuery(document).ready(function()
 			{
 				// First, make an array with the desired order of known types
 				// NOTE: Based on https://www.zotero.org/support/kb/item_types_and_fields
-				var orderedTypes = [ 'book', 'bookSection', 'journalArticle', 'conferencePaper', 'thesis', 'report', 'encyclopediaArticle', 'newspaperArticle', 'magazineArticle', 'presentation', 'interview' ];
+				var orderedTypes = [
+					'book',
+					'bookSection',
+					'journalArticle',
+					'conferencePaper',
+					'thesis',
+					'report',
+					'encyclopediaArticle',
+					'newspaperArticle',
+					'magazineArticle',
+					'presentation',
+					'interview',
+					'dictionaryEntry',
+					'document',
+					'manuscript',
+					'patent',
+					'map',
+					'blogPost',
+					'webpage',
+					'artwork',
+					'film',
+					'audioRecording',
+					'statute',
+					'bill',
+					'case',
+					'hearing',
+					'forumPost',
+					'letter',
+					'email',
+					'instantMessage',
+					'software',
+					'podcast',
+					'radioBroadcast',
+					'tvBroadcast',
+					'videoRecording',
+					'attachment',
+					'note'
+				];
 
 				// Then, remove any that aren't in the existing array
 				orderedTypes.slice(0).forEach( function(orderedType, i)
@@ -484,9 +554,9 @@ jQuery(document).ready(function()
 			else // Assume year
 			{
 				if ( orderby == "asc" )
-					titleSortedEntriesOrder.sort( function(a, b) { return a-b } );
+					titleSortedEntriesOrder.sort( function(a, b) { return a-b; } );
 				else
-					titleSortedEntriesOrder.sort( function(a, b) { return b-a } );
+					titleSortedEntriesOrder.sort( function(a, b) { return b-a; } );
 			}
 
 			// Next, restructure bib based on this order
@@ -515,8 +585,6 @@ jQuery(document).ready(function()
 				// and if header not already there
 				if ( zp_params.zpTitle == "year" )
 				{
-					// console.log("Title: Start of YEAR-based display");
-
 					// Just add the header, initially or if it doesn't exist
 					if ( jQuery("#"+$instance.attr("id")+" .zp-List h3[rel='"+orderedType+"']").length == 0 )
 						jQuery("#"+$instance.attr("id")+" .zp-List").append( "<h3 rel='"+orderedType+"'>"+tempTitle+"</h3>\n" );

@@ -1,7 +1,8 @@
 <?php
 
 	// Include WordPress
-	require('../../../../../wp-load.php');
+	// require('../../../../../wp-load.php');
+	require(dirname(__FILE__) . '/../../../../../wp-load.php');
 	define('WP_USE_THEMES', false);
 
 	// Include Request Functionality
@@ -41,7 +42,8 @@
 		// Read the external data
         $zp_xml = $zp_import_contents->get_request_contents( $zp_import_url, true, 'ris' );
 
-		if ( $zp_xml !== false && strlen(trim($zp_xml["json"])) > 0 )
+		if ( $zp_xml !== false
+				&& strlen(trim($zp_xml["json"])) > 0 )
 		{
 			header('Content-Type: application/x-research-info-systems');
 			header('Content-Disposition: attachment; filename="itemkey-'.$zp_item_key.'.ris"');
@@ -50,7 +52,7 @@
 		}
 		else
 		{
-			echo "No cite file found.";
+			echo "No RIS file found.";
 		}
 	}
 	else

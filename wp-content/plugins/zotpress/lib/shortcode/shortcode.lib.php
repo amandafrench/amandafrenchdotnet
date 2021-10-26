@@ -90,6 +90,10 @@ function Zotpress_zotpressLib( $atts )
 	if ( $download ) $download = str_replace('"','',html_entity_decode($download));
 	if ( $downloadable ) $download = str_replace('"','',html_entity_decode($downloadable));
 
+    // Show tags
+    if ( $showtags ) $showtags = str_replace('"','',html_entity_decode($showtags));
+    if ( strpos( $searchby, "tags" ) !== false ) $showtags = true;
+
 	// Show image
 	if ( $showimages ) $showimage = str_replace('"','',html_entity_decode($showimages));
 	if ( $showimage ) $showimage = str_replace('"','',html_entity_decode($showimage));
@@ -98,7 +102,7 @@ function Zotpress_zotpressLib( $atts )
 
     if ( $toplevel ) $toplevel = str_replace('"','',html_entity_decode($toplevel));
 
-	if ( $target ) $target = true;
+	if ( $target && $target != "no" ) $target = true; else $target = false;
 
 
 	// Get API User ID
@@ -152,6 +156,7 @@ function Zotpress_zotpressLib( $atts )
 	$zpLib->setOrder($order);
 	$zpLib->setCiteable($cite);
 	$zpLib->setDownloadable($download);
+    $zpLib->setShowTags($showtags);
 	$zpLib->setShowImage($showimage);
 	$zpLib->setURLWrap($urlwrap);
     $zpLib->setTopLevel($toplevel);

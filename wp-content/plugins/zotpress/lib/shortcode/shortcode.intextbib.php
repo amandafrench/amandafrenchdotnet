@@ -132,7 +132,8 @@ function Zotpress_zotpressInTextBib ($atts)
 
 
     // GENERATE IN-TEXT BIB STRUCTURE
-	$zp_output = "\n<div id='zp-InTextBib-".$instance_id."' class='zp-Zotpress zp-Zotpress-InTextBib";
+	$zp_output = "\n<div id='zp-InTextBib-".$instance_id."'";
+    $zp_output .= " class='zp-Zotpress zp-Zotpress-InTextBib wp-block-group";
 	if ( $forcenumber ) $zp_output .= " forcenumber";
 	$zp_output .= " zp-Post-".get_the_ID()."'>";
 	$zp_output .= '

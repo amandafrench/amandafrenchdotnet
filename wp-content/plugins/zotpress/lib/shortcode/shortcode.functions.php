@@ -343,6 +343,11 @@ function Zotpress_prep_ajax_request_vars()
 		$zpr["item_key"] = rtrim( $temp_reformatted, ',' );
 	}
 
+	$zpr["itemtype"] = false;
+	if ( isset($_GET['itemtype'])
+			&& ( $_GET['itemtype'] != "false" && $_GET['itemtype'] !== false && $_GET['itemtype'] !== '' ) )
+		$zpr["itemtype"] = $_GET['itemtype'];
+
 	$zpr["collection_id"] = false;
 	if ( isset($_GET['collection_id'])
 			&& ( $_GET['collection_id'] != "false" && $_GET['collection_id'] !== false && $_GET['collection_id'] !== '' ) )
@@ -353,11 +358,14 @@ function Zotpress_prep_ajax_request_vars()
 			&& ( $_GET['tag_id'] != "false" && $_GET['tag_id'] !== false && $_GET['tag_id'] !== '' ) )
 	{
 		$zpr["tag_id"] = $_GET['tag_id'];
-		$zpr["collection_id"] = false;
+		// $zpr["collection_id"] = false; // Can have tags in collection
 	}
 
 	// Author, year, style, limit, title
 	$zpr["author"] = false; if ( isset($_GET['author']) && $_GET['author'] != "false" && $_GET['author'] != "" ) $zpr["author"] = $_GET['author'];
+// TESTING: urldecode
+	$zpr["author"] = urldecode($zpr["author"]);
+
 	$zpr["year"] = false; if ( isset($_GET['year']) && $_GET['year'] != "false" && $_GET['year'] != "" ) $zpr["year"] = $_GET['year'];
 	$zpr["style"] = zp_Get_Default_Style(); if ( isset($_GET['style']) && $_GET['style'] != "false" && $_GET['style'] != "" && $_GET['style'] != "default" ) $zpr["style"] = $_GET['style'];
 	if ( isset($_GET['limit']) && $_GET['limit'] != 0 )
@@ -389,6 +397,8 @@ function Zotpress_prep_ajax_request_vars()
 		$zpr["toplevel"] = $_GET['toplevel'];
 		// $zpr["collection_id"] = false;
 	}
+	if ( $zpr["collection_id"] == "toplevel" )
+		$zpr["collection_id"] = false;
 
 	// SPECIAL SETTINGS
 
@@ -473,7 +483,10 @@ function Zotpress_prep_ajax_request_vars()
 
 	$zpr["highlight"] = false;
 	if ( isset($_GET['highlight'])
- 			&& $_GET['highlight'] !== '' ) $zpr["highlight"] = trim( htmlentities( $_GET['highlight'] ) );
+			&& $_GET['highlight'] !== ""
+			&& $_GET['highlight'] !== false
+			&& $_GET['highlight'] !== 0
+		 	&& $_GET['highlight'] !== "false" ) $zpr["highlight"] = trim( htmlentities( $_GET['highlight'] ) );
 
 	$zpr["forcenumber"] = false;
 	if ( isset($_GET['forcenumber'])
@@ -503,6 +516,8 @@ function Zotpress_prep_ajax_request_vars()
  */
 function Zotpress_prep_request_URL( $wpdb, $zpr, $zp_request_queue, $api_user_id=false, $zp_request_data=false )
 {
+	$tempItemType = "";
+
 	// Get account and $api_user_id
 	if ( $api_user_id )
     {
@@ -647,6 +662,12 @@ function Zotpress_prep_request_URL( $wpdb, $zpr, $zp_request_queue, $api_user_id
 	    	}
 	    }
 
+		// Itemtype-specific
+		if ( $zpr["itemtype"] )
+		{
+			$zp_import_url .= "&itemType=" . urlencode( stripslashes( $zpr["itemtype"] ));
+		}
+
 		// Tag-specific
 		if ( $zpr["tag_id"] )
 		{
@@ -699,6 +720,7 @@ function Zotpress_prep_request_URL( $wpdb, $zpr, $zp_request_queue, $api_user_id
 				if ( $zpr["author"] )
 				{
 					// REVIEW: Deal with authors with multi-part last names
+					// Replace plus signs with spaces
 					if ( strpos( $zpr["author"], "+" ) !== -1 )
 						$zpr["author"] = str_replace( '+', ' ', $zpr["author"] );
 
@@ -715,12 +737,19 @@ function Zotpress_prep_request_URL( $wpdb, $zpr, $zp_request_queue, $api_user_id
 					}
 				}
 
+				// CHANGED (7.3): For some reason, urlencode will replace apostrophes
+				// with &#039; and then encode that to %26%23039%3B
+				// which breaks ... so let's replace with %27 manually
+				$zp_import_url = str_replace("%26%23039%3B", "%27", $zp_import_url);
+
+				// Deal with just year, no author
 				if ( $zpr["year"] && ! $zpr["author"] ) $zp_import_url .= "&q=".$zpr["year"];
 			}
 		}
 
-		// Avoid attachments and notes
-		if ( $zpr["item_type"] == "items"
+		// Avoid attachments and notes, if not using itemtype filtering
+		if ( ! $zpr["itemtype"]
+				&& $zpr["item_type"] == "items"
 				|| ( $zpr["sub"] && $zpr["sub"] == "items" ) )
 			$zp_import_url .= "&itemType=-attachment+||+note";
 

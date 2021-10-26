@@ -18,6 +18,7 @@ function Zotpress_func( $atts )
         'year' => false,
         'years' => false,
 
+        'itemtype' => false, // for selecting by itemtype; assumes one type
         'item_type' => 'items',
         'data_type' => false, // deprecated
         'datatype' => 'items',
@@ -95,6 +96,60 @@ function Zotpress_func( $atts )
     else if ($years) $year = zp_clean_param( $years );
     else if (strpos($year, ",") > 0) $year = explode(",", $year);
 	else $year = "";
+
+    // Filter by itemtype
+    // TODO: Allow for a list of itemtypes in one shortcode?
+    $itemtype = zp_clean_param( $itemtype );
+    if ( $itemtype !== false )
+    {
+        // Make sure it's one of the accepted types
+        $officialItemTypes = array(
+            'book',
+            'bookSection',
+            'journalArticle',
+            'conferencePaper',
+            'thesis',
+            'report',
+            'encyclopediaArticle',
+            'newspaperArticle',
+            'magazineArticle',
+            'presentation',
+            'interview',
+            'dictionaryEntry',
+            'document',
+            'manuscript',
+            'patent',
+            'map',
+            'blogPost',
+            'webpage',
+            'artwork',
+            'film',
+            'audioRecording',
+            'statute',
+            'bill',
+            'case',
+            'hearing',
+            'forumPost',
+            'letter',
+            'email',
+            'instantMessage',
+            'software',
+            'podcast',
+            'radioBroadcast',
+            'tvBroadcast',
+            'videoRecording',
+            'attachment',
+            'note'
+        );
+
+        $itemtypeCheck = false;
+
+        foreach ($officialItemTypes as $type)
+            if ( $itemtype == $type ) $itemtypeCheck = true;
+
+        if ( $itemtypeCheck !== true )
+            $itemtype = false; // Default is no itemtype filter
+    }
 
     // Format with datatype and content
     if ($item_type) $item_type = zp_clean_param( $item_type );
@@ -262,8 +317,9 @@ function Zotpress_func( $atts )
 	if ( is_array( $author ) ) $temp_author = implode( "-", $author); else $temp_author = $author;
 	if ( is_array( $year ) ) $temp_year = implode( "-", $year); else $temp_year = $year;
 	if ( is_array( $sortby ) ) $temp_sortby = implode( "-", $sortby); else $temp_sortby = $sortby;
+
     // REVIEW: Added post ID
-    $instance_id = "zotpress-".md5(get_the_ID().$api_user_id.$nickname.$temp_author.$temp_year.$item_type.$temp_collection_id.$temp_item_key.$temp_tag_name.$style.$temp_sortby.$order.$limit.$showimage.$showtags.$downloadable.$shownotes.$citeable.$inclusive);
+    $instance_id = "zotpress-".md5(get_the_ID().$api_user_id.$nickname.$temp_author.$temp_year.$itemtype.$item_type.$temp_collection_id.$temp_item_key.$temp_tag_name.$style.$temp_sortby.$order.$limit.$showimage.$showtags.$downloadable.$shownotes.$citeable.$inclusive);
 
 	// Prepare item key
 	if ( $item_key ) if ( gettype( $item_key ) != "string" ) $item_key = implode( ",", $item_key );
@@ -291,7 +347,8 @@ function Zotpress_func( $atts )
     // Set up Update vars
     $update = false;
 
-	$zp_output = '<div id="' . $instance_id . '" class="zp-Zotpress zp-Zotpress-Bib';
+	$zp_output = '<div id="' . $instance_id . '"';
+    $zp_output .= ' class="zp-Zotpress zp-Zotpress-Bib wp-block-group';
 	if ( $forcenumber ) $zp_output .= " forcenumber";
 	$zp_output .= '">
 
@@ -301,7 +358,8 @@ function Zotpress_func( $atts )
 		<span class="ZP_TAG_ID" style="display: none;">'.$tag_id.'</span>
 		<span class="ZP_AUTHOR" style="display: none;">'.$author.'</span>
 		<span class="ZP_YEAR" style="display: none;">'.$year.'</span>
-		<span class="ZP_ITEM_TYPE" style="display: none;">'.$item_type.'</span>
+        <span class="ZP_ITEMTYPE" style="display: none;">'.$itemtype.'</span>
+        <span class="ZP_ITEM_TYPE" style="display: none;">'.$item_type.'</span>
 		<span class="ZP_INCLUSIVE" style="display: none;">'.$inclusive.'</span>
 		<span class="ZP_STYLE" style="display: none;">'.$style.'</span>
 		<span class="ZP_LIMIT" style="display: none;">'.$limit.'</span>
@@ -338,6 +396,7 @@ function Zotpress_func( $atts )
         $_GET['tag_id'] = $tag_id;
         $_GET['author'] = $author;
         $_GET['year'] = $year;
+        $_GET['itemtype'] = $itemtype;
         $_GET['item_type'] = $item_type;
         $_GET['inclusive'] = $inclusive;
         $_GET['style'] = $style;

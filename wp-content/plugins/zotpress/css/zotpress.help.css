@@ -70,10 +70,11 @@ div.zp-Zotero-API-Attributes-Search:after {
 input[type="text"].zp-Zotero-API-Attributes-Search-Input {
     background-color: #fff;
     border: 0;
+    border-radius: 0;
     box-shadow: none;
     color: #e14d43;
     float: left;
-    font-size: 2em; /* 14px */
+    font-size: 26px; /* 2em 14px */
     font-weight: bold;
     margin: 0;
     padding: 14px 1em;
@@ -87,6 +88,7 @@ input[type="text"].zp-Zotero-API-Attributes-Search-Input::placeholder {
 div.zp-Zotero-API-Attributes-Search-Status {
     background: #fff;
     float: left;
+    padding: 10px 0 11px;
     width: 7.5%;
 }
 div.zp-Zotero-API-Attributes-Search-Status .zp-Loading,
@@ -321,4 +323,3 @@ div#zp-Zotpress .zp-Documentation code {
 }
 
 /* END OF DOCUMENTATION CSS */
-	

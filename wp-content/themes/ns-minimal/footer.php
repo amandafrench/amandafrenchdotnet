@@ -31,11 +31,7 @@
 							printf( esc_html__( 'Proudly powered by %s', 'ns-minimal' ), 'WordPress' );
 							?>
 						</a>
-						<br>
-						<?php
-						/* translators: 1: Theme name, 2: Theme author. */
-						printf( esc_html__( '%1$s by %2$s.', 'ns-minimal' ), 'NS Minimal', '<a href="https://www.nuno-sarmento.com/">NS</a>' );
-						?>
+						<?php echo esc_html( ns_minimal_author_text_credit() ); ?>
 
 					<?php endif; ?>
 

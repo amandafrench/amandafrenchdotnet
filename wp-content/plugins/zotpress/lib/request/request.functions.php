@@ -114,29 +114,31 @@
     			$author = explode( "seif ", $author );
     			$author[1] = "seif ".$author[1];
     		}
-    		else
+    		else // Multipart names
     		{
-    			// First and last names, or multiple last names
+    			// First and last names OR multiple last names
     			if ( strpos( strtolower($author), " " ) !== false )
     			{
     				$author = explode( " ", $author );
 
-    				// Deal with multiple blanks, assume multiple first/middle names
-    				if ( count($author) > 2 )
-    				{
-    					$new_name = array();
-    					foreach ( $author as $num => $author_name )
-    					{
-    						if ( $num == 0 ) $new_name[0] .= $author_name;
-    						else if ( $num != count($author)-1 ) $new_name[0] .= " ". $author_name;
-    						else if ( $num == count($author)-1 ) $new_name[1] .= $author_name;
-    					}
-    					$author = $new_name;
-    				}
+    				// Deal with multiple blanks
+                    // NOTE: Previously assumed multiple first/middle names
+                    // CHANGED: Check this possibility as well as multiple (7.3)
+                    // last names; so keep array of 1-3+ items
+    				// if ( count($author) > 2 )
+    				// {
+    				// 	$new_name = array();
+    				// 	foreach ( $author as $num => $author_name )
+    				// 	{
+    				// 		if ( $num == 0 ) $new_name[0] .= $author_name;
+    				// 		else if ( $num != count($author)-1 ) $new_name[0] .= " ". $author_name;
+    				// 		else if ( $num == count($author)-1 ) $new_name[1] .= $author_name;
+    				// 	}
+    				// 	$author = $new_name;
+    				// }
     			}
-    			else
+    			else // Multi-part last name with plus sign separator
     			{
-                    // Multi-part last name with plus sign separator
                     // REVIEW: What if there's a first name(s)?
                     if ( strpos( strtolower($author), "+" ) !== false )
                     {
@@ -158,28 +160,52 @@
     		}
 
     		// Trim firstname
+            // QUESTION: Is this needed?
     		$author[0] = trim($author[0]);
 
     		// Check
     		foreach ( $item->data->creators as $creator )
     		{
-    			if ( count($author) == 1 ) // last name only
+                // NOTE: Assumes last name only
+    			if ( count($author) == 1 )
     			{
-    				if ( ( isset($creator->lastName) && strtolower($creator->lastName) == $author[0] )
-    						|| ( isset($creator->name) && strtolower($creator->name) == $author[0] ) )
+    				if ( ( isset($creator->lastName)
+                            && strtolower($creator->lastName) == $author[0] )
+    						|| ( isset($creator->name)
+                                    && strtolower($creator->name) == $author[0] ) )
     					$author_continue = true;
     			}
-    			else // first and last names
+                // NOTE: Assumes first and last names OR two last names
+    			elseif ( count($author) == 2 )
     			{
-    				if 	(
-    						( isset($creator->firstName)
-    							&& ( strtolower($creator->firstName) == $author[0]
-    									&& strtolower($creator->lastName) == $author[1] )
-    						)
-    						|| ( isset($creator->name) && ( strtolower($creator->name) == implode(" ", $author) ) )
-    					)
+    				if ( ( isset($creator->firstName)
+						&& ( strtolower($creator->firstName) == $author[0]
+						&& strtolower($creator->lastName) == $author[1] )
+                       )
+                       || ( strtolower($creator->lastName) == $author[0]." ".$author[1] )
+                       || ( isset($creator->name)
+                            && ( strtolower($creator->name) == implode(" ", $author) ) ) )
     					$author_continue = true;
     			}
+                else {
+                    // NOTE: Assumes multiple first (inc. middle) OR multiple last
+                    // with at least one first name
+                    // CHANGED: Fix for multiple last names (7.3)
+                    if 	(
+                        // Two first names (or one middle) and last name
+                        ( isset($creator->firstName)
+							&& ( strtolower($creator->firstName) == ($author[0]." ".$author[1])
+			                     && strtolower($creator->lastName) == $author[2] ) )
+                        // One first name and two last names
+						|| ( isset($creator->firstName)
+                            && ( strtolower($creator->firstName) == $author[0]
+                                && strtolower($creator->lastName) == ($author[1]." ".$author[2]) ) )
+                        // All combined
+                        || ( isset($creator->name)
+                                && strtolower($creator->name) == implode(" ", $author) )
+                    )
+    					$author_continue = true;
+                }
     		}
 
     		return $author_continue;
