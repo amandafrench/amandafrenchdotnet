@@ -13,7 +13,12 @@ $extra_option = '';
 
 <div id="new-release" class="<?php if ( $admin_notices == 'true' ) {echo 'invisible';} ?>"><?php echo apply_filters( 'sform_update', $notice ); ?>&nbsp;</div>
 
-<div class="full-width-bar <?php echo $color ?>"><h1 class="title <?php echo $color ?>"><span class="dashicons dashicons-plus-alt responsive"></span><?php _e( 'Add New', 'simpleform' ); ?></h1></div>
+<div class="full-width-bar <?php echo $color ?>"><h1 class="title <?php echo $color ?>"><span class="dashicons dashicons-plus-alt responsive"></span><?php _e( 'Add New', 'simpleform' ); ?>
+
+
+<a href="<?php echo esc_url(get_admin_url(get_current_blog_id(), 'admin.php?page=sform-forms')) ?>"><span class="dashicons dashicons-list-view icon-button admin <?php echo $color ?>"></span><span class="wp-core-ui button admin back-list <?php echo $color ?>"><?php _e( 'Back to forms', 'simpleform' ) ?></span></a>
+
+</h1></div>
 
 <div id="page-description"><p><?php _e( 'Adding a new form is quick and easy. Do it whenever you need it!','simpleform') ?></p></div>
 

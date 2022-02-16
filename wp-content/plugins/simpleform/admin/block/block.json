@@ -49,7 +49,7 @@
         },
         "bgColor": { 
 	        "type": "string", 
-	        "default": "#FFFFFF" 
+	        "default": "transparent" 
 	    },
  	    "borderRadius": {
 	        "type": "integer",

@@ -3,45 +3,45 @@
 /**
  * The core plugin class
  *
- * @since      1.0
+ * @since 1.0
  */
 
 class SimpleForm {
 
 	/**
-	 * The loader responsible for maintaining and registering all hooks.
+	 * The loader responsible for maintaining and registering all hooks
 	 *
-	 * @since    1.0
+	 * @since 1.0
 	 */
 	 
 	protected $loader;
 
 	/**
-	 * The unique identifier of this plugin.
+	 * The plugin's unique identifier
 	 *
-	 * @since    1.0
+	 * @since 1.0
 	 */
 
 	protected $plugin_name;
 
 	/**
-	 * The current version of the plugin.
+	 * The plugin's current version
 	 *
-	 * @since    1.0
+	 * @since 1.0
 	 */
 
 	protected $version;
 
 	/**
-	 * Define the core functionality of the plugin.
+	 * Define the plugin's core functionality
 	 *
-	 * @since    1.0
+	 * @since 1.0
 	 */
 
 	public function __construct() {
 		
 		if ( defined( 'SIMPLEFORM_VERSION' ) ) { $this->version = SIMPLEFORM_VERSION; } 
-		else { $this->version = '2.0.8'; }
+		else { $this->version = '2.1.2'; }
 		$this->plugin_name = 'simpleform';
 		$this->load_dependencies();
 		$this->define_admin_hooks();
@@ -53,43 +53,42 @@ class SimpleForm {
 	}
 
 	/**
-	 * Load the required dependencies for this plugin.
+	 * Load the required dependencies
 	 *
-	 * @since    1.0
+	 * @since 1.0
 	 */
 	 
 	private function load_dependencies() {
 
-		// The class responsible for orchestrating the actions and filters of the core plugin.
+		// The class responsible for orchestrating actions and filters of plugin
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-loader.php';
-		// The class responsible for defining all actions that occur in the admin area.		 
+		// The class responsible for defining actions that occur in the admin area		 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-admin.php';
-		// The class responsible for defining all actions that occur in the public-facing side of the site.		 
+		// The class responsible for defining actions that occur in the public-facing side of the site		 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-public.php';
 		// The class responsible for defining the widget
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-widget.php';	
-		// The class responsible for defining the block
-		if ( version_compare(get_bloginfo('version'),'5.6', '>=') ) { 	 
-		// require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-block.php';
+		// The class responsible for defining the block (requires WordPress 5.6 or later)
+        if ( version_compare( $GLOBALS['wp_version'], '5.6', '>=' ) ) {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/block/class-block.php';
 		}
-		// The class responsible for defining the general utilities	 
+		// The class responsible for defining utilities	 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-utilities.php';
-		// The base class for displaying a list of forms in an ajaxified HTML table.
-        // if ( ! class_exists( 'WP_List_Table' ) ) {
-	    // require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
-        // }
-        // The customized forms class that extends the base class
-        // require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-forms.php';
+		// The base class for displaying a list of forms
+        if ( ! class_exists( 'WP_List_Table' ) ) {
+	    require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
+        }
+        // The customized class that extends the base class
+        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-forms.php';
 
 		$this->loader = new SimpleForm_Loader();
 
 	}
 
 	/**
-	 * Register all hooks related to the admin area functionality of the plugin.
+	 * Register all hooks related to the admin area functionality
 	 *
-	 * @since    1.0
+	 * @since 1.0
 	 */
 	
 	private function define_admin_hooks() {
@@ -124,31 +123,31 @@ class SimpleForm {
 		// Fallback for database table updating if plugin is already active 
 		$this->loader->add_action( 'plugins_loaded', $plugin_admin, 'db_version_check' );
         }	
-        // Retrieve pages list containing the SimpleForm shortcode
-        $this->loader->add_action( 'save_post', $plugin_admin, 'sform_pages_list', 10, 2 ); 
+        // Update the pages list containing SimpleForm
+        $this->loader->add_action( 'save_post', $plugin_admin, 'sform_pages_list', 10, 2 );         
 	    // Clean up the post content of any non-existent and redundant form
 	    // $this->loader->add_filter('content_save_pre', $plugin_admin, 'clean_up_post_content', 10, 1 );
 	    // Register ajax callback for change admin color scheme
 	    $this->loader->add_action('wp_ajax_admin_color_scheme', $plugin_admin, 'admin_color_scheme');
-        // Display an admin notice in case there are any SimpleForm widgets running on WordPress 5.8 
-	    if ( version_compare(get_bloginfo('version'),'5.8', '>=') ) { 	 
-	    $this->loader->add_action('admin_notices', $plugin_admin, 'general_admin_notice');
-        }	    
 	    // Register ajax callback for form deleting
 	    $this->loader->add_action('wp_ajax_sform_delete_form', $plugin_admin, 'sform_delete_form');
         // Save screen options
-		// $this->loader->add_filter( 'set-screen-option', $plugin_admin, 'forms_screen_option', 10, 3 );		
+		$this->loader->add_filter( 'set-screen-option', $plugin_admin, 'forms_screen_option', 10, 3 );		
 		// Register a post type for change the pagination in Screen Options tab
-		// $this->loader->add_action( 'init', $plugin_admin, 'form_post_type' );
+		$this->loader->add_action( 'init', $plugin_admin, 'form_post_type' );
 		// Show the parent menu active for hidden sub-menu item
-		// $this->loader->add_filter( 'parent_file', $plugin_admin, 'contacts_menu_open', 1, 2 );
+	    $this->loader->add_filter( 'parent_file', $plugin_admin, 'contacts_menu_open', 1, 2 );
+	    // Register ajax callback for form moving/deleting
+	    $this->loader->add_action('wp_ajax_form_update', $plugin_admin, 'form_update');
+        // Remove all unnecessary parameters leaving the original URL used before performing an action
+	    $this->loader->add_action( 'current_screen', $plugin_admin, 'url_cleanup' );
 
 	}
 
 	/**
-	 * Register all hooks related to the public-facing functionality of the plugin.
+	 * Register all hooks related to the public-facing functionality
 	 *
-	 * @since    1.0
+	 * @since 1.0
 	 */
 	
 	private function define_public_hooks() {
@@ -174,9 +173,9 @@ class SimpleForm {
 	}
 
 	/**
-	 * Register all hooks related to the block functionality of the plugin.
+	 * Register all hooks related to the block functionality
 	 *
-	 * @since    1.0
+	 * @since 1.0
 	 */
 	
 	private function define_block_hooks() {
@@ -185,17 +184,23 @@ class SimpleForm {
 
 		// Register the block
 		$this->loader->add_action( 'init', $plugin_block, 'register_block' );
+		// Set the widgets check
+	    $this->loader->add_action( 'admin_init', $plugin_block, 'set_up_widgets_check', 100 );
 		// Clean up the widget areas of any non-existent and redundant form
-		$this->loader->add_action( 'widgets_init', $plugin_block, 'clean_up_widget_areas' );
-	    // Hide widget blocks if the form already appears in the post content
+		$this->loader->add_action( 'sform_widgets_cleaning', $plugin_block, 'widgets_cleaning' );
+	    // Hide widget blocks if the form already appears in the page
 		$this->loader->add_filter( 'sidebars_widgets', $plugin_block, 'hide_widgets' );
+        // Add block customized style in a block theme
+        if ( version_compare( $GLOBALS['wp_version'], '5.9', '>=' ) ) {
+        $this->loader->add_action( 'after_setup_theme', $plugin_block, 'enqueue_block_styles' );		
+        }	    
 
 	}
 
 	/**
-	 * Run the loader to execute all of the hooks with WordPress.
+	 * Run the loader to execute all hooks
 	 *
-	 * @since    1.0
+	 * @since 1.0
 	 */
 	 
 	public function run() {
@@ -205,9 +210,9 @@ class SimpleForm {
 	}
 
 	/**
-	 * Retrieve the name of the plugin.
+	 * Retrieve the plugin's name
 	 *
-	 * @since     1.0
+	 * @since 1.0
 	 */
 	 
 	public function get_plugin_name() {
@@ -217,9 +222,9 @@ class SimpleForm {
 	}
 
 	/**
-	 * The reference to the class that orchestrates the hooks with the plugin.
+	 * The reference to the class that orchestrates the hooks with the plugin
 	 *
-	 * @since     1.0
+	 * @since 1.0
 	 */
 	 
 	public function get_loader() {
@@ -229,9 +234,9 @@ class SimpleForm {
 	}
 
 	/**
-	 * Retrieve the version number of the plugin.
+	 * Retrieve the plugin's version number
 	 *
-	 * @since     1.0
+	 * @since 1.0
 	 */
 	 
 	public function get_version() {

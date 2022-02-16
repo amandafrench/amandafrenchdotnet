@@ -5,7 +5,6 @@ $id = isset( $_REQUEST['form'] ) ? absint($_REQUEST['form']) : '1';
 $attributes = get_option("sform_{$id}_attributes") != false ? get_option("sform_{$id}_attributes") : get_option("sform_attributes");
 $settings = get_option("sform_{$id}_settings") != false ? get_option("sform_{$id}_settings") : get_option("sform_settings");
 $admin_notices = ! empty( $settings['admin_notices'] ) ? esc_attr($settings['admin_notices']) : 'false';
-$widget_editor = ! empty( $settings['widget_editor'] ) ? esc_attr($settings['widget_editor']) : 'false';
 $color = ! empty( $settings['admin_color'] ) ? esc_attr($settings['admin_color']) : 'default';
 $notice = '';
 $extra_option = '';
@@ -19,8 +18,8 @@ $extra_option = '';
 <h1 class="title <?php echo $color ?>"><span class="dashicons dashicons-admin-settings responsive"></span><?php _e( 'Settings', 'simpleform' );
 global $wpdb; 
 $table_name = "{$wpdb->prefix}sform_shortcodes"; 
-$page_forms = $wpdb->get_results( "SELECT id, name FROM $table_name WHERE widget = '0' ORDER BY name ASC", 'ARRAY_A' );
-$widget_forms = $wpdb->get_results( "SELECT id, name FROM $table_name WHERE widget != '0' ORDER BY name ASC", 'ARRAY_A' );
+$page_forms = $wpdb->get_results( "SELECT id, name FROM $table_name WHERE widget = '0' AND status != 'trash' ORDER BY name ASC", 'ARRAY_A' );
+$widget_forms = $wpdb->get_results( "SELECT id, name FROM $table_name WHERE widget != '0' AND status != 'trash' ORDER BY name ASC", 'ARRAY_A' );
 $page_ids = array_column($page_forms, 'id');
 $widget_ids = array_column($widget_forms, 'id');
 $shortcode_ids = array_merge($page_ids, $widget_ids);
@@ -37,12 +36,7 @@ if ( isset( $_REQUEST['status'] ) && $_REQUEST['status'] == 'new' && $transient_
 $sidebars_widgets = get_option('sidebars_widgets');
 $simpleform_widgets = '';
 foreach ( $sidebars_widgets as $sidebar => $widgets ) { if ( is_array( $widgets ) ) { foreach ( $widgets as $key => $widget_id ) { if ( strpos($widget_id, 'sform_widget-' ) !== false ) { $simpleform_widgets .= '1'; }}}}
-
-// Detect use of WordPress 5.8 and the existence of simpleform widget
-if ( version_compare(get_bloginfo('version'),'5.8', '>=') && ! empty($simpleform_widgets) ) {
-if ( $widget_editor == 'false' ) { ?>
-<div class="notice notice-warning is-dismissible trwidget <?php if ( version_compare(get_bloginfo('version'),'5.8', '>=') && function_exists('wp_use_widgets_block_editor') && wp_use_widgets_block_editor() ) { echo 'unseen'; } ?>"><p><?php  _e( 'To maintain the best site editing experience for you, SimpleForm has disabled the widget screen introduced in WordPress 5.8.', 'simpleform' ) ?>&nbsp;<?php _e('To use the new widgets editor, you have to check the related option.', 'simpleform' ) ?>&nbsp;<?php _e('Below you will find the <b>"Widgets Block Editor"</b> option in the management preferences section within the general tab.', 'simpleform' ) ?>&nbsp;<?php _e('By checking this option, all SimpleForm widgets used previously will be deleted. You can continue using the contact form as a widget, but you’ll have to manually insert it in widget areas as a block. You will not be able to choose where to display it by using the "Show/Hide on" and the "Selected pages" options.', 'simpleform' ) ?></p></div>
-<?php } } ?>
+?>
 
 <div id="page-description"><p><?php _e( 'Customize messages and whatever settings you want to better match your needs:','simpleform') ?></p></div>
 
@@ -56,7 +50,6 @@ if ( $widget_editor == 'false' ) { ?>
 
 <?php
 $disabled_class = $id == '1' ? '' : 'class="disabled"';
-$admin_limits = ! empty( $settings['admin_limits'] ) ? esc_attr($settings['admin_limits']) : 'false';
 $html5_validation = ! empty( $settings['html5_validation'] ) ? esc_attr($settings['html5_validation']) : 'false';
 $out_error = ! empty( $settings['outside_error'] ) ? esc_attr($settings['outside_error']) : 'bottom';
 $focus = ! empty( $settings['focus'] ) ? esc_attr($settings['focus']) : 'field';
@@ -69,7 +62,6 @@ $style_notes = $form_template == 'customized' ? __('Create a directory inside yo
 $stylesheet = ! empty( $settings['stylesheet'] ) ? esc_attr($settings['stylesheet']) : 'false';
 $cssfile  = ! empty( $settings['stylesheet_file'] ) ? esc_attr($settings['stylesheet_file']) : 'false';
 $javascript = ! empty( $settings['javascript'] ) ? esc_attr($settings['javascript']) : 'false';
-$widget_options = ! empty( $settings['widget'] ) ? esc_attr($settings['widget']) : 'true';
 $css_notes_on = __('Create a directory inside your active theme\'s directory, name it "simpleform", add your CSS stylesheet file, and name it "custom-style.css"', 'simpleform' );
 $css_notes_off = __('Keep unchecked if you want to use your personal CSS code and include it somewhere in your theme\'s code without using an additional file', 'simpleform' );
 $css_notes = $cssfile == 'false' ? $css_notes_off : $css_notes_on;
@@ -78,6 +70,7 @@ $js_notes_off = __('Keep unchecked if you want to use your personal JavaScript c
 $js_notes = $javascript == 'false' ? $js_notes_off : $js_notes_on;
 $uninstall = ! empty( $settings['deletion_data'] ) ? esc_attr($settings['deletion_data']) : 'true';
 $disabled = 'disabled="disabled"';
+$frontend_notice = ! empty( $settings['frontend_notice'] ) ? esc_attr($settings['frontend_notice']) : 'true';
 ?>		
 	
 <h2 id="h2-admin" class="options-heading"><span class="heading" section="admin"><?php _e( 'Management Preferences', 'simpleform' ) ?><span class="toggle dashicons dashicons-arrow-up-alt2 admin"></span></span><?php if ( $id != '1' ) { ?><a href="<?php echo menu_page_url( 'sform-settings', false ); ?>"><span class="dashicons dashicons-edit icon-button admin <?php echo $color ?>"></span><span class="settings-page wp-core-ui button admin"><?php _e( 'Go to main settings for edit', 'simpleform' ) ?></span></a><?php } ?></h2>
@@ -86,15 +79,7 @@ $disabled = 'disabled="disabled"';
 
 <tr><th class="option"><span><?php _e('Admin Notices','simpleform') ?></span></th><td class="checkbox-switch notes"><div class="switch-box"><label class="switch-input"><input type="checkbox" name="admin-notices" id="admin-notices" class="sform-switch" value="false" <?php checked( $admin_notices, 'true'); if ( $id != '1' ) { echo $disabled; } ?>><span></span></label><label for="admin-notices" class="switch-label <?php if ( $id != '1' ) { echo 'disabled'; } ?>"><?php _e('Never display notices on the SimpleForm related admin pages','simpleform') ?></label></div><p class="description"><?php _e('Admin notices may include, but are not limited to, reminders, update notifications, calls to action, and links to documentation','simpleform') ?></p></td></tr>
 
-<tr><th class="option"><span><?php _e('Visibility Settings','simpleform') ?></span></th><td class="checkbox-switch"><div class="switch-box"><label class="switch-input"><input type="checkbox" name="admin-limits" id="admin-limits" class="sform-switch" value="false" <?php checked( $admin_limits, 'true'); if ( $id != '1' ) { echo $disabled; } ?>><span></span></label><label for="admin-limits" class="switch-label <?php if ( $id != '1' ) { echo 'disabled'; } ?>"><?php _e( 'Override the form visibility settings if user is the admin','simpleform') ?></label></div></td></tr>
-
-<?php if ( version_compare(get_bloginfo('version'),'5.8', '>=') && ! empty($simpleform_widgets) ) { ?>
-<tr><th class="option"><span><?php _e( 'Widgets Block Editor', 'simpleform' ) ?></span></th><td class="checkbox-switch notes"><div class="switch-box"><label class="switch-input"><input type="checkbox" id="widget-editor" name="widget-editor" class="sform-switch" value="true" <?php checked( $widget_editor, 'true'); if ( $id != '1' ) { echo $disabled; } ?>><span></span></label><label for="widget-editor" class="switch-label <?php if ( $id != '1' ) { echo 'disabled'; } ?>"><?php _e( 'Use the widgets editor introduced in WordPress 5.8', 'simpleform' ); ?></label></div><p class="description"><?php _e('Keep unchecked if you want to continue using the classic widgets editor', 'simpleform' ); ?></p></td></tr>
-<?php } ?>
-	
-<?php if ( version_compare(get_bloginfo('version'),'5.8', '<') || ( version_compare(get_bloginfo('version'),'5.8', '>=') && ! empty($simpleform_widgets) ) ) { ?>
-<tr class="trwidget <?php if ( version_compare(get_bloginfo('version'),'5.8', '>=') && function_exists('wp_use_widgets_block_editor') && wp_use_widgets_block_editor() ) { echo 'unseen'; } ?>"><th class="option"><span><?php _e( 'Widget\'s Options', 'simpleform' ) ?></span></th><td class="checkbox-switch notes"><div class="switch-box"><label class="switch-input"><input type="checkbox" id="widget-options" name="widget-options" class="sform-switch" value="true" <?php checked( $widget_options, 'true'); if ( $id != '1' ) { echo $disabled; } ?>><span></span></label><label for="widget-options" class="switch-label <?php if ( $id != '1' ) { echo 'disabled'; } ?>"><?php _e( 'Use the default options for choosing where to display the SimpleForm widget', 'simpleform' ); ?></label></div><p class="description"><?php _e('Keep unchecked if you want to use a customized code or a third-party plugin to define where you want the widget to appear', 'simpleform' ); ?></p></td></tr>
-<?php } ?>
+<tr><th class="option"><span><?php _e('Front-end Admin Notice','simpleform') ?></span></th><td class="checkbox-switch notes"><div class="switch-box"><label class="switch-input"><input type="checkbox" name="frontend-notice" id="frontend-notice" class="sform-switch" value="true" <?php checked( $frontend_notice, 'true'); if ( $id != '1' ) { echo $disabled; } ?>><span></span></label><label for="frontend-notice" class="switch-label <?php if ( $id != '1' ) { echo 'disabled'; } ?>"><?php _e('Display an admin notice when the form cannot be seen by the admin when visiting the website\'s front end','simpleform') ?></label></div></td></tr>
 
 <tr><th class="option"><span><?php _e( 'Admin Color Scheme', 'simpleform' ) ?></span></th><td class="last select"><select name="admin-color" id="admin-color" class="sform" <?php if ( $id != '1' ) { echo $disabled; } ?>><option value="default" <?php selected( $color, 'default'); ?>><?php _e('Default','simpleform') ?></option><option value="light" <?php selected( $color, 'light'); ?>><?php _e('Light','simpleform') ?></option><option value="modern" <?php selected( $color, 'modern'); ?>><?php _e('Modern','simpleform') ?></option><option value="blue" <?php selected( $color, 'blue'); ?>><?php _e('Blue','simpleform') ?></option><option value="coffee" <?php selected( $color, 'coffee'); ?>><?php _e('Coffee','simpleform') ?></option><option value="ectoplasm" <?php selected( $color, 'ectoplasm'); ?>><?php _e('Ectoplasm','simpleform') ?></option><option value="midnight" <?php selected( $color, 'midnight'); ?>><?php _e('Midnight','simpleform') ?></option><option value="ocean" <?php selected( $color, 'ocean'); ?>><?php _e('Ocean','simpleform') ?></option><option value="sunrise" <?php selected( $color, 'sunrise'); ?>><?php _e('Sunrise','simpleform') ?></option><option value="foggy" <?php selected( $color, 'foggy'); ?>><?php _e('Foggy','simpleform') ?></option><option value="polar" <?php selected( $color, 'polar'); ?>><?php _e('Polar','simpleform') ?></option></select></td></tr>
 

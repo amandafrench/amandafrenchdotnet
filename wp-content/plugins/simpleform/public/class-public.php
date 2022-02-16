@@ -89,25 +89,35 @@ class SimpleForm_Public {
              $attributes = get_option('sform_attributes');
  	         $settings = get_option('sform_settings');
  	  } else { 
-	 	     $option = 'sform_'.$atts_array['id'].'_attributes';
-             $attributes_option = get_option($option);
-             $attributes = $attributes_option != false ? $attributes_option : get_option('sform_attributes');
-             $settings_option = get_option('sform_'.$atts_array['id'].'_settings');
-             $settings = $settings_option != false ? $settings_option : get_option('sform_settings');
+	 	     //$option = 'sform_'.$atts_array['id'].'_attributes';
+             // $attributes_option = get_option($option);
+             $attributes = ! empty($atts_array['id']) && get_option('sform_'.$atts_array['id'].'_attributes') != false ? get_option('sform_'.$atts_array['id'].'_attributes') : get_option('sform_attributes');
+             // $settings_option = get_option('sform_'.$atts_array['id'].'_settings');
+             $settings = ! empty($atts_array['id']) && get_option('sform_'.$atts_array['id'].'_settings') != false ? get_option('sform_'.$atts_array['id'].'_settings') : get_option('sform_settings');
  	  }
 
       $show_for = ! empty( $attributes['show_for'] ) ? esc_attr($attributes['show_for']) : 'all';
       $user_role = ! empty( $attributes['user_role'] ) ? esc_attr($attributes['user_role']) : 'any';  
-      $admin_limits = ! empty( $settings['admin_limits'] ) ? esc_attr($settings['admin_limits']) : 'false';
       $custom_css = ! empty( $attributes['additional_css'] ) ? esc_attr($attributes['additional_css']) : ''; 	    
-      
-      if ( ( current_user_can('manage_options') && $admin_limits != 'true' && $show_for == 'out' && is_user_logged_in() ) || ( !current_user_can('manage_options') && $show_for == 'out' && is_user_logged_in() ) || ( $show_for == 'in' && ! is_user_logged_in() ) )
-      return;
-        
       $current_user = wp_get_current_user();
-      if ( ( current_user_can('manage_options') && $admin_limits != 'true' || !current_user_can('manage_options') ) && $show_for != 'all' && $user_role != 'any' && ! in_array( $user_role, (array) $current_user->roles ) )
-      return;
-	        
+      $frontend_notice = ! empty( $settings['frontend_notice'] ) ? esc_attr($settings['frontend_notice']) : 'true';
+      
+      if ( $show_for == 'out' ) { $form_user = '<b>' . __( 'logged-out users','simpleform') . '</b>'; $for_role = ''; }
+      elseif ( $show_for == 'in' ) { $form_user = '<b>' . __( 'logged-in users','simpleform') . '</b>'; $for_role = $user_role; }
+      else { $form_user = __( 'everyone','simpleform'); $for_role = ''; }
+      
+      $form_user_role = !empty($for_role) ? ' ' . __( 'with the role of','simpleform') . ' <b>' . translate_user_role(ucfirst($user_role)) . '</b>' : '' ; 
+      $admin_message = '';
+
+      if ( ( $show_for == 'out' && is_user_logged_in() ) || ( $show_for == 'in' && ! is_user_logged_in() ) || ( $show_for == 'in' && is_user_logged_in() && $user_role != 'any' && ! in_array( $user_role, (array) $current_user->roles ) ) )
+        if ( current_user_can('manage_options') )  { 
+          $admin_message = '<div id="sform-admin-message" style="font-size: 0.8em; border: 1px solid; margin-top: 20px; padding: 20px 15px; height: -webkit-fit-content; height: -moz-fit-content; height: fit-content;"><p class="heading" style="font-weight: 600; margin-bottom: 10px;">'. __('SimpleForm Admin Notice', 'simpleform') . '</p>'. __('The form is visible only for ', 'simpleform') . $form_user . $form_user_role . '. ' . __( 'Your role does not allow you to see it!','simpleform') .'</div>';
+        // return;
+        }
+        else  { 
+        return;
+        }
+      
       include 'partials/form-variables.php'; 
 	  
       $template = ! empty( $settings['form_template'] ) ? esc_attr($settings['form_template']) : 'default'; 
@@ -187,10 +197,18 @@ class SimpleForm_Public {
 
       $above_form = isset( $_GET['sending'] ) && $_GET['sending'] == 'success' && isset( $_GET['form'] ) && $_GET['form'] == $atts_array['id'] ? '' : '<div id="sform-introduction-'.$atts_array['id'].'" class="sform-introduction '.$class_direction.'">'.$introduction_text.'</div>';
       $below_form = isset( $_GET['sending'] ) && $_GET['sending'] == 'success' && isset( $_GET['form'] ) && $_GET['form'] == $atts_array['id'] ? '' : '<div id="sform-bottom-'.$atts_array['id'].'" class="sform-bottom '.$class_direction.'">'.$bottom_text.'</div>';
+      $is_gb_editor = defined( 'REST_REQUEST' ) && REST_REQUEST;
 
+     // Show an admin notice when the form settings do not allow the administrator to see it when visiting the website's front end
+  	 if ( ! empty($admin_message) && ! is_admin() && ! $is_gb_editor && ! is_customize_preview() ) { 
+  	    if ( $frontend_notice == 'true' ) { return $admin_message; } 
+  	    else { return ''; }
+	 }
+  	 else {
   	  if ( $atts_array['type'] != '' ) { return $contact_form; } 
   	  else { return $above_form . $contact_form . $below_form; }
-
+     }
+     
     } 
 
 	/**
@@ -656,7 +674,6 @@ class SimpleForm_Public {
          $flagged = apply_filters('akismet_action', $formdata['name'], $formdata['email'], $formdata['message'], $flagged );
      }
      
-     
     $mailing = 'false';
     $submission_timestamp = time();
     $submission_date = date('Y-m-d H:i:s');
@@ -666,16 +683,35 @@ class SimpleForm_Public {
     $requester_type  = is_user_logged_in() ? 'registered' : 'anonymous';
     $user_ID = is_user_logged_in() ? get_current_user_id() : '0';
    
-    $sform_default_values = array( "form" => $form_id, "date" => $submission_date, "requester_type" => $requester_type, "requester_id" => $user_ID );
+    $form_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}sform_shortcodes WHERE id = %d", $form_id) );
+    $relocation = esc_attr($form_data->relocation) ? 'true' : 'false';
+    $moveto = esc_attr($form_data->moveto) != '0' ? esc_attr($form_data->moveto) : '';
+    $to_be_moved = esc_attr($form_data->to_be_moved) ? esc_attr($form_data->to_be_moved) : '';
+    $onetime_moving = esc_attr($form_data->onetime_moving) ? 'true' : 'false';
+    $moving = $relocation == 'true' && $moveto != '' && $to_be_moved == 'next' && $onetime_moving == 'false' ? true : false;
+    $save_as = $moving == true ? $moveto : $form_id;
+    $moved_from = $moving == true ? $form_id : '0';
+    $sform_default_values = array( "form" => $save_as, "moved_from" => $moved_from, "date" => $submission_date, "requester_type" => $requester_type, "requester_id" => $user_ID );        
     $extra_fields = array('notes' => '');
-  
     $submitter = $requester_name != '' ? $requester_name : __( 'Anonymous', 'simpleform' );
   
     $sform_extra_values = array_merge($sform_default_values, apply_filters( 'sform_storing_values', $extra_fields, $form_id, $formdata['name'], $requester_lastname, $formdata['email'], $phone_value, $subject_value, $formdata['message'], $flagged ));
     
     $success = $wpdb->insert($table_name, $sform_extra_values);
 
-    if ($success)  {
+    if ( $success ) {
+	    
+	  if ( $moving == true ) { 	  
+	     $count_entries = $wpdb->get_var("SELECT entries FROM {$wpdb->prefix}sform_shortcodes WHERE id = '$moveto'");
+  	     $update_entries = $count_entries + 1;
+  	     $wpdb->update($wpdb->prefix . 'sform_shortcodes', array('entries' => $update_entries), array('id' => $moveto ) ); 
+  	     $update_moved = esc_attr($form_data->moved_entries) + 1;
+  	     $wpdb->update($wpdb->prefix . 'sform_shortcodes', array('moved_entries' => $update_moved), array('id' => $form_id ) ); 
+	  }
+      else { 
+  	     $update_entries = esc_attr($form_data->entries) + 1;
+  	     $wpdb->update($wpdb->prefix . 'sform_shortcodes', array('entries' => $update_entries), array('id' => $form_id ) ); 
+      }
 
     $from_data = '<b>'. __('From', 'simpleform') .':</b>&nbsp;&nbsp;';
     $from_data .= $requester;
@@ -712,8 +748,10 @@ class SimpleForm_Public {
 	
 	$last_message = '<div style="line-height:18px;">' . $from_data . '<b>'. __('Date', 'simpleform') .':</b>&nbsp;&nbsp;' . $website_date . $subject_data . '<b>'. __('Message', 'simpleform') .':</b>&nbsp;&nbsp;' .  $formdata['message'] . '</div>';
 
-       set_transient('sform_last_'.$form_id.'_message', $last_message, 0 );
-       set_transient( 'sform_last_message', $last_message, 0 );
+    update_option( 'sform_last_message', $last_message );
+    $timestamp = strtotime($submission_date);
+    $message_data = $timestamp . '#' . $last_message;
+    update_option('sform_last_'.$save_as.'_message', $message_data);
 
     $notification = ! empty( $settings['notification'] ) ? esc_attr($settings['notification']) : 'true';
 
@@ -1218,15 +1256,40 @@ $error_message_label = $characters_length == 'true' ? $message_numeric_error : $
       $requester_type  = is_user_logged_in() ? 'registered' : 'anonymous';
       $user_ID = is_user_logged_in() ? get_current_user_id() : '0';
       
-      $sform_default_values = array( "form" => $form_id, "date" => $submission_date, "requester_type" => $requester_type, "requester_id" => $user_ID );  
+      $form_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}sform_shortcodes WHERE id = %d", $form_id) );
+      $relocation = esc_attr($form_data->relocation);
+      $moveto = esc_attr($form_data->moveto);
+      $to_be_moved = esc_attr($form_data->to_be_moved);
+      $onetime_moving = esc_attr($form_data->onetime_moving);
+      $moving = $relocation == '1' && $moveto != '0' && $to_be_moved == 'next' && $onetime_moving == '0' ? true : false;
+      $save_as = $moving == true ? $moveto : $form_id;
+      $moved_from = $moving == true ? $form_id : '0';
+
+      $sform_default_values = array( "form" => $save_as, "moved_from" => $moved_from, "requester_type" => $requester_type, "requester_id" => $user_ID, "date" => $submission_date );    
+      
       $extra_fields = array('notes' => '');
       $submitter = $requester_name != ''  ? $requester_name : __( 'Anonymous', 'simpleform' );      
       $sform_extra_values = array_merge($sform_default_values, apply_filters( 'sform_storing_values', $extra_fields, $form_id, $name, $requester_lastname, $email, $phone, $subject_value, $request, $flagged )); 
       $sform_additional_values = array_merge($sform_extra_values, apply_filters( 'sform_testing', $extra_fields ));
+      
       $success = $wpdb->insert($table_name, $sform_additional_values);
       $server_error = ! empty( $settings['server_error'] ) ? stripslashes(esc_attr($settings['server_error'])) : __( 'Error occurred during processing data. Please try again!', 'simpleform' );
       
-      if ( $success )  {		   
+      if ( $success )  { 	      
+	     	     
+	    if ( $moving == true ) { 	      
+		    $count_entries = $wpdb->get_var("SELECT entries FROM {$wpdb->prefix}sform_shortcodes WHERE id = '$moveto'");
+  	        $update_entries = $count_entries + 1;
+  	        $wpdb->update($wpdb->prefix . 'sform_shortcodes', array('entries' => $update_entries), array('id' => $moveto ) ); 
+  	        $update_moved = esc_attr($form_data->moved_entries) + 1;
+  	        $wpdb->update($wpdb->prefix . 'sform_shortcodes', array('moved_entries' => $update_moved), array('id' => $form_id ) ); 		    
+	    }
+	    else { 
+		    // $wpdb->query( $wpdb->prepare("UPDATE $wpdb->prefix}sform_shortcodes SET status = 'used', entries = entries + 1 WHERE id = '%d'", $form_id) ); 
+  	        $update_entries = esc_attr($form_data->entries) + 1;
+  	        $wpdb->update($wpdb->prefix . 'sform_shortcodes', array('entries' => $update_entries), array('id' => $form_id ) ); 
+	    }
+	      		   
        if (has_action('spam_check_activation')):
           do_action( 'spam_check_activation' );
        endif;	      
@@ -1289,11 +1352,15 @@ $error_message_label = $characters_length == 'true' ? $message_numeric_error : $
        remove_filter( 'wp_mail_from_name', array ( $this, 'alert_sender_name' ) );
        remove_filter( 'wp_mail_from', array ( $this, 'alert_sender_email' ) );
 	   $last_message = '<div style="line-height:18px;">' . $from_data . '<b>'. __('Date', 'simpleform') .':</b>&nbsp;&nbsp;' . $website_date . $subject_data . '<b>'. __('Message', 'simpleform') .':</b>&nbsp;&nbsp;' .  $request . '</div>';
-       set_transient('sform_last_'.$form_id.'_message', $last_message, 0 );
-       set_transient( 'sform_last_message', $last_message, 0 ); 
-        if ($sent):
+	   
+       update_option( 'sform_last_message', $last_message );
+       $timestamp = strtotime($submission_date);
+       $message_data = $timestamp . '#' . $last_message;
+       update_option('sform_last_'.$save_as.'_message', $message_data);
+       
+       if ($sent):
          $mailing = 'true';
-        endif;
+       endif;
 	  } 
 
       $confirmation = ! empty( $settings['autoresponder'] ) ? esc_attr($settings['autoresponder']) : 'false';

@@ -53,48 +53,65 @@ class SimpleForm_Activator {
     public static function create_db() {
 
         $current_db_version = SIMPLEFORM_DB_VERSION; 
-
-        global $wpdb;
-        $charset_collate = $wpdb->get_charset_collate();
         $installed_version = get_option('sform_db_version');
-        $prefix = $wpdb->prefix;
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
         if ( $installed_version != $current_db_version ) {
+	        
+          global $wpdb;
+          $shortcodes_table = $wpdb->prefix . 'sform_shortcodes';
+          $submissions_table = $wpdb->prefix . 'sform_submissions';
+          $charset_collate = $wpdb->get_charset_collate();
         
-          $shortcodes_table = $prefix . 'sform_shortcodes';
-          $sql = "CREATE TABLE " . $shortcodes_table . " (
+          $sql_shortcodes = "CREATE TABLE {$shortcodes_table} (
             id int(11) NOT NULL AUTO_INCREMENT,
             shortcode tinytext NOT NULL,
             area varchar(250) NOT NULL DEFAULT 'page',
             name tinytext NOT NULL,
             shortcode_pages text NOT NULL,
             block_pages text NOT NULL,
-            widget_id text NOT NULL,
-            widget smallint(5) UNSIGNED NOT NULL DEFAULT 0,
+            widget_id varchar(128) NOT NULL default '',
             target tinytext NOT NULL,
             creation datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            widget smallint(5) UNSIGNED NOT NULL DEFAULT '0',
+            entries mediumint(9) NOT NULL DEFAULT '0',
+            relocation tinyint(1) NOT NULL DEFAULT '0',
+            moveto smallint(6) NOT NULL DEFAULT '0',
+            to_be_moved varchar(32) NOT NULL default '',
+            onetime_moving tinyint(1) NOT NULL DEFAULT '1',
+            moved_entries mediumint(9) NOT NULL DEFAULT '0',
+            deletion tinyint(1) NOT NULL DEFAULT '0',
+            status tinytext NOT NULL,
+            previous_status varchar(32) NOT NULL default '',
+            storing tinyint(1) NOT NULL DEFAULT '1',
             PRIMARY KEY  (id) 
-          ) ". $charset_collate .";";
-          dbDelta($sql);
+          ) {$charset_collate};";
 
-          $submissions_table = $prefix . 'sform_submissions';
-          $sql = "CREATE TABLE " . $submissions_table . " (
+          $sql_submissions = "CREATE TABLE {$submissions_table} (
             id int(11) NOT NULL AUTO_INCREMENT,
-            form int(7) NOT NULL DEFAULT 1,
+            form int(7) NOT NULL DEFAULT '1',
+            moved_from int(7) NOT NULL DEFAULT '0',
             requester_type tinytext NOT NULL,
-            requester_id int(15) NOT NULL,
+            requester_id int(15) NOT NULL DEFAULT '0',
             date datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            notes text NOT NULL,
+            status tinytext NOT NULL,
+            previous_status varchar(32) NOT NULL default '',
+            trash_date datetime NULL,
+            hidden tinyint(1) NOT NULL DEFAULT '0',
+            notes text NULL,
             PRIMARY KEY  (id)
-          ) ". $charset_collate .";";
-          dbDelta($sql);
+          ) {$charset_collate};";
+          
+          require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+
+          dbDelta($sql_shortcodes);
+          dbDelta($sql_submissions);
           
           update_option('sform_db_version', $current_db_version);
           
         }
    
     }
+    
     /**
      * Save default properties.
      *
@@ -104,13 +121,27 @@ class SimpleForm_Activator {
     public static function default_data_entry() {
 	  
         global $wpdb;
-        $prefix = $wpdb->prefix;
-        $shortcodes_table = $prefix . 'sform_shortcodes';
+        $shortcodes_table = $wpdb->prefix . 'sform_shortcodes';
         $shortcode = 'simpleform';
         $name = __( 'Contact Us Page','simpleform');
         $shortcode_data = $wpdb->get_results("SELECT * FROM {$shortcodes_table}");
-        if(count($shortcode_data) == 0) { $wpdb->insert( $shortcodes_table, array( 'shortcode' => $shortcode, 'name' => $name ) ); }
-	    	    
+        if(count($shortcode_data) == 0) { $wpdb->insert( $shortcodes_table, array( 'shortcode' => $shortcode, 'name' => $name, 'status' => 'draft' ) ); }
+        else {
+          $where_submissions = defined('SIMPLEFORM_SUBMISSIONS_NAME') ? "WHERE object != '' AND object != 'not stored'" : '';
+          $msg = $wpdb->get_var("SELECT COUNT(id) FROM {$wpdb->prefix}sform_submissions $where_submissions");
+          $entries = $wpdb->get_var("SELECT SUM(entries) as total_entries FROM {$wpdb->prefix}sform_shortcodes");
+          if ( $msg > 0 && $entries == 0 ) {
+            $forms = $wpdb->get_col( "SELECT id FROM {$wpdb->prefix}sform_shortcodes" );
+            foreach ($forms as $form) { 
+              $form_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}sform_shortcodes WHERE id = %d", $form) );
+	          $status = esc_attr($form_data->shortcode_pages) != '' || esc_attr($form_data->block_pages) != '' || esc_attr($form_data->widget_id) != '' ? 'published' : 'draft'; 
+	          $where = defined('SIMPLEFORM_SUBMISSIONS_NAME') ? "AND object != '' AND object != 'not stored'" : '';
+	          $form_msg = $wpdb->get_var("SELECT COUNT(id) FROM {$wpdb->prefix}sform_submissions WHERE form = {$form} $where");
+	          $wpdb->update( $shortcodes_table, array( 'entries' => $form_msg, 'status' => $status ), array('id' => $form ) );
+            }
+          }
+        }
+
     }
     
     /**
@@ -142,7 +173,8 @@ class SimpleForm_Activator {
        
        if ( !$settings ) {
 	       
-       $form_page = array( 'post_type' => 'page', 'post_content' => '[simpleform]', 'post_title' => __( 'Contact Us', 'simpleform' ), 'post_status' => 'draft' );
+	   $form_page_content = '<!-- wp:simpleform/form-selector {"formId":"1","optionNew":"d-none","formOptions":"visible"} /-->';    
+       $form_page = array( 'post_type' => 'page', 'post_content' => $form_page_content, 'post_title' => __( 'Contact Us', 'simpleform' ), 'post_status' => 'draft' );
        $thank_string1 = __( 'Thank you for contacting us.', 'simpleform' );
        $thank_string2 = __( 'Your message will be reviewed soon, and we\'ll get back to you as quickly as possible.', 'simpleform' );
        $confirmation_img = SIMPLEFORM_URL . 'public/img/confirmation.png';
@@ -157,8 +189,6 @@ class SimpleForm_Activator {
 
        $settings = array(
 	             'admin_notices' => 'false',
-                 'admin_limits' => 'false',
-                 'widget' => 'true',
                  'admin_color' => 'default',
                  'ajax_submission' => 'false',
                  'spinner' => 'false',
@@ -258,7 +288,7 @@ class SimpleForm_Activator {
     }
 
     /**
-     *  Specify the initial form fields.
+     *  Specify the initial attributes.
      *
      * @since    1.8.4
      */

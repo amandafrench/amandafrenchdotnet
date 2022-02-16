@@ -6,13 +6,13 @@
 .align-left { text-align: left; }
 .align-center { text-align: center; }
 .align-right { text-align: right; }
-h1.sform,h2.sform,h3.sform,h4.sform,h5.sform,h6.sform { color: inherit; }
+h1.sform,h2.sform,h3.sform,h4.sform,h5.sform,h6.sform { color: inherit; font-size: inherit; }
 
 /* Text above form */
-.sform-introduction { padding-bottom: 15px; clear: both; }
+.sform-introduction { padding: 20px 0 30px 0; clear: both; }
 
 /* Text below form */
-.sform-bottom { margin: 0 auto; clear: both; }
+.sform-bottom { margin: 0 auto; padding:20px 0 30px 0; clear: both; }
 
 /* Form field group */
 .sform-field-group { line-height: 1; padding-bottom: 3px; clear: both; }
@@ -28,8 +28,8 @@ label.sform.larger { font-size: 1.1em; }
 .required-symbol.word { color: inherit; padding-left: 3px; font-weight: 300; font-size: 0.8em; font-style: italic; }
 
 /* General form fields */
-input.sform-field { width: 100%; margin-bottom: 0; outline: none; font-size: inherit; color: inherit; font-weight: 400; line-height: normal; }
-textarea.sform-field { width: 100%; height: auto; outline: none; line-height: 1.5; font-size: inherit; color: inherit; font-weight: 400; }
+input.sform-field { width: 100%; margin-bottom: 0; outline: none; font-size: inherit; color: inherit; font-weight: 400; line-height: normal; box-sizing: border-box; -webkit-box-sizing:border-box; -moz-box-sizing: border-box; }
+textarea.sform-field { width: 100%; height: auto; outline: none; line-height: 1.5; font-size: inherit; color: inherit; font-weight: 400; box-sizing: border-box; -webkit-box-sizing:border-box; -moz-box-sizing: border-box; }
 .half { clear: none; }
 .name.half, .email.half { width: 47.5%; float: left; }
 .lastname.half, .phone.half { width: 47.5%; float: right; }
@@ -52,7 +52,7 @@ textarea.sform-field { width: 100%; height: auto; outline: none; line-height: 1.
 /* Consent field */
 .sform-field-group.checkbox { margin-top: 20px; }
 input.checkbox { position: absolute; opacity: 0; height: 1px; width: 1px; appearance: none; -webkit-appearance: none; -moz-appearance: none; }
-input.checkbox + label { position: relative; cursor: default; display: inline-block; margin-left: 0; width: 100%; font-size: inherit; }
+input.checkbox + label { position: relative; cursor: default; display: inline-block; margin-left: 0; width: 100%; font-size: inherit; box-sizing: border-box; }
 input.checkbox + label a { color: inherit; text-decoration: underline; text-decoration-style: dotted; }
 .checkmark { position: absolute; cursor: pointer; top: 0; left: 0; height: 34px; width: 34px; }
 input.checkbox:checked + label .checkmark:after { display: block; }
@@ -102,14 +102,14 @@ input[type=number] { appearance: textfield; -moz-appearance: textfield; -webkit-
 .submit-wrap { margin: 22px 0; }
 .submit-wrap button.sform { outline: none; font-size: inherit; text-transform: uppercase; font-weight: 600; line-height: 1.25; text-decoration: none; box-shadow: none; padding: 10px 16px; }
 .submit-wrap button.sform:hover { box-shadow: none; }
-.default .submit-wrap button.sform { border-width: 1px; border-color: #0090D5; border-style: solid; border-radius: 25px; background-color: #0090D5; color: #FFF; }
-.default .submit-wrap button.sform:hover { color: #0090D5; background-color: #FFF; }
+.default .submit-wrap button.sform { border-width: 1px; border-color: #007BFF; border-style: solid; border-radius: 25px; background-color: #007BFF; color: #FFF; cursor: pointer; }
+.default .submit-wrap button.sform:hover { color: #007BFF; background-color: #FFF; }
 .basic .submit-wrap button.sform { border-width: 1px; border-color: #007bff; border-style: solid; border-radius: 0; background-color: #007bff; color: #FFF; }
 .basic .submit-wrap button.sform:hover { border-color: #0062cc; background-color: #0069d9; }
 .rounded .submit-wrap button.sform { border-width: 1px; border-color: #6c757d; border-style: solid; border-radius: 50px; background-color: transparent; color: inherit; }
 .rounded .submit-wrap button.sform:hover { border-color: #6c757d; color: #FFF; background-color: #6c757d; }
-.minimal .submit-wrap button.sform { border-width: 2px; border-color: #0090D5; border-style: solid; border-radius: 5px; background-color: #0090D5; color: #FFF; }
-.minimal .submit-wrap button.sform:hover { border-color: #0090D5; color: #0090D5; background-color: #FFF; }
+.minimal .submit-wrap button.sform { border-width: 2px; border-color: #007BFF; border-style: solid; border-radius: 5px; background-color: #007BFF; color: #FFF; }
+.minimal .submit-wrap button.sform:hover { border-color: #007BFF; color: #007BFF; background-color: #FFF; }
 .transparent .submit-wrap button.sform { border-width: 2px; border-color: #333; border-style: solid; border-radius: 0; background-color: #333; color: #FFF; }
 .transparent .submit-wrap button.sform:hover { border-color: #0d6efd; color: #FFF; background-color: #0d6efd; }
 .highlighted .submit-wrap button.sform { border-width: 1px; border-color: #333; border-style: solid; border-radius: 5px; background-color: #333; color: #FFF; }
@@ -141,14 +141,14 @@ label.checkbox.is-invalid { color: #dc3545; }
 /* Fields when focusing */
 input:focus, textarea:focus { -webkit-transition: none; -moz-transition: none; -ms-transition: none; -o-transition: none; transition: none; }
 .sform-field.captcha:focus { background-color: transparent; box-shadow: none; }
-.default input.sform-field:focus, .default textarea.sform-field:focus, .default div.captcha.focus { border-color: #0090D5; background-color: #fafafa; outline: none; }
+.default input.sform-field:focus, .default textarea.sform-field:focus, .default div.captcha.focus { border-color: #007BFF; background-color: #fafafa; outline: none; }
 .default input.sform-field.is-invalid:focus, .default textarea.sform-field.is-invalid:focus, .default div.captcha.is-invalid.focus, .minimal input.sform-field.is-invalid:focus, .minimal textarea.sform-field.is-invalid:focus, .minimal div.captcha.is-invalid.focus { border-color: #dc3545; }
 .default input.sform-field.question:focus, .default input.sform-field.captcha:focus, .basic input.sform-field.question:focus, .basic input.sform-field.captcha:focus, .highlighted input.sform-field.question:focus, .highlighted input.sform-field.captcha:focus { background-color: transparent; }
 .basic input.sform-field:focus, .rounded input.sform-field:focus, .basic textarea.sform-field:focus, .rounded textarea.sform-field:focus, .basic div.captcha.focus, .rounded div.captcha.focus { border-color: #007bff; box-shadow: 0 0 0 2px rgba(0,123,255,.25); outline: none; }
 .basic .sform-field.question:focus, .basic .sform-field.captcha:focus, .basic .sform-field.is-invalid.question:focus, .basic .sform-field.is-invalid.captcha:focus { box-shadow: none; }
 .basic input.sform-field.is-invalid:focus, .rounded input.sform-field.is-invalid:focus, .basic textarea.sform-field.is-invalid:focus, .rounded textarea.sform-field.is-invalid:focus, .basic div.captcha.is-invalid.focus, .rounded div.captcha.is-invalid.focus { border-color: #dc3545; box-shadow: 0 0 0 2px rgba(220,53,69,.25); }
 .rounded .sform-field.question:focus, .rounded .sform-field.captcha:focus, .rounded .sform-field.is-invalid.question:focus, .rounded .sform-field.is-invalid.captcha:focus { box-shadow: none; }
-.minimal input.sform-field:focus, .minimal textarea.sform-field:focus, .minimal div.captcha.focus { border-color: #0090D5; outline: none; box-shadow: none; }
+.minimal input.sform-field:focus, .minimal textarea.sform-field:focus, .minimal div.captcha.focus { border-color: #007BFF; outline: none; box-shadow: none; }
 .transparent input.sform-field:focus, .transparent textarea.sform-field:focus, .transparent div.captcha.focus { border-color: #0d6efd; background-color: #E8F0FE; outline: none; box-shadow: none; }
 .transparent .sform-field.question:focus, .transparent .sform-field.captcha:focus, .transparent .sform-field.is-invalid.question:focus, .transparent .sform-field.is-invalid.captcha:focus { background-color: transparent; box-shadow: none; }
 .transparent input.sform-field.is-invalid:focus, .transparent textarea.sform-field.is-invalid:focus, .transparent div.captcha.is-invalid.focus { border-color: #dc3545; background-color: #f1b1b7; }
@@ -180,7 +180,7 @@ input:focus, textarea:focus { -webkit-transition: none; -moz-transition: none; -
 .sform.spinner.right { margin: 0 0 0 auto; }
 .sform.spinner.center { margin: 0 auto; }
 .sform.spinner > div { width: 18px; height: 18px; border-radius: 100%; display: inline-block; -webkit-animation: sk-bouncedelay 1.2s infinite ease-in-out both; animation: sk-bouncedelay 1.2s infinite ease-in-out both; margin: 0 3px; }
-.default .sform.spinner > div, .minimal .sform.spinner > div, .highlighted .sform.spinner > div { background-color: #0090D5; }
+.default .sform.spinner > div, .minimal .sform.spinner > div, .highlighted .sform.spinner > div { background-color: #007BFF; }
 .basic .sform.spinner > div { background-color: #0069d9; }
 .rounded .sform.spinner > div { background-color: #6c757d; }
 .transparent .sform.spinner > div { background-color: #0d6efd; }
@@ -241,3 +241,6 @@ label.sform.col-sm-2 { letter-spacing: -0.05em; }
 .rtl .row.checkbox { float: left; }
 
 .form-wrap.success { background-color: inherit !important; }
+
+#sform-admin-message { font-size: 0.8em; border: 1px solid; margin-top: 20px; padding: 20px 15px; height: -webkit-fit-content; height: -moz-fit-content; height: fit-content; }
+#sform-admin-message p.heading { font-weight: 600; margin-bottom: 10px; }

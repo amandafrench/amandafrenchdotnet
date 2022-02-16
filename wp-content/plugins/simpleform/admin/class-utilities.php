@@ -39,9 +39,9 @@ class SimpleForm_Util {
 	
 	   $used_forms = array();
 	   
+	   // Search for any use of SimpleForm as shortcode
 	   if ($type == 'shortcode') {
 	     
-	     // Search for any type of simpleform shortcode
          $lastPos = 0;
          $positions = array();
          while ( ( $lastPos = strpos($content, '[simpleform', $lastPos)) !== false ) {
@@ -62,9 +62,10 @@ class SimpleForm_Util {
          
        }
 
+	   // Search for any use of SimpleForm
 	   if ($type == 'all') {
 		   	   
-	     // Search for any type of simpleform shortcode
+	     // Search for shortcodes
          $lastPos = 0;
          $positions = array();
          while ( ( $lastPos = strpos($content, '[simpleform', $lastPos)) !== false ) {
@@ -83,7 +84,7 @@ class SimpleForm_Util {
            $used_forms[] = $form_id;
          }
        
-	     // Search for the simpleform blocks
+	     // Search for blocks
          if ( class_exists('SimpleForm_Block') ) {
          if ( has_blocks( $content ) ) {
 	       $block_class = new SimpleForm_Block(SIMPLEFORM_NAME,SIMPLEFORM_VERSION);
@@ -168,6 +169,26 @@ class SimpleForm_Util {
   
 	}
 	
+	/**
+	 * Update forms status
+     *
+	 * @since    2.1
+	 */
+
+	public static function form_status() {
+
+       global $wpdb;
+       $form_ids = $wpdb->get_col( "SELECT id FROM {$wpdb->prefix}sform_shortcodes" );
+	   foreach ($form_ids as $form_id) {	       
+         $shortcode_pages = $wpdb->get_var( "SELECT shortcode_pages FROM {$wpdb->prefix}sform_shortcodes WHERE id = {$form_id}" );
+         $block_pages = $wpdb->get_var( "SELECT block_pages FROM {$wpdb->prefix}sform_shortcodes WHERE id = {$form_id}" );
+         $widget_id = $wpdb->get_var( "SELECT widget_id FROM {$wpdb->prefix}sform_shortcodes WHERE id = {$form_id}" );
+         $form_status = empty($shortcode_pages) && empty($block_pages) && empty($widget_id)? 'draft' : 'published';
+         $wpdb->query( $wpdb->prepare("UPDATE {$wpdb->prefix}sform_shortcodes SET status = '$form_status' WHERE id = %d", $form_id) );
+       }
+  
+	}
+		
 }
 
 new SimpleForm_Util();

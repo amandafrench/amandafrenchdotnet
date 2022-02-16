@@ -3,10 +3,10 @@
 Contributors: simpleform
 Donate link: https://wpsform.com/
 Tags: contact form, form builder, form, custom form, smtp, email, message, contact, ajax, information, support, block
-Requires at least: 5.2
-Tested up to: 5.8
+Requires at least: 5.6
+Tested up to: 5.9
 Requires PHP: 5.6
-Stable tag: 2.0.9
+Stable tag: 2.1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -158,6 +158,26 @@ We provide free support in the WordPress.org plugin repository. Please log into 
 10. Form failed validation
 
 == Changelog ==
+
+= 2.1.2 (16 February 2022) =
+* Fixed: repeated creation of unwanted forms when visiting the widgets page if simpleform has been moved to inactive widgets area
+* Fixed: migration of the classic widget in the block-based widgets editor
+* Fixed: error when managing the widget in the customizer page
+* Fixed: displaying of the title and description when using the block even if the chosen settings do not allow the displaying
+* Fixed: incorrect displaying of a form visible only by anonymous users when editing it with the block editor
+* Fixed: uninstall error
+* Fixed: JavaScript errors
+* Changed: code cleaning and optimization
+* Changed: pre-built contact form page
+* Changed: visibility option and widget related options in the settings page have been removed
+* Added: admin notice when the form cannot be seen by the admin when visiting the website's front end
+
+= 2.1.1 (25 January 2022) =
+* Fixed: PHP error while activating the plugin
+
+= 2.1 (25 January 2022) =
+* Changed: code cleaning and optimization
+* Added: forms page
 
 = 2.0.9 (22 October 2021) =
 * Fixed: failure to submit the form when the browser auto-fill option is enabled

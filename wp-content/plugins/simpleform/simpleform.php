@@ -5,15 +5,14 @@
  * Plugin Name:       SimpleForm
  * Plugin URI:        https://wpsform.com
  * Description:       Create a basic contact form for your website. Lightweight and very simple to manage, SimpleForm is immediately ready to use.
- * Version:           2.0.9
- * Requires at least: 5.2
+ * Version:           2.1.2
+ * Requires at least: 5.6
  * Requires PHP:      5.6
  * Author:            WPSForm Team
  * Author URI:        https://wpsform.com
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       simpleform
- * Domain Path:       /languages
  *
  */
 
@@ -26,8 +25,8 @@ if ( ! defined( 'WPINC' ) ) { die; }
  */
  
 define( 'SIMPLEFORM_NAME', 'SimpleForm' );
-define( 'SIMPLEFORM_VERSION', '2.0.9' );
-define( 'SIMPLEFORM_DB_VERSION', '2.0.5' );
+define( 'SIMPLEFORM_VERSION', '2.1.2' );
+define( 'SIMPLEFORM_DB_VERSION', '2.1.1' );
 define( 'SIMPLEFORM_PATH', plugin_dir_path( __FILE__ ) );
 define( 'SIMPLEFORM_URL', plugin_dir_url( __FILE__ ) );
 define( 'SIMPLEFORM_BASENAME', plugin_basename( __FILE__ ) );
