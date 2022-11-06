@@ -42,9 +42,6 @@ class SimpleForm_Block {
 	 
 	public function register_block() {
 		
-	  // Cleaning of duplicate widgets blocks
-	  do_action( 'sform_widgets_cleaning' );
-		
       $asset_file = include( plugin_dir_path( __FILE__ ) . 'build/index.asset.php');
       $metadata = (array)json_decode(file_get_contents(__DIR__ . '/block.json'), true);
     
@@ -136,15 +133,21 @@ class SimpleForm_Block {
   	  $form_id = ! empty( $attributes['formId'] ) && absint($attributes['formId']) ? $attributes['formId'] : '';
         
 	  if ( empty( $form_id ) ) {
-			return '';
+	    return '';
 	  }
-
+      
+      $settings = $form_id != '' && $form_id != '1' && get_option('sform_'.$form_id.'_settings') != false ? get_option('sform_'.$form_id.'_settings') : get_option('sform_settings');
+      $form_attributes = $form_id != '' && $form_id != '1' && get_option('sform_'.$form_id.'_attributes') != false ? get_option('sform_'.$form_id.'_attributes') : get_option('sform_attributes');
       $css_settings = '';
   	  $bgcolor = ! empty( $attributes['bgColor'] ) ? $attributes['bgColor'] : '';
   	  $labelcolor = ! empty( $attributes['labelColor'] ) ? $attributes['labelColor'] : '';
+  	  $fieldsbordercolor = ! empty( $attributes['fieldsBorderColor'] ) ? $attributes['fieldsBorderColor'] : '';
+  	  $checkedcolor = ! empty( $attributes['checkedColor'] ) ? $attributes['checkedColor'] : '';
   	  $borderradius = ! empty( $attributes['borderRadius'] ) ? $attributes['borderRadius'] : '';
       $css_settings .= ! empty($bgcolor) ? '#form-wrap-'.$form_id.' {background-color: '.$bgcolor.';}' : '';
       $css_settings .= ! empty($labelcolor) ? '#form-wrap-'.$form_id.' label.sform {color: '.$labelcolor.';}' : '';
+      $css_settings .= ! empty($fieldsbordercolor) ? '#form-'.$form_id.':not(.highlighted) input, #form-'.$form_id.':not(.highlighted) textarea, #form-'.$form_id.':not(.highlighted) div.captcha, #form-'.$form_id.':not(.highlighted) input.checkbox:not(:checked)+label .checkmark {border-color: '.$fieldsbordercolor.';} #form-'.$form_id.'.rounded input.checkbox:not(:checked)+label .checkmark {background-color: '.$fieldsbordercolor.';}' : '';
+      $css_settings .= ! empty($checkedcolor) ? '#form-'.$form_id.' input.checkbox:checked+label .checkmark {border-color: '.$checkedcolor.'; background-color: '.$checkedcolor.';}' : '';
       $css_settings .= ! empty($borderradius) ? '#form-wrap-'.$form_id.' {border-radius: '.$borderradius.'px;}' : '';
    	  $buttoncolor = ! empty( $attributes['buttonColor'] ) ? $attributes['buttonColor'] : '';
   	  $buttonbordercolor = ! empty( $attributes['buttonBorderColor'] ) ? $attributes['buttonBorderColor'] : '';
@@ -158,34 +161,12 @@ class SimpleForm_Block {
       $css_settings .= ! empty($hoverbuttoncolor) ? '#submission-'.$form_id.':hover {background-color: '.$hoverbuttoncolor.';}' : '';
       $css_settings .= ! empty($hoverbuttonbordercolor) ? '#submission-'.$form_id.':hover {border-color: '.$hoverbuttonbordercolor.';}' : '';
       $css_settings .= ! empty($hoverbuttontextcolor) ? '#submission-'.$form_id.':hover {color: '.$hoverbuttontextcolor.';}' : '';
+      $additionalStyle = ! empty( $form_attributes['additional_css'] ) ? esc_attr($form_attributes['additional_css']) : '';
       
-      // With WP 5.9 in a block theme, blocks get parsed before the <head> so this code needs to fixed!
-      if ( $css_settings ) { 
-	    
-	    wp_add_inline_style( 'sform-public-style', $css_settings ); 
-	      
-	   	if ( version_compare(get_bloginfo('version'),'5.9', '>=') ) {
-          // Get the default styling file
-	      $current_block_style = file_get_contents(SIMPLEFORM_URL . 'public/css/block-style.css');
-	      $search_form_style_start = '/*'.$form_id.'*/';
-	      $split_style = explode($search_form_style_start, $current_block_style);
-   	      if ( isset($split_style[1]) ) {
-		    $search_form_style_end = '/* END '.$form_id.'*/';
-		    $split_form_style = explode($search_form_style_end, $split_style[1]);
-	        $previous_style = isset($split_form_style[1]) ? $split_style[0] . $split_form_style[1] : $split_style[0]; 
-          }
-	      else {
-	        $previous_style = $current_block_style; 
-          }
-	      $block_style = '/*'.$form_id.'*/' . $css_settings . '/* END '.$form_id.'*/';
-          $blocks_style = $previous_style.$block_style;
-          // Write styling settings to default styling file
-	      file_put_contents(SIMPLEFORM_PATH . 'public/css/block-style.css',$blocks_style);
-	      // LOCK_EX prevents anyone else writing to the file at the same time
-        }
-	      
-      }
-     
+      // Update style to enqueue    
+      $util = new SimpleForm_Util();
+      $util->block_style($form_id,$css_settings);
+      
 	  $anchor = ! empty( $attributes['formAnchor'] ) ? 'id="' . $attributes['formAnchor'] . '"' : '';
       $topmargin = ! empty( $attributes['topMargin'] ) && absint( $attributes['topMargin'] ) ? 'margin-top:'. $attributes['topMargin'] .'px;' : '';
       $rightmargin = ! empty( $attributes['rightMargin'] ) && absint( $attributes['rightMargin'] ) ? 'margin-right:'. $attributes['rightMargin'] .'px;' : '';
@@ -197,13 +178,8 @@ class SimpleForm_Block {
       $leftpadding = ! empty( $attributes['leftPadding'] ) && absint( $attributes['leftPadding'] ) ? 'padding-left:'. $attributes['leftPadding'] .'px;' : '';
       $spacing = ! empty($topmargin) || ! empty($rightmargin) || ! empty($bottommargin) || ! empty($leftmargin) || ! empty($toppadding) || ! empty($rightpadding) || ! empty($bottompadding) || ! empty($leftpadding) ? true : false;
 	  $anchor_tag = $spacing ? '' : $anchor;
-      $form_attributes = $form_id != '' && $form_id != '1' && get_option('sform_'.$form_id.'_attributes') != false ? get_option('sform_'.$form_id.'_attributes') : get_option('sform_attributes');
-      $settings = $form_id != '' && $form_id != '1' && get_option('sform_'.$form_id.'_settings') != false ? get_option('sform_'.$form_id.'_settings') : get_option('sform_settings');
       $frontend_notice = ! empty( $settings['frontend_notice'] ) ? esc_attr($settings['frontend_notice']) : 'true';
-      $custom_css = ! empty( $form_attributes['additional_css'] ) ? esc_attr($form_attributes['additional_css']) : ''; 	    
       $form_template = ! empty( $settings['form_template'] ) ? esc_attr($settings['form_template']) : 'default'; 
-      $stylesheet = ! empty( $settings['stylesheet'] ) ? esc_attr($settings['stylesheet']) : 'false';
-      $cssfile = ! empty( $settings['stylesheet_file'] ) ? esc_attr($settings['stylesheet_file']) : 'false';
       $form_direction = ! empty( $form_attributes['form_direction'] ) ? esc_attr($form_attributes['form_direction']) : 'ltr';
       $class_direction = $form_direction == 'rtl' ? 'rtl' : '';
       $shortcode = $form_id != '1' ? '[simpleform id="'.$form_id.'" type="block"]' : '[simpleform type="block"]';         
@@ -222,71 +198,20 @@ class SimpleForm_Block {
       $form_description = $description == true && ! empty( $form_attributes['introduction_text'] ) ? '<div id="sform-introduction-'.$form_id.'" class="sform-introduction '.$class_direction.'">'.stripslashes(wp_kses_post($form_attributes['introduction_text'])).'</div>' : '';
       $bottom_text = $ending == true && ! empty( $form_attributes['bottom_text'] ) ? '<div id="sform-bottom-'.$form_id.'" class="sform-bottom '.$class_direction.'">'.stripslashes(wp_kses_post($form_attributes['bottom_text'])).'</div>' : '';
       $is_gb_editor = defined( 'REST_REQUEST' ) && REST_REQUEST;
-      $form_display = ! empty( $attributes['formDisplay'] ) && $attributes['formDisplay'] == true ? true : false;
-      $form_widget = ! empty( $attributes['formWidget'] ) && $attributes['formWidget'] == true ? true : false;
-      $form_shortcode = ! empty( $attributes['formShortcode'] ) && $attributes['formShortcode'] == true ? true : false;
 
-		if ( $is_gb_editor ) {
-		  if ( $stylesheet == 'false') { $css_content = file_get_contents(SIMPLEFORM_URL . 'public/css/public-min.css'); }
-		  else { 
-            $css_content = 'input, select, textarea {width: 100%;} #captcha-field-'.$form_id.' { width: 150px; height: intrinsic; } #captcha-question-'.$form_id.' { width: 80px; height: inherit; cursor: text; border: none !important; outline: none; display: inline-block; background-color: transparent; padding-right: 0; padding-left: 0; box-shadow: none; } #sform-captcha-'.$form_id.' { width: 50px; border: none !important; outline: none; display: inline-block; background-color: transparent; padding-left: 5px ; box-shadow: none; } input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; } input[type=number] { -moz-appearance: textfield; } .carrots { opacity: 0; position: absolute; top: 0; left: 0; height: 0; width: 0; z-index: -1; } .error-des { line-height: 1; color: #dc3545; font-size: 14px; height: 14px; margin-top: 5px; margin-bottom: 5px; } .error-des span { display: none; } .sform-field.is-invalid + .error-des span { display: block; } #errors-'.$form_id.' { padding: 5px 0 25px 0; position: relative; outline: none; } #errors-'.$form_id.' span { display: block; visibility: hidden; text-align: center; } .captcha-error { display: none !important; } .noscript { position: absolute; top: 0; width: 100%; } #errors-'.$form_id.'.top { margin-bottom: 20px; } .form.confirmation { outline: none; } .form.confirmation { text-align: center; padding-top: 50px; } .form.confirmation > img, .form.confirmation > p > img { margin: 30px auto; width: 250px; } #sform-confirmation-'.$form_id.' { outline: 0; } .d-block { display: inline-block; } .d-none { display: none !important; } .v-visible { visibility: visible !important; } .v-invisible { visibility: hidden !important; opacity: 0; } .align-left { text-align: left; } .align-center { text-align: center; } .align-right { text-align: right; } h1.sform,h2.sform,h3.sform,h4.sform,h5.sform,h6.sform { color: inherit; }';
-            if ( $cssfile == 'true' ) {
-                if (is_child_theme() ) {
-	               if ( file_exists( get_stylesheet_directory()  . '/simpleform/custom-style.css' ) ) {
-                      $css_content = file_get_contents(get_stylesheet_directory_uri() . '/simpleform/custom-style.css' );
-	               }
-                }
-                else { 
-	               if ( file_exists( get_template_directory()  . '/simpleform/custom-style.css' ) ) {
-                      $css_content = file_get_contents(get_template_directory_uri() . '/simpleform/custom-style.css' );
-	               }
-                }
-            }
-          }
- 		  if ( $form_display == false ) {
-	 	     global $wpdb;
-             $table_name = "{$wpdb->prefix}sform_shortcodes"; 
-             $query = "SELECT name FROM `$table_name` WHERE id = %s";
-             $name = '"'. $wpdb->get_var( $wpdb->prepare( $query, $form_id ) ) .'"'; 
-        	 if ( $form_widget == false ) {
-        	   $message =  $form_shortcode == false ? __( 'The block cannot be displayed on this page since the same block has been used.', 'simpleform' ) . '<br>' . sprintf( __( 'You may display the form %s only once to make it work properly.', 'simpleform' ), $name ) . '&nbsp;' . __( 'Remove the block or select a different one.', 'simpleform' ) : sprintf( __( 'The block cannot be displayed on this page since the shortcode %s has been used.', 'simpleform' ), $shortcode ) . '<br>' . sprintf( __( 'You may display the form %s only once to make it work properly.', 'simpleform' ), $name ) . '&nbsp;' . __( 'Remove the block or select a different one.', 'simpleform' );
-	         } 
-        	 else {
-	           $message =  $form_shortcode == false ? __( 'The block cannot be displayed on this widget area since the same block has been used.', 'simpleform' ) . '<br>' . sprintf( __( 'You may display the form %s only once to make it work properly.', 'simpleform' ), $name ) . '&nbsp;' . __( 'Remove the block or select a different one.', 'simpleform' ) : sprintf( __( 'The block cannot be displayed on this widget area since the shortcode %s has been used.', 'simpleform' ), $shortcode ) . '<br>' . sprintf( __( 'You may display the form %s only once to make it work properly.', 'simpleform' ), $name ) . '&nbsp;' . __( 'Remove the block or select a different one.', 'simpleform' );
-             }
-			$return_html = '<div id="duplication-notice"><label class="components-placeholder__label"><svg viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg" width="24" height="24" role="img" aria-hidden="true" focusable="false"><path d="M96.326,111.597c0-18.193-0.167-36.391,0.053-54.58 c0.188-15.525,3.512-29.949,12.957-41.421c9.567-11.622,21.017-11.457,30.737-0.01c7.372,8.682,10.607,19.568,12.215,31.381 c0.732,5.379,0.851,10.786,0.849,16.214c-0.011,29.197-0.002,58.396-0.007,87.595c-0.002,6.48-4.014,10.405-9.378,9.323 c-1.924-0.389-1.816-2.022-1.926-3.624c-0.695-10.047-0.688-10.011-8.982-7.314c-6.804,2.212-13.586,4.543-20.463,6.387 c-3.582,0.962-5.123,2.99-4.787,7.271c0.146,1.889,0.034,3.815-0.05,5.717c-0.121,2.802-1.362,4.579-3.627,5.479 c-6.666,2.648-7.592,1.872-7.592-6.516C96.325,148.864,96.325,130.23,96.326,111.597z" fill="currentColor"></path><path d="M27.769,107.198c0-15.412-0.03-30.824,0.006-46.234 c0.066-28.643,17.508-50.748,41.681-53.416c10.049-1.108,20.08-0.48,30.118-0.75c0.936-0.025,2.139-0.439,2.631,0.961 c0.478,1.368-0.575,2.092-1.229,2.922c-0.76,0.967-1.845,1.741-2.281,2.873c-2.752,7.121-7.72,7.832-13.544,7.427 c-6.419-0.445-12.871-0.373-19.217,1.558C49.624,27.498,38.989,43.42,39.058,63.261c0.029,8.499,0.51,16.996,0.485,25.493 c-0.039,13.634-0.362,27.268-0.496,40.901c-0.065,6.679,1.043,7.76,6.557,8.476c12.062,1.562,24.085,3.49,36.146,5.019 c3.442,0.438,4.282,2.441,4.271,6.104c-0.025,9.025-0.132,8.982-7.748,7.741c-11.527-1.878-23.107-3.308-34.656-5.002 c-3.365-0.496-4.713,0.846-4.562,5.06c0.346,9.731,0.213,8.388-7.725,7.188c-2.969-0.446-3.621-2.725-3.603-5.963 C27.816,141.25,27.769,124.225,27.769,107.198z" fill="currentColor"></path><path d="M75.697,51.212c-5.191-0.897-10.416-0.479-15.628-0.553 c-2.054-0.029-2.659-0.985-2.13-3.342c1.504-6.724,6.782-12.072,12.691-12.477c3.083-0.211,6.184-0.019,9.271-0.12 c1.641-0.054,1.945,0.99,1.602,2.487c-0.899,3.906-1.4,7.864-1.404,11.914c-0.002,1.369-0.648,2.056-1.787,2.086 C77.44,51.23,76.568,51.212,75.697,51.212z" fill="currentColor"></path><path d="M73.535,48.245c-3.321-0.574-6.665-0.307-10.001-0.354 c-1.313-0.019-1.702-0.63-1.362-2.139c0.963-4.303,4.34-7.726,8.121-7.986c1.975-0.135,3.959-0.012,5.936-0.076 c1.049-0.035,1.244,0.633,1.024,1.592c-0.577,2.5-0.897,5.033-0.899,7.625c0,0.875-0.414,1.316-1.144,1.335 C74.651,48.256,74.094,48.245,73.535,48.245z" fill="transparent"></path></svg>'. __( 'SimpleForm', 'simpleform' ) .'</label>' . $message . '</div>';
-	      }
-	      else {
-		    $css = '<style>' . $css_content . $custom_css . $css_settings . '</style>';
-      	    $return_html = $start_wrap . $form_title . $form_description . '<fieldset disabled>' . do_shortcode($shortcode) .'</fieldset>' . $bottom_text . $end_wrap . $css;	
-	      }
-        } 
+	  if ( $is_gb_editor ) {
+      	$return_html = $start_wrap . $form_title . $form_description . '<fieldset disabled>' . do_shortcode($shortcode) .'</fieldset>' . $bottom_text . $end_wrap . '<style>' . $css_settings . $additionalStyle . '</style>';	
+      } 
 
-        else {
-            $show_for = ! empty( $form_attributes['show_for'] ) ? esc_attr($form_attributes['show_for']) : 'all';
-            $user_role = ! empty( $form_attributes['user_role'] ) ? esc_attr($form_attributes['user_role']) : 'any';  
-            $current_user = wp_get_current_user();
-            if ( $show_for == 'out' ) { $form_user = '<b>' . __( 'logged-out users','simpleform') . '</b>'; $for_role = ''; }
-            elseif ( $show_for == 'in' ) { $form_user = '<b>' . __( 'logged-in users','simpleform') . '</b>'; $for_role = $user_role; }
-            else { $form_user = __( 'everyone','simpleform'); $for_role = ''; }
-            $form_user_role = !empty($for_role) ? ' ' . __( 'with the role of','simpleform') . ' <b>' . translate_user_role(ucfirst($user_role)) . '</b>' : '' ; 
-            
-            if ( ($show_for == 'out' && is_user_logged_in()) || ($show_for == 'in' && ! is_user_logged_in()) || ($show_for == 'in' && is_user_logged_in() && $user_role != 'any' && ! in_array($user_role, (array) $current_user->roles)) ) {
-	          if ( current_user_can('manage_options') && $frontend_notice == 'true' )  {
-	             $return_html = '<div id="sform-admin-message" style="font-size: 0.8em; border: 1px solid; margin-top: 20px; padding: 20px 15px; height: -webkit-fit-content; height: -moz-fit-content; height: fit-content;"><p class="heading" style="font-weight: 600; margin-bottom: 10px;">'. __('SimpleForm Admin Notice', 'simpleform') . '</p>'. __('The form is visible only for ', 'simpleform') . $form_user . $form_user_role . '. ' . __( 'Your role does not allow you to see it!','simpleform') .'</div>';
-              }
-              else  { 
-		         $return_html = '';   
-              }
-	        }
-	        else {
-              $above_form = isset( $_GET['sending'] ) && $_GET['sending'] == 'success' && isset( $_GET['form'] ) && $_GET['form'] == $form_id ? '' : $form_description;
-              $below_form = isset( $_GET['sending'] ) && $_GET['sending'] == 'success' && isset( $_GET['form'] ) && $_GET['form'] == $form_id ? '' : $bottom_text;
-	          $return_html = $start_wrap . $form_title . $above_form . do_shortcode($shortcode) . $below_form . $end_wrap; 
-	        }
-        }
+      else {
+	    $form = do_shortcode($shortcode);
+        $above_form = isset( $_GET['sending'] ) && $_GET['sending'] == 'success' && isset( $_GET['form'] ) && $_GET['form'] == $form_id ? '' : $form_description;
+        $below_form = isset( $_GET['sending'] ) && $_GET['sending'] == 'success' && isset( $_GET['form'] ) && $_GET['form'] == $form_id ? '' : $bottom_text;
+	    $contact_form = strpos( $form, __('SimpleForm Admin Notice', 'simpleform') ) !== false ? $form : $start_wrap . $form_title . $above_form . $form . $below_form . $end_wrap;
+ 	    $return_html = $form != '' ? $contact_form : ''; 
+      }
         
-		return $return_html;    
+	  return $return_html;    
     
     }
 
@@ -348,269 +273,70 @@ class SimpleForm_Block {
     }
 
 	/**
-	 * Cleaning of duplicate widgets
-	 *
-	 * @since    2.0.4
-	 */
-    
-    public function set_up_widgets_check(){
-	   
-	   // Whenever the admin widgets page is loaded set a checking option
-       global $pagenow;
-       if ( $pagenow == 'widgets.php' ) { add_option( 'sform_widgets_check', true ); }
-       else { delete_option( 'sform_widgets_check' ); }
-      
-    }    
-
-
-    public function widgets_cleaning(){
-	   
-	    if( get_option('sform_widgets_check' ) ) {
-
-	     $widget_block = get_option("widget_block") != false ? get_option("widget_block") : array();
-         $used_ids = array();
-         global $wpdb;
-         $table_name = "{$wpdb->prefix}sform_shortcodes";
-         $widget_forms = $wpdb->get_col( "SELECT id FROM $table_name WHERE widget_id != ''" );
-         $util = new SimpleForm_Util();      
-         $form_ids = $util->sform_ids();
-        
-         // Look for the presence of widget blocks
-         if ( !empty($widget_block) ) {
-	        
-          foreach ($widget_block as $key => $value ) {
-	          
-	        $widget_id = 'block-'.$key;
-            $array_widget_id = array($widget_id);
-            
-            if ( is_array($value) ) {   
-	           $string = implode('',$value);
-	           
-	           // Check if the widget is a simpleform block
-               if ( strpos($string, 'wp:simpleform/form-selector') !== false ) {
-	             $split_display = ! empty($string) ? explode('formDisplay":', $string) : '';
-	             $formDisplay = isset($split_display[1]) ? explode(',"', $split_display[1])[0] : '';
-	             $split_id = ! empty($string) ? explode('formId":"', $string) : '';
-	             $id = isset($split_id[1]) ? explode('"', $split_id[1])[0] : '';
-	             
-	             // Remove blocks where the form id has already been used
-	             if ( $formDisplay == 'false' || in_array($id, $used_ids) ) {
-			      unset($widget_block[$key]);
-			      update_option('widget_block', $widget_block);
-                  $widget_used_in = $wpdb->get_var( "SELECT widget_id FROM $table_name WHERE id = {$id}" );
-                  $widget_ids = ! empty($widget_used_in) ? explode(',',$widget_used_in) : array();
-                  if ( in_array($widget_id,$widget_ids) ) {
-                    $updated_used_ids = array_diff($widget_ids,$array_widget_id);
-                    $new_used_in = implode(",", $updated_used_ids); 
-                    // $wpdb->query( $wpdb->prepare("UPDATE $table_name SET widget_id = '$new_used_in' WHERE id = %d", $id) );
-                    $wpdb->query( $wpdb->prepare("UPDATE $table_name SET widget_id = '$new_used_in', status = 'published' WHERE id = %d", $id) );
-                  }
-                 }
-                 
-                 else {
-	              if ( !empty($id)) {                             
-                  $used_ids[] = $id;
-                  $widget_ids = $wpdb->get_var( "SELECT widget_id FROM $table_name WHERE id = {$id}" );
-                  $ids = ! empty($widget_ids) ? explode(',',$widget_ids) : array();
-                  // Add the widget id in the list
-                  if ( ! in_array($widget_id,$ids) ) {
-	              $new_ids = implode(",", array_unique(array_merge($array_widget_id,$ids)));
-                  // $wpdb->update($table_name, array('widget_id' => $new_ids), array('id' => $id ));
-                  $wpdb->update($table_name, array('widget_id' => $new_ids, 'status' => 'published'), array('id' => $id ));
-	              }	              
-                  // Exclude the widget id from other lists
-                  $widget_ids_list = $wpdb->get_results( "SELECT id, shortcode_pages, block_pages, widget_id FROM $table_name WHERE id != {$id}", 'ARRAY_A' );
-                  foreach($widget_ids_list as $list) { 
-	                 $form_id = $list['id']; 
-	                 $form_widget_ids = ! empty($list['widget_id']) ? explode(',',$list['widget_id']) : array();
-                     if ( in_array($widget_id,$form_widget_ids) ) {
-	                   $new_ids = implode(",", array_diff($form_widget_ids,$array_widget_id));
-                       $form_status = !empty($list['shortcode_pages']) || !empty($list['block_pages']) ? 'published' : 'draft';
-                       $wpdb->update($table_name, array('widget_id' => $new_ids, 'status' => $form_status), array('id' => $form_id ));
-	                 }
-	              }
-                  }
-	              else {
-		            // Remove empty blocks where form id has not been selected
-			        unset($widget_block[$key]);
-			        update_option('widget_block', $widget_block);
-                 }
-                 }
- 		         
- 		         // Remove blocks where form id has already been used               
-                 if ( !empty($id) && ($key = array_search($id, $widget_forms)) !== false ) {
-                   unset($widget_forms[$key]);
-                 }
-                 
-               }
-               
-	           // Check if widget is a simpleform shortcode
-               if ( strpos($string,'[simpleform') !== false ) {
-	             $split_shortcode = ! empty($string) ? explode('[simpleform', $string) : '';
-	             $split_id = isset($split_shortcode[1]) ? explode(']', $split_shortcode[1])[0] : '';
-	             $id = empty($split_id) ? '1' : filter_var($split_id, FILTER_SANITIZE_NUMBER_INT);
-	             if (in_array($id, $used_ids) || ! in_array($id, $form_ids) ) { 		             
-			      unset($widget_block[$key]);
-			      update_option('widget_block', $widget_block);			      
-                  $widget_used_in = $wpdb->get_var( "SELECT widget_id FROM $table_name WHERE id = {$id}" );
-                  $widget_ids = ! empty($widget_used_in) ? explode(',',$widget_used_in) : array();
-                  if ( in_array($widget_id,$widget_ids) ) {
-                    $updated_used_ids = array_diff($widget_ids,$array_widget_id);
-                    $new_used_in = implode(",", $updated_used_ids); 
-                    $wpdb->query( $wpdb->prepare("UPDATE $table_name SET widget_id = '$new_used_in', status = 'published' WHERE id = %d", $id) );
-                  }
-	             }
-                 else {                              
-	              if ($id) {                             
-                  $used_ids[] = $id;
-                  $widget_id = 'block-'.$key;
-                  $array_widget_id = array($widget_id);
-                  $widget_ids = $wpdb->get_var( "SELECT widget_id FROM $table_name WHERE id = {$id}" );
-                  $ids = ! empty($widget_ids) ? explode(',',$widget_ids) : array();
-                  if ( ! in_array($widget_id,$ids) ) {
-	              $new_ids = implode(",", array_unique(array_merge($array_widget_id,$ids)));
-                  // $wpdb->update($table_name, array('widget_id' => $new_ids), array('id' => $id ));
-                  $wpdb->update($table_name, array('widget_id' => $new_ids, 'status' => 'published'), array('id' => $id ));
-                  
-                  
-	              }
-                  $widget_ids_list = $wpdb->get_results( "SELECT id, shortcode_pages, block_pages, widget_id FROM $table_name WHERE id != {$id}", 'ARRAY_A' );
-                  foreach($widget_ids_list as $list) { 
-	                  $form_id = $list['id']; 
-	                  $form_widget_ids = ! empty($list['widget_id']) ? explode(',',$list['widget_id']) : array();
-                     if ( in_array($widget_id,$form_widget_ids) ) {
-	                 $new_ids = implode(",", array_diff($form_widget_ids,$array_widget_id));
-	                 $form_status = !empty($list['shortcode_pages']) || !empty($list['block_pages']) ? 'published' : 'draft';
-                     // $wpdb->update($table_name, array('widget_id' => $new_ids), array('id' => $form_id ));
-                     $wpdb->update($table_name, array('widget_id' => $new_ids, 'status' => $form_status), array('id' => $form_id ));
-	                 }
-	              }
-                  }
-                 }
-                 if ( !empty($id) && ($key = array_search($id, $widget_forms)) !== false ) {
-                   unset($widget_forms[$key]);
-                 }
-               }
-               
-               // Is it necessary to search for "Paragraph", "Custom HTML" and "Preformatted" blocks ?
-            
-            }
-            
-          }
-          
-          if ( !empty($widget_forms) ) {
-	        foreach ($form_ids as $form_id) {
-		      if ( in_array($form_id,$widget_forms) ) {                  
-                $wpdb->query( $wpdb->prepare("UPDATE $table_name SET widget_id = '' WHERE id = %d", $form_id) );                
-              }
-            }
-          }
-          
-        }
-        
-         else {
-	      
-	        foreach ($form_ids as $form_id) {	       
-              // $wpdb->query( $wpdb->prepare("UPDATE $table_name SET widget_id = '' WHERE id = %d", $form_id) );            
-              $shortcode_pages = $wpdb->get_var( "SELECT shortcode_pages FROM $table_name WHERE id = {$form_id}" );
-              $block_pages = $wpdb->get_var( "SELECT block_pages FROM $table_name WHERE id = {$form_id}" );
-              $form_status = empty($shortcode_pages) && empty($block_pages) ? 'draft' : 'published';
-              $wpdb->query( $wpdb->prepare("UPDATE $table_name SET widget_id = '', status = '$form_status' WHERE id = %d", $form_id) );
-            }
-          
-        }
-                 
-      }
-        
-     }      
-          
-	/**
 	 * Hide widget blocks if the form already appears in the post content.
 	 *
 	 * @since    2.0.4
+     * @version  2.1.3
 	 */
-    
-    public function hide_widgets( $sidebars_widgets ) { 	
-	    	    
+
+    public function hide_widgets( $sidebars_widgets ) {
+
        if ( is_admin() )
        return $sidebars_widgets;
-       
-       $post_id = get_the_ID(); //  return int or false
-       $post_content = get_the_content();       
-       $util = new SimpleForm_Util();   
-       $used_ids = $post_id ? $util->used_forms($post_content,$type = 'all') : array();
-       global $wpdb;
-       $table_name = "{$wpdb->prefix}sform_shortcodes";       
-       $sform_pages = get_option('sform_pages') != false ? get_option('sform_pages') : array();
-       
-       // one time
-       if ( empty($sform_pages) ) { 
-         $pages = $wpdb->get_col( "SELECT pages FROM $table_name" );
-         $shortcode_pages = $wpdb->get_col( "SELECT shortcode_pages FROM $table_name" );
-         $block_pages = $wpdb->get_col( "SELECT block_pages FROM $table_name" );
-         if ($pages) { 
-         foreach ($pages as $list) { 
-	       if ( ! empty($list) ) { 
-	          $sform_pages = array_unique(array_merge($sform_pages,explode(',',$list)));
-		   }
-         }
-         }
-         foreach ($shortcode_pages as $list) { 
-	       if ( ! empty($list) ) { 
-	          $sform_pages = array_unique(array_merge($sform_pages,explode(',',$list)));
-		   }
-         }
-         foreach ($block_pages as $list) { 
-	       if ( ! empty($list) ) { 
-	          $sform_pages = array_unique(array_merge($sform_pages,explode(',',$list)));
-	  	   }
-         }
-         update_option('sform_pages',$sform_pages);
-       }
-	   
-	   if ( empty($sform_pages) || ( ! is_page($sform_pages) && ! is_single($sform_pages) ) )
+
+       $post_id = get_the_ID();
+       $post_content = get_the_content();
+       $util = new SimpleForm_Util();
+       $used_forms = $post_id && ! empty($post_content) ? $util->used_forms($post_content,$type = 'all') : array();
+
+	   if ( empty($used_forms) )
 	   return $sidebars_widgets;
-	   
+
   	   $widget_block = get_option("widget_block") != false ? get_option("widget_block") : array();
-	   	   
-  	   foreach ( $sidebars_widgets as $widget_area => $widget_list ) {
-	     if ( $widget_area != 'wp_inactive_widgets' ) {   
-           foreach ( $widget_list as $pos => $widget_id ) { 
-	         if ( ( $search = strpos($widget_id, 'block-' )) !== false ) {
-		        $block_id = substr($widget_id, 6); 
-		        foreach ($widget_block as $key => $value ) {	
-			      if ( $key == $block_id )  {
-                    $string = implode('',$value);
-  				    if ( strpos($string, 'wp:simpleform/form-selector' ) !== false ) { 
-	                  $split_display = ! empty($string) ? explode('formDisplay":', $string) : '';
-	                  $formDisplay = isset($split_display[1]) ? explode(',"', $split_display[1])[0] : '';
+       $sform_widget = get_option('widget_sform_widget') != false ? get_option("widget_sform_widget") : array();
+  	   foreach ( $sidebars_widgets as $sidebar => $widgets ) {
+	     if ( is_array( $widgets ) && $sidebar != 'wp_inactive_widgets' ) {
+           foreach ( $widgets as $key => $value ) {
+	         if ( strpos($value, 'block-' ) !== false ) {
+		        $block_id = substr($value, 6);
+		        foreach ($widget_block as $block_key => $block_value ) {
+			      if ( $block_key == $block_id )  {
+                    $string = implode('',$block_value);
+  				    if ( strpos($string, 'wp:simpleform/form-selector' ) !== false ) {
                  	  $split_id = ! empty($string) ? explode('formId":"', $string) : '';
-	                  $id = isset($split_id[1]) ? explode('"', $split_id[1])[0] : '';
-	                  if (in_array($id, $used_ids) ) { 		           
-		                unset( $sidebars_widgets[$widget_area][$pos] ); 
+	                  $form_id = isset($split_id[1]) ? explode('"', $split_id[1])[0] : '';
+                      if (in_array($form_id, $used_forms) ) {
+		                unset( $sidebars_widgets[$sidebar][$key] );
 	                  }
                     }
-                    else {
-                      if ( strpos($string,'[simpleform') !== false ) { 
-	                    $split_shortcode = ! empty($string) ? explode('[simpleform', $string) : '';
-	                    $split_id = isset($split_shortcode[1]) ? explode(']', $split_shortcode[1])[0] : '';
-	                    $id = empty($split_id) ? '1' : filter_var($split_id, FILTER_SANITIZE_NUMBER_INT);
-	                    if (in_array($id, $used_ids) ) { 		           
-		                  unset( $sidebars_widgets[$widget_area][$pos] ); 
-	                    }
-                      }    
+                    if ( strpos($string,'[simpleform') !== false ) {
+	                  $split_shortcode = ! empty($string) ? explode('[simpleform', $string) : '';
+	                  $split_id = isset($split_shortcode[1]) ? explode(']', $split_shortcode[1])[0] : '';
+	                  $form_id = empty($split_id) ? '1' : filter_var($split_id, FILTER_SANITIZE_NUMBER_INT);
+	                  if (in_array($form_id, $used_forms) ) {
+		                unset( $sidebars_widgets[$sidebar][$key] );
+	                  }
  		            }
                   }
 		        }
 		     }
+		 	 if ( strpos($value, 'sform_widget-' ) !== false ) {
+                $id =  explode("sform_widget-", $value)[1];
+		        global $wpdb;
+		        if ( isset( $sform_widget[$id]['shortcode_id'] ) ) { $form_id = $sform_widget[$id]['shortcode_id']; }
+			    else { $form_id = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}sform_shortcodes WHERE widget = %d", $id ) ); }
+	            if (in_array($form_id, $used_forms) ) {
+		           unset( $sidebars_widgets[$sidebar][$key] );
+	            }
+             }
            }
          }
        }
 
        return $sidebars_widgets;
-       
+
     }
-     
+
 	/**
 	 * Extract the SimpleForm block ID from found blocks (To be used when editing a page)
      *
@@ -625,7 +351,7 @@ class SimpleForm_Block {
 	  if ($blocks){
 	  foreach ( $blocks as $block ) {
       
-      if ($block['blockName'] === 'simpleform/form-selector' && $block['attrs']['formId'] != '' ) {
+      if ($block['blockName'] === 'simpleform/form-selector' && isset($block['attrs']['formId']) && $block['attrs']['formId'] != '' ) {
 	    $id = $block['attrs']['formId'];  
 	    $ids[] = $block['attrs']['formId'];
       }
@@ -679,21 +405,43 @@ class SimpleForm_Block {
       
     }
     
-    
     /**
-     * Attach extra styles to multiple blocks.
+     * Add the theme support to load the form's stylesheet in the editor
+     *
+	 * @since    2.1.8.1
      */
-    
-    public function enqueue_block_styles() {
-	   
-   	  // Same args used for wp_enqueue_style().
-      $args = array(
-        'handle' => 'sform-block-style',
-        'src'    => SIMPLEFORM_URL . 'public/css/block-style.css',
-      );
- 
-      wp_enqueue_block_style( 'simpleform/form-selector', $args );
 
+    public function editor_styles_support() {
+	    
+       add_theme_support( 'editor-styles' );
+       
     }
-	
+
+    /**
+     * Add the form's stylesheet to use in the editor
+     *
+	 * @since    2.1.8.1
+     */
+
+    public function add_editor_styles() {
+	    
+      $settings = get_option('sform_settings');
+      $stylesheet = ! empty( $settings['stylesheet'] ) ? esc_attr($settings['stylesheet']) : 'false';
+      $cssfile = ! empty( $settings['stylesheet_file'] ) ? esc_attr($settings['stylesheet_file']) : 'false';
+   	  $additionalStyle = get_option('sform_additional_style') != false ? get_option('sform_additional_style') : '';
+ 	  $blockStyle = get_option('sform_block_style') != false ? get_option('sform_block_style') : '';
+
+      if ( $stylesheet == 'false' ) {	      
+        add_editor_style( plugins_url( 'simpleform/public/css/public-min.css' ) );
+      }
+      
+      else {
+	    add_editor_style( plugins_url( 'simpleform/public/css/simpleform-style.css' ) );  
+        if ( $cssfile == 'true' && file_exists( get_theme_file_path( '/simpleform/custom-style.css' ) ) ) {
+          add_editor_style( get_theme_file_uri( 'simpleform/custom-style.css') );
+        }
+      }
+    
+    }
+    	
 }

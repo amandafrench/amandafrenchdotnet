@@ -67,24 +67,24 @@
 
         <?php include( dirname(__FILE__) . '/admin.menu.php' ); ?>
 
-        <div id="zp-Browse-Wrapper">
+        <div class="zp-Browse-Wrapper">
 
             <h3><?php
 
 
 			if ( $zp_accounts_total === 1 ): echo __('Your Library', 'zotpress'); else: ?>
 
-				<div id="zp-Browse-Accounts">
+				<div class="zp-Browse-Accounts">
 
 					<?php echo zp_get_accounts( $wpdb, true, false, false, false, $api_user_id ); ?>
 				</div>
 
 			<?php endif; ?></h3>
 
-			<div id="zp-Browse-Account-Options">
+			<div class="zp-Browse-Account-Options">
 
 				<?php $is_default = false; if ( get_option("Zotpress_DefaultAccount") && get_option("Zotpress_DefaultAccount") == $api_user_id ) { $is_default = true; } ?>
-				<a href="javascript:void(0);" rel="<?php echo $api_user_id; ?>" class="zp-Browse-Account-Default zp-Accounts-Default button button-secondary dashicons <?php if ( $is_default ) { echo "dashicons-star-filled disabled"; } else { echo "dashicons-star-empty"; } ?>"><?php if ( $is_default ) { echo __('Default','zotpress'); } else { echo __('Set as Default','zotpress'); } ?></a>
+				<a href="javascript:void(0);" rel="<?php echo $api_user_id; ?>" class="zp-Browse-Account-Default zp-Account-Default button button-secondary dashicons <?php if ( $is_default ) { echo "zp-IsDefaultAccount dashicons-star-filled disabled"; } else { echo "dashicons-star-empty"; } ?>"><?php if ( $is_default ) { echo __('Default','zotpress'); } else { echo __('Set as Default','zotpress'); } ?></a>
 
 			</div>
 
@@ -92,7 +92,7 @@
 
             <?php echo $zpLib->getLib(); ?>
 
-        </div><!-- #zp-Browse-Wrapper -->
+        </div><!-- .zp-Browse-Wrapper -->
 
     </div>
 

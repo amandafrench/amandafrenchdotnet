@@ -3,8 +3,10 @@
 	namespace ShortPixel\AI\Notice;
 
 	use ShortPixel\AI\ActiveIntegrations;
+	use ShortPixel\AI\Page;
+	use ShortPixelAI;
 
-    class Constants {
+	class Constants {
 		private static $instance;
 
 		public $autoptimize;
@@ -50,10 +52,25 @@
 			}
 
 			$this->autoptimize = [
+				'causer' => 'ao', //if causer not specified, the name of constant will be used as causer
 				'title' => __( 'Autoptimize option conflict', 'shortpixel-adaptive-images' ),
 				'body'  => [
 					__( 'The option "<strong>Optimize images on the fly and serve them from a CDN.</strong>" is active in Autoptimize. Please <span>deactivate it</span> to let ShortPixel Adaptive Images serve the images properly optimized and scaled.',
 						'shortpixel-adaptive-images' ),
+				],
+				'buttons' => [
+					[
+						'title'   => __( 'Deactivate it', 'shortpixel-adaptive-images' ),
+						'action'  => 'solve conflict',
+						'primary' => true,
+					],
+					[
+						'type'    => 'link',
+						'title'   => __( 'More info', 'shortpixel-adaptive-images' ),
+						'url'     => 'https://shortpixel.com/knowledge-base/article/198-shortpixel-adaptive-images-vs-autoptimizes-optimize-images-option',
+						'target'  => '_blank',
+						'primary' => false,
+					],
 				],
 			];
 
@@ -63,6 +80,14 @@
 					__( 'The option "Enable Lazy Loading" is active in your Avada theme options, under the Performance section. Please <span>deactivate it</span> to let ShortPixel Adaptive Images serve the images properly optimized and scaled.',
 						'shortpixel-adaptive-images' ),
 				],
+				'buttons' => [
+					[
+						'type'    => 'link',
+						'title'   => __( 'Deactivate it', 'shortpixel-adaptive-images' ),
+						'url'     => 'themes.php?page=avada_options',
+						'primary' => true,
+					],
+				],
 			];
 
 			$this->ginger = [
@@ -71,6 +96,21 @@
 					__( 'The option "<strong>Cookie Confirmation Type</strong>" is set to Opt-in in Ginger - EU Cookie Law and this conflicts with ShortPixel. Please <span>set it differently</span> to let ShortPixel Adaptive Images serve the images properly optimized and scaled.',
 						'shortpixel-adaptive-images' ),
 				],
+				'buttons' => [
+					[
+						'type'    => 'link',
+						'title'   => __( 'Ginger EU Cookie Law settings', 'shortpixel-adaptive-images' ),
+						'url'     => 'admin.php?page=ginger-setup',
+						'primary' => true,
+					],
+					[
+						'type'    => 'link',
+						'title'   => __( 'More info', 'shortpixel-adaptive-images' ),
+						'url'     => 'https://shortpixel.com/knowledge-base/article/198-shortpixel-adaptive-images-vs-autoptimizes-optimize-images-option',
+						'target'  => '_blank',
+						'primary' => false,
+					],
+				],
 			];
 
 			$this->divitoolbox = [
@@ -78,6 +118,21 @@
 				'body'  => [
 					__( 'The option "Custom Post Meta" is active in your Divi Toolbox options, under the Blog section. Please either update the plugin to version > 1.4.2 or <span>deactivate the option</span> to let ShortPixel Adaptive Images serve the images.',
 						'shortpixel-adaptive-images' ),
+				],
+				'buttons' => [
+					[
+						'type'    => 'link',
+						'title'   => __( 'Deactivate it', 'shortpixel-adaptive-images' ),
+						'url'     => 'admin.php?page=divi_toolbox&tab=blog',
+						'primary' => true,
+					],
+					[
+						'type'    => 'link',
+						'title'   => __( 'More info', 'shortpixel-adaptive-images' ),
+						'url'     => 'https://shortpixel.com/knowledge-base/article/269-shortpixel-adaptive-image-errors-when-divi-toolbox-is-enabled',
+						'target'  => '_blank',
+						'primary' => false,
+					],
 				],
 			];
 
@@ -91,7 +146,14 @@
 			];
 			*/
 
-			$this->beta = [
+            $this->mbstring = [
+                'title' => __( 'ShortPixel Adaptive Images needs the PHP MBString extension.', 'shortpixel-adaptive-images' ),
+                'body'  => [
+                    __( 'ShortPixel Adaptive Images needs the PHP MBString extension. Please ask your admin or your hosting to enable it for your website.' ),
+                ],
+            ];
+
+            $this->beta = [
 				'title' => __( 'ShortPixel Adaptive Images is in BETA', 'shortpixel-adaptive-images' ),
 				'body'  => [
 					__( 'Currently the plugin is in the Beta phase. While we have tested it a lot, we can\'t possibly test it with all the themes out there. On Javascript-intensive themes, layout issues could occur or some images might not be replaced.',
@@ -99,13 +161,34 @@
 					__( 'If you notice any problems, just deactivate the plugin and the site will return to the previous state. Please kindly <span>let us know</span> and we\'ll be more than happy to work them out.',
 						'shortpixel-adaptive-images' ),
 				],
+				'buttons' => [
+					[
+						'type'    => 'link',
+						'title'   => __( 'Contact us', 'shortpixel-adaptive-images' ),
+						'url'     => apply_filters('spai_affiliate_link',ShortPixelAI::DEFAULT_MAIN_DOMAIN. '/contact'),
+						'target'  => '_blank',
+						'primary' => true,
+					],
+				],
 			];
 
 			$this->on_boarding = [
+				'causer' => 'on boarding',
 				'title' => __( 'ShortPixel Adaptive Images new feature', 'shortpixel-adaptive-images' ),
 				'body'  => [
 					__( 'Thank you for updating to our new 3.0 version!', 'shortpixel-adaptive-images' ),
 					__( 'Please let us introduce our <span>On-Boarding Wizard</span> which has been developed to help you decide exactly which advanced options are really necessary for your website.', 'shortpixel-adaptive-images' ),
+				],
+				'buttons' => [
+					[
+						'title'   => __( 'Open Wizard', 'shortpixel-adaptive-images' ),
+						'action'  => 'redirect',
+						'primary' => true,
+					],
+					[
+						'title'  => __( 'No, I do not need it!', 'shortpixel-adaptive-images' ),
+						'action' => 'dismiss',
+					],
 				],
 			];
 
@@ -120,18 +203,35 @@
 			];
 
 			$this->wp_rocket_defer_js = [
+				'causer' => 'wp rocket defer js',
 				'title' => __( 'ShortPixel Adaptive Images conflicts with defer of all JavaScript files', 'shortpixel-adaptive-images' ),
 				'body'  => [
 					__( '<strong>ShortPixel Adaptive Images</strong> has found that conflicting option <span>Load JavaScript deferred</span> in the WP Rocket has been enabled without safe mode.',
 						'shortpixel-adaptive-images' ),
 				],
+				'buttons' => [
+					[
+						'title'   => __( 'Change conflicting settings', 'shortpixel-adaptive-images' ),
+						'action'  => 'solve conflict',
+						'primary' => true,
+					],
+				],
 			];
 
 			$this->wp_rocket_lazy = [
+				'causer' => 'wp rocket lazy',
 				'title' => __( 'ShortPixel Adaptive Images conflicts with other lazy-loading settings', 'shortpixel-adaptive-images' ),
 				'body'  => [
 					__( '<strong>ShortPixel Adaptive Images</strong> is also using a lazy-loading method as means to provide its service, so please deactivate the other lazy-loading setting. <span>Open the WP Rocket Settings</span> to turn off the Lazy Load option.',
 						'shortpixel-adaptive-images' ),
+				],
+				'buttons' => [
+					[
+						'type'    => 'link',
+						'title'   => __( 'Open the WP Rocket Settings', 'shortpixel-adaptive-images' ),
+						'url'     => 'options-general.php?page=wprocket#media',
+						'primary' => true,
+					],
 				],
 			];
 
@@ -141,19 +241,34 @@
 					__( 'You have enabled the "Replace in CSS files" option in ShortPixel. Please either <span>Open the WP Rocket Settings</span> to turn off the "Minify CSS files" option of WP Rocket or <span>update your WP Rocket plugin</span> to at least version 3.4.3.',
 						'shortpixel-adaptive-images' ),
 				],
+				'buttons' => [
+					[
+						'type'    => 'link',
+						'title'   => __( 'Open the WP Rocket Settings', 'shortpixel-adaptive-images' ),
+						'url'     => 'options-general.php?page=wprocket#file_optimization',
+						'primary' => true,
+					],
+				],
 			];
 
 			$this->key = [
 				'title' => __( 'ShortPixel account', 'shortpixel-adaptive-images' ),
 				'body'  => [
-					__( 'You already have a ShortPixel account for this website. Do you want to use ShortPixel Adaptive Images with this account?', 'shortpixel-adaptive-images' ),
+					__( 'You already have a ShortPixel account for this website: <span>%s</span>. Do you want to use ShortPixel Adaptive Images with this account?', 'shortpixel-adaptive-images' ),
+				],
+				'buttons' => [
+					[
+						'title'   => __( 'Use this account', 'shortpixel-adaptive-images' ),
+						'action'  => 'use account',
+						'primary' => true,
+					],
 				],
 			];
 
 			$this->credits = [
-				'title' => __( 'ShortPixel credits', 'shortpixel-adaptive-images' ),
+				'title' => __( 'ShortPixel CDN traffic', 'shortpixel-adaptive-images' ),
 				'body'  => [
-					__( 'Your ShortPixel Adaptive Images quota has been exceeded.', 'shortpixel-adaptive-images' ),
+					__( 'Your ShortPixel Adaptive Images quota has been exceeded.', 'shortpixel-adaptive-images' ) . ' ' . __( 'Your images are served from the origin server until you top-up your account.', 'shortpixel-adaptive-images' ),
 				],
 			];
 
@@ -162,24 +277,57 @@
 				'body'  => [
 					__( 'ShortPixel Adaptive Images and ShortPixel Image Optimizer are both set to do Lossy optimization which could result in a too aggressive optimization of your images, please set one of them to Glossy or Lossless.', 'shortpixel-adaptive-images' ),
 				],
+				'buttons' => [
+					[
+						'type'    => 'link',
+						'title'   => __( 'ShortPixel Image Optimizer options', 'shortpixel-adaptive-images' ),
+						'url'     => 'options-general.php?page=wp-shortpixel-settings',
+						'primary' => true,
+					],
+					[
+						'type'    => 'link',
+						'title'   => __( 'ShortPixel Adaptive Images options', 'shortpixel-adaptive-images' ),
+						'url'     => 'options-general.php?page=' . Page::NAMES[ 'settings' ],
+						'primary' => false,
+					],
+				],
 			];
 
 			$this->missing_jquery = [
+				'causer' => 'missing jquery',
 				'title' => __( 'ShortPixel Adaptive Images has found that jQuery is missing', 'shortpixel-adaptive-images' ),
 				'body'  => [
 					sprintf( __( 'Your theme is missing the <a href="%s" target="_blank">jQuery</a> library. In order for ShortPixel to properly run, please either go to <a href="%s" target="_blank">ShortPixel\'s settings</a>, in the Behaviour tab, scroll down to the bottom and activate the option "New AI engine" or restore jQuery.',
 						'shortpixel-adaptive-images' ), 'https://jquery.com', 'options-general.php?page=shortpixel-ai-settings#top#behaviour' ),
 					__( 'Please press <span>Re-Check</span> button if <b>jQuery</b> has been restored in your theme.', 'shortpixel-adaptive-images' ),
 				],
+				'buttons' => [
+					[
+						'title'      => __( 'Re-Check', 'shortpixel-adaptive-images' ),
+						'action'     => 're-check',
+						'additional' => [
+							'return_url' => '//' . $_SERVER[ 'HTTP_HOST' ] . $_SERVER[ 'REQUEST_URI' ],
+						],
+						'primary'    => true,
+					],
+				],
 			];
 
 			$sw = ActiveIntegrations::_()->get( 'swift-performance' );
 			$this->swift_performance = [
+				'causer' => 'swift performance',
 				'title' => 'Swift Performance ' . ( empty( $sw[ 'plugin' ] ) ? '' : ucfirst( $sw[ 'plugin' ] ) . ' ' ) . __( 'options conflict', 'shortpixel-adaptive-images' ),
 				'body'  => [
 					__( 'There is a known compatibility issue between ShortPixel Adaptive Images and older Swift Performance plugin versions which makes some background images to never get displayed.', 'shortpixel-adaptive-images' ),
 					__( 'Please update to the latest plugin version, or deactivate either "<b>Merge Styles</b>" or "<b>Normalize Static Resources</b>" options from the Swift Performance <a href="tools.php?page=swift-performance&subpage=settings" target="_blank">plugin settings</a>.',
 						'shortpixel-adaptive-images' ),
+				],
+				'buttons' => [
+					[
+						'title'   => __( 'Change conflicting settings', 'shortpixel-adaptive-images' ),
+						'action'  => 'solve conflict',
+						'primary' => true,
+					],
 				],
 			];
 
@@ -190,21 +338,44 @@
 					__( 'Please deactivate <b>"Display images in webp format on the site"</b> from the Imagify <a href="options-general.php?page=imagify" target="_blank">plugin settings</a>. <b>ShortPixel</b> will handle the delivery of WebP images to supporting browsers.',
 						'shortpixel-adaptive-images' ),
 				],
+				'buttons' => [
+					[
+						'title'   => __( 'Change conflicting settings', 'shortpixel-adaptive-images' ),
+						'action'  => 'solve conflict',
+						'primary' => true,
+					],
+				],
 			];
 
 			$this->spio_webp = [
+				'causer' => 'spio webp',
 				'title' => __( 'ShortPixel optimization alert', 'shortpixel-adaptive-images' ),
 				'body'  => [
 					sprintf( __( 'Please deactivate the <span>ShortPixel Image Optimizer\'s</span> <a href="%s" target="_blank">Deliver next generation images</a> option when the ShortPixel Adaptive Images plugin is active. The next generation images will transparently be delivered by ShortPixel Adaptive Images CDN.', 'shortpixel-adaptive-images' ),
 						admin_url( 'options-general.php?page=wp-shortpixel-settings&part=adv-settings' ) ),
 				],
+				'buttons' => [
+					[
+						'title'   => __( 'Deactivate option', 'shortpixel-adaptive-images' ),
+						'action'  => 'solve conflict',
+						'primary' => true,
+					],
+				],
 			];
 
 			$this->litespeed_js_combine = [
+				'causer' => 'litespeed js combine',
 				'title' => __( 'LiteSpeed Cache options conflict', 'shortpixel-adaptive-images' ),
 				'body'  => [
 					sprintf( __( 'Please deactivate the <span>LiteSpeed Cache\'s</span> <a href="%s" target="_blank">JS Combine</a> option when the ShortPixel Adaptive Images plugin is active.', 'shortpixel-adaptive-images' ),
 						admin_url( 'admin.php?page=litespeed-page_optm#settings_js' ) ),
+				],
+				'buttons' => [
+					[
+						'title'   => __( 'Change conflicting settings', 'shortpixel-adaptive-images' ),
+						'action'  => 'solve conflict',
+						'primary' => true,
+					],
 				],
 			];
 
@@ -218,6 +389,7 @@
 			];
 
 			$this->wpo_merge_css = [
+				'causer' => 'wpo merge css',
 				'title' => __( 'WP Optimize CSS options conflict', 'shortpixel-adaptive-images' ),
 				'body'  => [
 					sprintf( __( 'In some circumstances, the <span>WP Optimize\'s</span> <a href="%s" target="_blank">Enable merging of CSS files</a> option breaks the ShortPixel Adaptive Images plugin CSS. Please check your website and if you find CSS issues, please deactivate this option.',
@@ -228,9 +400,22 @@
 						admin_url( 'admin.php?page=wpo_minify&tab=wp_optimize_css' ) ),
 					'<pre>' . implode( PHP_EOL, $conflicting_files ) . '</pre>',
 				],
+				'buttons' => [
+					[
+						'title'   => __( 'Add exclusions', 'shortpixel-adaptive-images' ),
+						'action'  => 'add exclusions',
+						'primary' => true,
+					],
+					[
+						'title'   => __( 'Change conflicting settings', 'shortpixel-adaptive-images' ),
+						'action'  => 'solve conflict',
+						'primary' => false,
+					],
+				],
 			];
       
       $this->lqip_mkdir_failed = [
+		        'causer' => 'lqip mkdir failed',
 				'title' => __( 'LQIP creation failed', 'shortpixel-adaptive-images' ),
 				'body'  => [
 					__( '<strong>ShortPixel Adaptive Images</strong> was trying to create Low Quality Image Placeholders of your images in the last 12 hours but <span>the plugin has no permissions to do that</span>.', 'shortpixel-adaptive-images' ),

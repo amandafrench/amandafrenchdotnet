@@ -34,6 +34,7 @@ class ShortPixelAI {
     );
 
     const THUMBNAIL_REGEX = "/(-[0-9]+x[0-9]+)\.([a-zA-Z0-9]+)$/";
+	const GRAVATAR_REGEX = "regex:/\/\/([^\/]*\.|)gravatar.com\//";
 
 	public $options;
 	public $settings;
@@ -211,9 +212,17 @@ class ShortPixelAI {
                 $this->settings->exclusions->excluded_paths .=  (strlen($this->settings->exclusions->excluded_paths) ? PHP_EOL : '')
                     . "path://i.ytimg.com/vi/ID/hqdefault.jpg";
             }
-            if( $integrations->has( 'instagram-feed' ) || $integrations->has( 'insta-gallery' )) {
-                $this->settings->exclusions->excluded_paths .=  (strlen($this->settings->exclusions->excluded_paths) ? PHP_EOL : '')
-                    . "domain:cdninstagram.com";
+            if( $integrations->has( 'instagram-feed' ) || $integrations->has( 'insta-gallery' ) || $integrations->has('essential-grid')) {
+                $this->exclusions->excluded_paths[] = "domain:cdninstagram.com";
+            }
+
+            if($integrations->themeIs('Jupiter')) {
+                $this->exclusions->eager_selectors[] = 'img[data-mk-image-src-set]';
+            }
+
+            if( $integrations->has( 'perfmatters' )) {
+                $this->logger->log( 'PERFMATTERS PRELOAD IS EAGER.');
+                $this->exclusions->eager_selectors[] = 'img[data-perfmatters-preload]';
             }
 
             $swiftPerf = $integrations->get('swift-performance');
@@ -423,7 +432,7 @@ class ShortPixelAI {
                                     $current_api_url = ( $only_store ? $api_url_only_store : $api_url );
 
                                     // if so replacing the url with API url
-                                    $styles[ 'background-image' ] = str_replace($background_url, $current_api_url . '/' . $background_url, $styles[ 'background-image' ]);
+                                    $styles[ 'background-image' ] = str_replace($background_url, $current_api_url . '/' . ShortPixelUrlTools::absoluteUrl($background_url), $styles[ 'background-image' ]);
                                     (SHORTPIXEL_AI_DEBUG & ShortPixelAILogger::DEBUG_AREA_CSS) && $this->logger->log("PARSING ELEMENTOR REPLACE WITH: " . $current_api_url . '/' . $background_url, $styles);
                                 }
 
@@ -446,7 +455,7 @@ class ShortPixelAI {
 		$this->basename    = plugin_basename( $this->file );
 		$this->plugin_dir  = plugin_dir_path( $this->file );
 		$this->plugin_url  = plugin_dir_url( $this->file );
-		$gravatar          = 'regex:/\/\/([^\/]*\.|)gravatar.com\//';
+		$gravatar          = self::GRAVATAR_REGEX;
 
 		if ( is_null( $this->options->get( 'api_url', [ 'settings', 'behaviour' ], null ) ) ) {
 			$this->options->settings_behaviour_apiUrl        = ShortPixelAI::DEFAULT_API_AI . self::DEFAULT_API_AI_PATH;
@@ -461,6 +470,15 @@ class ShortPixelAI {
 			$this->options->settings_areas_serveSvg           = true;
 			$this->options->settings_exclusions_excludedPaths = $gravatar;
             $this->options->settings_behaviour_sizespostmeta  = false;
+			$this->options->settings_exclusions_excludedPages = '';
+			//set advanced to off by default for new installations
+			$this->options->flags_all_advanced = false;
+            $this->options->settings_behaviour_nojquery = 2; //default to 2 for new installations in order to differentiate from the situations where it was manually set.
+		} else {
+			//for existing installations set advanced to true by default
+			if ( is_null( $this->options->get( 'advanced', [ 'flags', 'all' ], null ) ) ) {
+				$this->options->flags_all_advanced = true;
+			}
 		}
 
         if ( is_null( $this->options->get( 'sizespostmeta', [ 'settings', 'behaviour' ], null ) ) ) {
@@ -481,7 +499,11 @@ class ShortPixelAI {
 		    $this->options->settings_exclusions_excludedPaths = $gravatar;
 	    }
 
-	    if ( is_null( $this->options->get( 'eager_selectors', [ 'settings', 'exclusions' ], null ) ) && !empty( $this->options->get( 'noresize_selectors', [ 'settings', 'exclusions' ], null ) ) ) {
+		if ( is_null( $this->options->get( 'excluded_pages', [ 'settings', 'exclusions' ], null ) ) ) {
+			$this->options->settings_exclusions_excludedPages = '';
+		}
+
+		if ( is_null( $this->options->get( 'eager_selectors', [ 'settings', 'exclusions' ], null ) ) && !empty( $this->options->get( 'noresize_selectors', [ 'settings', 'exclusions' ], null ) ) ) {
 		    // for backwards compatibility, the eager should take the values from noresize because noresize was also eager.
 		    $this->options->settings_exclusions_eagerSelectors = $this->options->settings_exclusions_noresizeSelectors;
 	    }
@@ -497,6 +519,9 @@ class ShortPixelAI {
         if(is_null($this->options->settings_behaviour_alter2wh)) {
             $this->options->settings_behaviour_alter2wh = ($this->options->flags_all_firstInstall ? 0 : 1);
         }
+		if(is_null($this->options->settings_behaviour_topbarmenu)) {
+			$this->options->settings_behaviour_topbarmenu = true;
+		}
 
 //        if(SHORTPIXEL_AI_DEBUG) {
 //            foreach($this->settings as $key => $value) {
@@ -520,7 +545,8 @@ class ShortPixelAI {
 
 		$this->setup_front_tests();
 
-	    add_action( 'admin_bar_menu', [ $this, 'toolbar_sniper' ], 999 );
+	    add_action( 'admin_bar_menu', [ $this, 'toolbar_sniper' ], 998 );
+		add_action( 'admin_bar_menu', [$this, 'toolbar_top_menu'], 999);
 
 	    /**
 	     * Filter deactivates WordPress's images lazy-loading
@@ -730,7 +756,7 @@ class ShortPixelAI {
 
     public function toolbar_sniper_bar($wp_admin_bar) {
 		//                                                TODO: missing_jquery check should be removed after sniper will migrate to VanillaJS
-	    if ( !self::userCan( 'manage_options' ) || !!$this->options->tests_frontEnd_missingJquery
+	    if ( !self::userCan( 'manage_options' ) || !!$this->options->tests_frontEnd_missingJquery && ($this->options->settings_behaviour_nojquery <= 0)
         //    || !!$this->options->tests_frontEnd_enqueued
         ) {
             $this->logger->log('TOOLBAR SNIPER CANCELLED: ' . (!!$this->options->tests_frontEnd_missingJquery ? ' Missing jQuery' : ''));
@@ -742,7 +768,7 @@ class ShortPixelAI {
 
         $args = array(
             'id'    => 'shortpixel_ai_sniper',
-            'title' => '<div id="shortpixel_ai_sniper" onclick="spaiSniperClick();return false;" title="' . __('Click here and then use the mouse to select an image to check, clear the CDN cache for it, or exclude','shortpixel-adaptive-images') . '" class="shortpixel_ai_sniper spai-smp-trigger ab-icon" data-spai-exclude="true">
+            'title' => '<div id="shortpixel_ai_sniper" onclick="spaiSniperClick();return false;" title="' . __('Click here and then use the mouse to select an image to check, clear the CDN cache for it, or exclude','shortpixel-adaptive-images') . '" data-spai-exclude="true">
                        <div id="spai-smps">
                             <div id="spai-smp-multiple" class="spai-smp" style="display:none;">
                                 <button class="spai-smp-options-button-cancel spai-smp-options-button-cancel-top">Cancel</button>
@@ -752,7 +778,7 @@ class ShortPixelAI {
                             <div id="spai-smp-single-template" class="spai-smp" style="display:none;">
                                 <div class="spai-smp-single-item-container">
                                     <div class="spai-smp-single-item-container-image-container">
-                                        <img src="#" class="spai-smp-single-item-container-image" alt="">
+                                        <img src="//:0" class="spai-smp-single-item-container-image" alt="">
                                     </div>
                                     <span class="spai-smp-single-item-container-basename"></span>
                                 </div>
@@ -815,7 +841,7 @@ class ShortPixelAI {
                     'selector'             => __( 'selector', 'shortpixel-adaptive-images' ),
                     'imageExcluded'        => __( 'Image is excluded.', 'shortpixel-adaptive-images' ),
                     'removeExcludingRule'  => __( 'Remove the excluding rule', 'shortpixel-adaptive-images' ),
-                    'clickToInspect'       => sprintf( __( 'Please click on the image that you want to inspect. <a href="%s" target="_blank">More details</a>', 'shortpixel-adaptive-images' ), 'https://help.shortpixel.com/article/338-how-to-use-the-image-checker-tool' ),
+                    'clickToInspect'       => sprintf( __( 'Please click on the image that you want to inspect. <a href="%s" target="_blank">More details</a>', 'shortpixel-adaptive-images' ), 'https://shortpixel.com/knowledge-base/article/338-how-to-use-the-image-checker-tool' ),
                     'whyImageNotIncluded'  => __( 'Why isn\'t this image included?', 'shortpixel-adaptive-images' ),
                     'hasBeenSelected'      => __( 'has been selected', 'shortpixel-adaptive-images' ),
                     'imageOptimized'       => __( 'Image optimized', 'shortpixel-adaptive-images' ),
@@ -828,7 +854,7 @@ class ShortPixelAI {
                     'refreshOnCdn'         => __( 'Refresh on CDN.', 'shortpixel-adaptive-images' ),
                     'wantToExcludeUrl'     => __( 'Are you sure you want to exclude this image URL from optimization?', 'shortpixel-adaptive-images' ),
                     'createNeededSelector' => sprintf( __( 'Use the controls below to create the CSS selector needed. Try to keep it as simple as possible. <a href="%s" target="_blank">How do I use this?</a>', 'shortpixel-adaptive-images' ),
-                        'https://help.shortpixel.com/article/338-how-to-use-the-image-checker-tool' ),
+                        'https://shortpixel.com/knowledge-base/article/338-how-to-use-the-image-checker-tool' ),
                     'errorOccurred'        => __( 'An error occurred, please contact support.', 'shortpixel-adaptive-images' ),
                     'resizing'             => __( 'resizing', 'shortpixel-adaptive-images' ),
                     'optimizing'           => __( 'optimizing', 'shortpixel-adaptive-images' ),
@@ -894,9 +920,8 @@ class ShortPixelAI {
     public function enqueue_script() {
         if ( $this->isWelcome() )
         {
-            if ( $this->settings->behaviour->fadein ) {
+            if ( $this->settings->behaviour->fadein && !$this->settings->behaviour->lqip ) {
                 \ShortPixel\AI\JsLoader::_($this)->fadeInCss();
-
             }
 
             \ShortPixel\AI\JsLoader::_($this)->enqueue();
@@ -925,6 +950,68 @@ class ShortPixelAI {
             $this->toolbar_sniper_bar($wp_admin_bar);
         }
     }
+	public function toolbar_top_menu($wp_admin_bar) {
+
+		if (
+			self::userCan( 'manage_options' ) &&
+			Options::_()->settings_behaviour_topbarmenu &&
+			!!Options::_()->pages_onBoarding_hasBeenPassed
+		) {
+			$this->register_js('spai-topbar-menu', 'topbar-menu');
+			$wp_admin_bar->add_menu( array(
+				'id'    => 'shortpixel_ai_topmenu',
+
+			));
+
+			if ( Options::_()->settings_areas_parseCssFiles ) {
+				$wp_admin_bar->add_menu( array(
+					'id'     => 'spai_top_menu_clear_css_cache',
+					'title'  => __( 'Clear CSS Cache', 'shortpixel-adaptive-images' ),
+					'href'   => '#',
+					'parent' => 'shortpixel_ai_topmenu',
+					'meta'   => [
+						'class'   => 'spai_clear_css_cache',
+						'onclick' => 'spaiCssCacheClear(this);return false;'
+					]
+				) );
+			}
+			if ( Options::_()->settings_behaviour_lqip ) {
+				$wp_admin_bar->add_menu( array(
+					'id'     => 'spai_top_menu_clear_lqip_cache',
+					'title'  => __( 'Clear LQIP cache', 'shortpixel-adaptive-images' ),
+					'href'   => '#',
+					'parent' => 'shortpixel_ai_topmenu',
+					'meta'   => [
+						'class'   => 'spai_clear_lqip_cache',
+						'onclick' => 'spaiLqipCacheClear(this);return false;'
+					]
+				) );
+			}
+			if (!is_admin() && $this->isWelcome()) {
+				$this->logger->log( 'TOOLBAR SNIPER ON' );
+				$wp_admin_bar->add_menu( array(
+					'id'     => 'spai_top_menu_sniper',
+					'title'  => __( 'Check images', 'shortpixel-adaptive-images' ),
+					'href'   => '#',
+					'parent' => 'shortpixel_ai_topmenu',
+					'meta'   => [
+						'class'   => 'shortpixel-ai-sniper spai-smp-trigger',
+						'onclick' => 'spaiSniperClick();return false;',
+					]
+				) );
+			}
+			$wp_admin_bar->add_menu( array(
+				'id'    => 'spai_top_menu_settings',
+				'title' => __( 'Settings', 'shortpixel-adaptive-images' ),
+				'href'  => admin_url( 'options-general.php?page=shortpixel-ai-settings' ),
+				//'href'  => '#',
+				'parent'=>'shortpixel_ai_topmenu',
+				'meta' => [
+					'class' => 'spai-settings'
+				]
+			));
+		}
+	}
 
 	public function enqueue_admin_styles() {
 		// Registering the styles
@@ -1154,7 +1241,7 @@ class ShortPixelAI {
 				$options->settings_behaviour_replaceMethod = $replace_method == 1 ? 'src' : ( $replace_method == 3 ? 'both' : 'srcset' );
 				$options->settings_behaviour_apiUrl        = get_option( 'spai_settings_api_url' );
 				$options->settings_behaviour_hoverHandling = !!get_option( 'spai_settings_hover_handling' );
-                $options->settings_behaviour_nativeLazy    = !!get_option( 'spai_settings_native_lazy' );
+				$options->settings_behaviour_nativeLazy    = !!get_option( 'spai_settings_native_lazy' );
 
 				// Areas
 				$options->settings_areas_backgroundsLazy     = !!get_option( 'spai_settings_backgrounds_lazy' );
@@ -1249,6 +1336,7 @@ class ShortPixelAI {
 			update_option( 'spai_settings_api_url', $options->settings_behaviour_apiUrl );
 			update_option( 'spai_settings_hover_handling', !!$options->settings_behaviour_hoverHandling );
             update_option( 'spai_settings_native_lazy', !!$options->settings_behaviour_nativeLazy );
+			update_option( 'spai_settings_topbarmenu', !!$options->settings_behaviour_topbarmenu );
 			//Areas
 			update_option( 'spai_settings_backgrounds_lazy', !!$options->settings_areas_backgroundsLazy );
 			update_option( 'spai_settings_backgrounds_max_width', $options->settings_areas_backgroundsMaxWidth );
@@ -1390,6 +1478,10 @@ class ShortPixelAI {
 	public function get_api_url( $width = '%WIDTH%', $height = '%HEIGHT%', $type = false, $compression = false ) {
         $args = array();
 
+        if($compression == 'orig' && defined('SHORTPIXEL_AI_ORIG_NO_CDN')) {
+            return '';
+        }
+
 		if ( !in_array($type, ShortPixelUrlTools::$ONLY_STORE) ) {
 			//ATTENTION, w_ should ALWAYS be the first parameter if present! (see fancyboxUpdateWidth in JS)
 			if ( $width !== false ) {
@@ -1438,7 +1530,8 @@ class ShortPixelAI {
 
     public function maybe_replace_images_src($content)
     {
-        (SHORTPIXEL_AI_DEBUG & ShortPixelAILogger::DEBUG_AREA_HTML) && $this->logger->log("maybe_replace_images_src - PROCESSING OUTPUT BUFFER.");
+        (SHORTPIXEL_AI_DEBUG & ShortPixelAILogger::DEBUG_AREA_HTML) && $this->logger->log("maybe_replace_images_src - PROCESSING OUTPUT BUFFER."
+            . (SHORTPIXEL_AI_DEBUG & ShortPixelAILogger::DEBUG_INCLUDE_CONTENT ? "\n\nCONTENT:" . strlen($content) . "bytes, type:" . gettype($content) . "\n" . $content : ''));
         if (!$this->doingAjax && !\ShortPixel\AI\JsLoader::_($this)->check()) {
             //the script was dequeued
             $this->logger->log("SPAI JS DEQUEUED ... and it's not AJAX");
@@ -1491,14 +1584,17 @@ class ShortPixelAI {
             //TODO in cazul asta vom inlocui direct cu URL-urile finale ca AO
             (SHORTPIXEL_AI_DEBUG & ShortPixelAILogger::DEBUG_AREA_HTML) && $this->logger->log("SPAI JS IS DEQUEUED. ABORTING.");
         }
-        elseif(preg_match('/^(\s*<!--.*-->)*(\s*<!--[^->!]+\-->)*\s*<\s*(!\s*doctype|\s*[a-z0-9]+)(\s+[^\>]+|)\/?\s?>/i', $content)) { //check if really HTML
+        //found a content starting with a zero width non-breaking space \xFEFF (HS#76951) and this matches: (\u{FEFF})?
+        elseif(preg_match("/^"
+            . (version_compare(PHP_VERSION, '7.0.0') >= 0 ? "(\u{FEFF})?" : "")
+            . "(\s*<!--.*-->)*(\s*<!--[^->!]+\-->)*\s*<\s*(!\s*doctype|\s*[a-z0-9]+)(\s+[^\>]+|)\/?\s?>/i", $content)) { //check if really HTML
             $content = $this->parser->parse($content);
             if($this->doingAjax) {
                 $this->affectedTags->record();
             }
         }
         else {
-            (SHORTPIXEL_AI_DEBUG & ShortPixelAILogger::DEBUG_AREA_HTML) && $this->logger->log("OOPS... WHAT KIND OF ANIMAL IS THIS?!.");
+            (SHORTPIXEL_AI_DEBUG & ShortPixelAILogger::DEBUG_AREA_HTML) && $this->logger->log("OOPS... WHAT KIND OF ANIMAL IS THIS?!", (SHORTPIXEL_AI_DEBUG & ShortPixelAILogger::DEBUG_INCLUDE_CONTENT ? $content : false));
         }
 
         if($this->options->settings_behaviour_lqip && count($this->blankInlinePlaceholders)) {
@@ -1572,6 +1668,7 @@ class ShortPixelAI {
 			'eager_selectors'    => $this->splitSelectors( $this->settings->exclusions->eager_selectors, ',' ),
 			'noresize_selectors' => $this->splitSelectors( $this->settings->exclusions->noresize_selectors, ',' ),
 			'excluded_paths'     => $this->splitSelectors( $this->settings->exclusions->excluded_paths, "\n" ),
+			'excluded_pages'     => $this->splitSelectors( $this->settings->exclusions->excluded_pages, "\n" ),
 		];
 	}
 
@@ -1581,38 +1678,42 @@ class ShortPixelAI {
             return true;
         }
 		//Second it could be by excluded_selectors or noresize_selectors
-		if (
-			count( $this->exclusions->{$type . '_selectors'})
-			&& ( strpos( $text, 'class=' ) !== false || strpos( $text, 'id=' ) !== false )
-		) {
-			foreach ( $this->exclusions->{$type . '_selectors'} as $selector ) {
-				$selector = trim( $selector );
-				$parts    = explode( '.', $selector );
-				if ( count( $parts ) == 2 && ( $parts[ 0 ] == '' || strpos( $text, $parts[ 0 ] ) === 1 ) ) {
-					if ( preg_match( '/\sclass=[\'"]([-_a-zA-Z0-9\s]*[\s]+' . $parts[ 1 ] . '|' . $parts[ 1 ] . ')[\'"\s]/i', $text ) ) {
-						return true;
-					}
-					else if ( preg_match( '/\sclass=' . $parts[ 1 ] . '[>\s]/i', $text ) ) {
-						return true;
-					}
-				}
-				else {
-					$parts = explode( '#', $selector );
-					if ( count( $parts ) == 2 && ( $parts[ 0 ] == '' || strpos( $text, $parts[ 0 ] ) === 1 ) ) {
-						if ( preg_match( '/\sid=[\'"]' . $parts[ 1 ] . '[\'"\s]/i', $text ) ) {
-							return true;
-						}
-					}
-					else {
-					    //TODO test this
-					    if ($selector === substr($text, 1, strlen($selector))) {
-					        //it's only the tag name
-					        return true;
-                        }
+        if(strpos($text, 'data-perfmatters-preload')) $this->logger->log( 'TAG IS ' . $type . '? ' . $text );
+
+        foreach ( $this->exclusions->{$type . '_selectors'} as $selector ) {
+            $selector = trim( $selector );
+            if(strpos($text, 'data-perfmatters-preload')) $this->logger->log( 'TAG IS SELECTOR: ' . $selector );
+            $parts    = explode( '.', $selector );
+            if ( count( $parts ) == 2 && ( $parts[ 0 ] == '' || strpos( $text, $parts[ 0 ] ) === 1 ) ) {
+                if ( preg_match( '/\sclass=[\'"]([-_a-zA-Z0-9\s]*[\s]+' . $parts[ 1 ] . '|' . $parts[ 1 ] . ')[\'"\s]/i', $text ) ) {
+                    return true;
+                }
+                else if ( preg_match( '/\sclass=' . $parts[ 1 ] . '[>\s]/i', $text ) ) {
+                    return true;
+                }
+            }
+            else {
+                $parts = explode( '#', $selector );
+                if ( count( $parts ) == 2 && ( $parts[ 0 ] == '' || strpos( $text, $parts[ 0 ] ) === 1 ) ) {
+                    if ( preg_match( '/\sid=[\'"]' . $parts[ 1 ] . '[\'"\s]/i', $text ) ) {
+                        return true;
                     }
-				}
-			}
-		}
+                }
+                else {
+                    preg_match('/^([^\s>\(]*)\[([^\t\n\f\s\/>"\'=]+?)(?:=(?:["\']?([^\]]*?)["\']?)|)\]$/', $selector, $matches);
+
+                    if($matches && (!strlen($matches[1]) || strpos( $text, $matches[ 1 ] ) === 1)) {
+                        return isset($matches[3]) && preg_match( '/\b'. $matches[2] . '=[\'"]?' . $matches[ 3 ] . '[\'"\s]?/i', $text ) //attribute with value
+                           || !isset($matches[3]) && preg_match( '/\b'. $matches[2] . '\b/i', $text ); //only existing attribute
+                    }
+                    //TODO test this
+                    elseif ($selector === substr($text, 1, strlen($selector))) {
+                        //it's only the tag name
+                        return true;
+                    }
+                }
+            }
+        }
 
 		return false;
 	}
@@ -1625,74 +1726,124 @@ class ShortPixelAI {
 	}
 
     public function urlIsExcluded($url) {
-        //exclude generated images like JetPack's admin bar hours stats
-        if(strpos($url, '?page=')) {
-            $admin = parse_url(admin_url());
-            if(strpos($url, $admin['path'])) {
-                return true;
-            }
-        }
-        //$this->logger->log("IS EXCLUDED? $url");
-        if( isset($this->settings->exclusions->excluded_paths) && strlen($this->settings->exclusions->excluded_paths)) {
-            $urlParsed = parse_url($url);
-            foreach (explode("\n", $this->settings->exclusions->excluded_paths) as $rule) {
 
-                $rule = explode(':', $rule);
-                if(count($rule) >= 2) {
-                    $type = array_shift($rule);
-                    $value = implode(':', $rule);
-                    $value = trim($value); //remove whitespaces and especially the \r which gets added on Windows (most probably)
+	    //exclude generated images like JetPack's admin bar hours stats
+	    if(strpos($url, '?page=')) {
+		    $admin = parse_url(admin_url());
+		    if(strpos($url, $admin['path'])) {
+			    return true;
+		    }
+	    }
 
-                    switch($type) {
-                        case 'regex':
-                            if(@preg_match($value, $url)) {
-                                $this->logger->log("EXCLUDED by $type : $value");
-                                return true;
-                            }
-                            break;
-                        case 'path':
-                        case 'http': //being so kind to accept urls as they are. :)
-                        case 'https':
-                            if(!isset($urlParsed['host'])) {
-                                $valueParsed = parse_url($value);
-                                if(isset($valueParsed['host'])) {
-                                    $url = ShortPixelUrlTools::absoluteUrl($url);
-                                }
-                            }
-                            if(strpos($url, $value) !== false) {
-                                $this->logger->log("EXCLUDED by $type $value RULE:", $rule);
-                                return true;
-                            }
-                            if(isset($urlParsed['path'])) {
-                                preg_match(self::THUMBNAIL_REGEX, $urlParsed['path'], $matches);
-                                //$this->logger->log("MATCHED THUMBNAIL for $url: ", $matches);
-                                if(isset($matches[1]) && isset($matches[2])) {
-                                    //try again without the resolution part, in order to exclude all thumbnails if main image is excluded
-                                    $urlMain = str_replace($matches[1] . '.' . $matches[2], '.' . $matches[2], $url);
-                                    //$this->logger->log("WILL REPLACE : {$matches[1]}.{$matches[2]} with .{$matches[2]} results: ", $urlMain);
-                                    if($urlMain !== $url) {
-                                        return $this->urlIsExcluded($urlMain);
-                                    }
-                                }
-                            }
-                            break;
-                        case 'domain':
-                            if(isset($urlParsed['host']) && stripos($urlParsed['host'], $value) !== false) {
-                                $this->logger->log("EXCLUDED by $type : $value");
-                                return true;
-                            }
-                    }
-                }
-            }
-        }
-        //$this->logger->log("NOT EXCLUDED");
-        return false;
+		if( isset($this->settings->exclusions->excluded_paths) && strlen($this->settings->exclusions->excluded_paths)) {
+			return $this->isExcluded($url, $this->settings->exclusions->excluded_paths);
+		} else {
+			return false;
+	    }
+
     }
+
+
+	/**
+	 * Return if a page is Excluded
+	 * @param $page
+	 *
+	 * @return mixed
+	 */
+	public function pageIsExcluded($page = null) {
+		static $pagesCache = [];
+
+		if(is_null($page)) {
+			$page = home_url($_SERVER['REQUEST_URI']);
+		}
+		$this->logger->log(home_url($_SERVER['REQUEST_URI']));
+
+		if(isset($pagesCache[$page])) {
+			$ret = $pagesCache[$page];
+		} else {
+			$ret = $this->isExcluded($page, $this->settings->exclusions->excluded_pages);
+			$pagesCache[$page] = $ret;
+		}
+		return $ret;
+
+	}
+
+	protected function isExcluded($url, $excludedList) {
+
+		//$this->logger->log("IS EXCLUDED? $url");
+		$urlParsed = parse_url($url);
+		foreach (explode("\n", $excludedList) as $rule) {
+
+			$rule = explode(':', $rule);
+			if(count($rule) >= 2) {
+				$type = array_shift($rule);
+				$value = implode(':', $rule);
+				$value = trim($value); //remove whitespaces and especially the \r which gets added on Windows (most probably)
+
+				switch($type) {
+					case 'regex':
+						if(@preg_match($value, $url)) {
+							$this->logger->log("EXCLUDED by $type : $value");
+							return true;
+						}
+						break;
+					case 'path':
+					case 'http': //being so kind to accept urls as they are. :)
+					case 'https':
+						if(!isset($urlParsed['host'])) {
+							$valueParsed = parse_url($value);
+							if(isset($valueParsed['host'])) {
+								$url = ShortPixelUrlTools::absoluteUrl($url);
+							}
+						}
+						if(strpos($url, $value) !== false) {
+							$this->logger->log("EXCLUDED by $type $value RULE:", $rule);
+							return true;
+						}
+						if(isset($urlParsed['path'])) {
+							preg_match(self::THUMBNAIL_REGEX, $urlParsed['path'], $matches);
+							//$this->logger->log("MATCHED THUMBNAIL for $url: ", $matches);
+							if(isset($matches[1]) && isset($matches[2])) {
+								//try again without the resolution part, in order to exclude all thumbnails if main image is excluded
+								$urlMain = str_replace($matches[1] . '.' . $matches[2], '.' . $matches[2], $url);
+								//$this->logger->log("WILL REPLACE : {$matches[1]}.{$matches[2]} with .{$matches[2]} results: ", $urlMain);
+								if($urlMain !== $url) {
+									return $this->urlIsExcluded($urlMain);
+								}
+							}
+						}
+						break;
+					case 'domain':
+						if(isset($urlParsed['host']) && stripos($urlParsed['host'], $value) !== false) {
+							$this->logger->log("EXCLUDED by $type : $value");
+							return true;
+						}
+				}
+			}
+		}
+		return false;
+	}
+
 
     /**
      * @return bool true if SPAI is welcome ( not welcome for example if it's an AMP page, CLI, is admin page or PageSpeed is off )
      */
 	public function isWelcome() {
+        if(defined('DONOTCDN')) {
+            $this->logger->log('NOT WELCOME. DONOTCDN.');
+            return false;
+        }
+
+        if(!$this->options->get( 'credits', [ 'flags', 'all' ], 1 )) {
+            $this->logger->log('NOT WELCOME. No credits.');
+            return false;
+        }
+
+		if($this->pageIsExcluded()) {
+			$this->logger->log('NOT WELCOME. Page is excluded.');
+			return false;
+		}
+
 	    $referrerPath = '';
 		if ( isset( $_SERVER[ 'HTTP_REFERER' ] ) ) {
 			$admin    = parse_url( admin_url() );
@@ -1717,7 +1868,9 @@ class ShortPixelAI {
              . ( defined( ' - DOING_AUTOSAVE' ) && DOING_AUTOSAVE ? ' DOING AUTOSAVE ' : '' )
              . ( defined( ' - DOING_CRON' ) && DOING_CRON ? ' DOING CRON ' : '' )
              . ( defined( ' - WP_CLI' ) && WP_CLI ? ' WP CLI ' : '')
-             . (!!$this->options->get( 'missing_jquery', [ 'tests', 'front_end' ], false ) ? ' - MISING jQuery ' : '')
+            //missing jQuery AND using legacy jQuery JS (ai-2.0.js)
+             . (   !!$this->options->get( 'missing_jquery', [ 'tests', 'front_end' ], false )
+                && ($this->options->get( 'nojquery', [ 'settings', 'behaviour' ], 2 ) <= 0) ? ' - MISING jQuery ' : '')
              . (( is_admin() && function_exists( "is_user_logged_in" ) && is_user_logged_in()
                  && !$this->doingAjax ) ? ' - USER DOING AJAX ' : '')
              . ( function_exists( "is_user_logged_in" )
@@ -1731,10 +1884,13 @@ class ShortPixelAI {
 		          || ( defined( 'DOING_CRON' ) && DOING_CRON )
 		          || ( defined( 'WP_CLI' ) && WP_CLI )
 		          || ( isset( $_GET[ 'PageSpeed' ] ) && $_GET[ 'PageSpeed' ] == 'off' ) || strpos( $referrerPath, 'PageSpeed=off' )
+                 //missing jQuery AND using legacy jQuery JS (ai-2.0.js)
 		          || !!$this->options->get( 'missing_jquery', [ 'tests', 'front_end' ], false )
+                     && ($this->options->get( 'nojquery', [ 'settings', 'behaviour' ], 2 ) <= 0)
 		          || isset( $_GET[ 'fl_builder' ] ) || strpos( $referrerPath, '/?fl_builder' ) // shh.... Beaver Builder is editing :)
 		          || ( isset( $_GET[ 'tve' ] ) && $_GET[ 'tve' ] == 'true' ) // Thrive Architect editor (thrive-visual-editor/thrive-visual-editor.php)
 		          || ( isset( $_GET[ 'ct_builder' ] ) && $_GET[ 'ct_builder' ] == 'true' ) // Oxygen Builder
+                  || isset( $_GET[ 'mailpoet_router' ] ) // MailPoet email view in browser link
 		          || ( isset( $_GET[ 'oxygen_iframe' ] ) && $_GET[ 'oxygen_iframe' ] == 'true' ) // Oxygen Builder
                   || ( isset( $_GET[ 'zn_pb_edit' ] ) && $_GET[ 'zn_pb_edit' ] == '1' ) // Zion Page Builder
 		          || ( isset( $_REQUEST[ 'action' ] ) && in_array( $_REQUEST[ 'action' ], self::$excludedAjaxActions ) )
@@ -1748,4 +1904,122 @@ class ShortPixelAI {
         SHORTPIXEL_AI_DEBUG && $this->logger->log($welcome ? "YES!" : "NO.");
 		return $welcome;
 	}
+
+	/**
+	 * Sets all settings to simple mode defaults
+	 * @return void
+	 */
+	public static function setSimpleDefaultOptions()
+	{
+		$options = Options::_();
+
+		$simpleValues = [
+			'compression' => [
+				'avif' => 0,
+				'remove_exif' => 1,
+				//webp is set in interface, defaults for suboptions
+				'png_to_webp' => 1,
+				'jpg_to_webp' => 1,
+				'gif_to_webp' => 1,
+			],
+			'behaviour' => [
+				'fadein' => 0,
+				'crop' => 0,
+				'replace_method' => 'src',
+				'generate_noscript' => 0,
+				'api_url' => self::DEFAULT_API_AI . self::DEFAULT_API_AI_PATH,
+				'lazy_threshold' => 500,
+				'hover_handling' => 0,
+				'replace_logged_in' => 1,
+				'lqip' => 0,
+				'process_way' => 'cron',
+				'native_lazy' => 0,
+				'alter2wh' => 0,
+				'sizespostmeta' => 0,
+				'size_breakpoints' => 0,
+				'nojquery' => 2,
+
+			],
+			'areas' => [
+				'lity' => 0,
+				'parse_js_lazy' => 0,
+				'parse_json_lazy' => 0,
+				'backgrounds_max_width' => 1920,
+				'backgrounds_lazy_style' => $options->settings_areas_parseCssFiles,
+				'backgrounds_lazy' => $options->settings_areas_parseCssFiles,
+			],
+			'exclusions' => [
+				'excluded_paths' => self::GRAVATAR_REGEX,
+				'eager_selectors' => '',
+				'noresize_selectors' => '',
+				'excluded_selectors' => '',
+				'excluded_pages' => '',
+			]
+		];
+
+		foreach( $simpleValues as $category => $items ) {
+			foreach( $items as $name => $value ) {
+				$options->set( $value, $name, [ 'settings', $category ] );
+			}
+		}
+
+	}
+
+	/**
+	 * @param object $options
+	 *
+	 * @return object
+	 */
+	public static function translateSimpleOptions( $options )
+	{
+		//Simple options are mostly meta options. Translate them to real one
+		if( isset($options->simple->simple_level) ) {
+			$options->compression->level = $options->simple->simple_level;
+		}
+
+		if( isset($options->simple->simple_webp) ) {
+			$options->compression->webp = $options->simple->simple_webp;
+		}
+
+		if( isset($options->simple->simple_optimize_backgrounds) ) {
+			$options->areas->backgrounds_lazy_style = $options->simple->simple_optimize_backgrounds;
+			$options->areas->backgrounds_lazy = $options->simple->simple_optimize_backgrounds;
+			$options->areas->parse_css_files = $options->simple->simple_optimize_backgrounds;
+		}
+
+		if( isset($options->simple->simple_optimize_js_images) ) {
+			$options->areas->js2cdn = $options->simple->simple_optimize_js_images;
+			$options->areas->parse_js = $options->simple->simple_optimize_js_images;
+			$options->areas->parse_json = $options->simple->simple_optimize_js_images;
+		}
+
+		unset( $options->simple );
+
+		return $options;
+	}
+
+    /**
+     * Simple options are mostly meta options. Infer them from the real options.
+     * @param $settings
+     * @return boolean true if simple options were inferred, false if not
+     */
+    public static function verifySimpleOptions($settings )
+    {
+        //this is partial, used only for on-boarding, when pressing done, to decide if we activate the advanced mode.
+        // TODO might be useful to when switching from advanced to simple mode, to notify the user only if settings can be lost
+        // TODO but then it needs to check more items.
+        return $settings->areas->backgrounds_lazy_style === $settings->areas->backgrounds_lazy
+            && $settings->areas->backgrounds_lazy_style === $settings->areas->parse_css_files
+
+            && $settings->areas->js2cdn === $settings->areas->parse_js
+            && $settings->areas->js2cdn === $settings->areas->parse_json
+            && !$settings->areas->parse_js_lazy
+            && !$settings->areas->parse_json_lazy
+
+            && $settings->compression->webp == $settings->compression->png_to_webp
+            && $settings->compression->png_to_webp === $settings->compression->jpg_to_webp
+            && $settings->compression->png_to_webp === $settings->compression->gif_to_webp
+            && $settings->compression->avif === 0
+            && $settings->compression->remove_exif === 1;
+    }
 }

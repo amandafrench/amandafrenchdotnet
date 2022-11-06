@@ -10,6 +10,7 @@
         const DEBUG_AREA_JSON = 16;
         const DEBUG_AREA_CSS = 32;
         const DEBUG_AREA_HTML = 64;
+        const DEBUG_AREA_LQIP = 64;
 
         /**
 		 * Make sure only one instance is running.

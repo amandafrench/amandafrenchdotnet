@@ -36,7 +36,7 @@
 		 * Url to API-endpoint to receive placeholders
 		 * @var string
 		 */
-		const API_URL = ShortPixelAI::DEFAULT_API_AI . '/client/q_lqip' . ShortPixelAI::SEP . 'ret_wait';
+		const API_URL = ShortPixelAI::DEFAULT_API_AI . '/spai/q_lqip' . ShortPixelAI::SEP . 'ret_wait';
 
 		/**
 		 * Lifetime of the placeholders
@@ -448,8 +448,8 @@
 				return false;
 			}
 
-			preg_match( '/<svg.*width=(?:\'|"|`)(.*?)(?:\'|"|`).*?>/s', $placeholder, $width );
-			preg_match( '/<svg.*height=(?:\'|"|`)(.*?)(?:\'|"|`).*?>/s', $placeholder, $height );
+			preg_match( '/<svg.*?width=(?:\'|"|`)(.*?)(?:\'|"|`).*?>/s', $placeholder, $width );
+			preg_match( '/<svg.*?height=(?:\'|"|`)(.*?)(?:\'|"|`).*?>/s', $placeholder, $height );
 
 			$return = [
 				'width'  => !empty( $width ) && !empty( $width[ 1 ] ) ? (float) $width[ 1 ] : null,
@@ -883,7 +883,7 @@
 		 * @return \ShortPixel\AI\LQIP
 		 */
 		private function log( $message, $_ = null ) {
-			if ( !defined( 'SHORTPIXEL_AI_DEBUG' ) || !SHORTPIXEL_AI_DEBUG ) {
+			if ( !defined( 'SHORTPIXEL_AI_DEBUG' ) || !SHORTPIXEL_AI_DEBUG || !(SHORTPIXEL_AI_DEBUG & \ShortPixelAILogger::DEBUG_AREA_LQIP)) {
 				return $this;
 			}
 

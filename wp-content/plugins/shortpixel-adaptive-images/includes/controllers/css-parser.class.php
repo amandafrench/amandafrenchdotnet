@@ -6,9 +6,18 @@
 
 class ShortPixelCssParser {
     //                          v- changed to also parse --background-image CSS variable used by Blocksy builder
-    const REGEX_CSS = '/([\s{;-]|^)()(background-image|background)(\s*:(?:[^;]*?[,\s]|\s*))(url|[\w-]+-gradient)\(\s*(?:\'|")?([^\'"\)]+)(\'|"|)?\s*\)/s';
+    const REGEX_CSS = '/([\s{;-]|^)()(background-image|background|content)(\s*:(?:[^;}]*[,\s]|\s*))(url)\(\s*(?:\'|")?([^\'"\)]+)(\'|"|)?\s*\)/s';
+    // tried (url|[\w-]+-gradient) instead of (url) but it breaks when the gradient is before a url() (HS#71821) so reverted it. To be seen if the gradient problem for which it was added in the first place reappears.
 
-    const REGEX_IN_TAG = '/\<([\w]+)([^\<\>]*?)(background-image|background)(\s*:(?:[^;]*?[,\s]|\s*))(url|[\w-]+-gradient)\(\s*(?:\'|")?([^\'"\)]+)(\'|"|)?\s*\)/s';
+	//extract content of @font-face
+	const REGEX_FONT_FACE = '/@font-face.*{([^}]+)[}]/sU';
+	//extract src of @font-face (may be multiple)
+	const REGEX_FONT_FACE_SRC = '/src\s*:([^;}]+)[;}]/s';
+	//extract url part of src
+	const REGEX_FONT_FACE_SRC_URL = '/url\((.*)\)/sU';
+
+
+	const REGEX_IN_TAG = '/\<([\w]+)([^\<\>]*?)(background-image|background)(\s*:(?:[^;}]*[,\s]|\s*))(url)\(\s*(?:\'|")?([^\'"\)]+)(\'|"|)?\s*\)/s';
     /**** BEWARE, THE ABOVE IS NOT USED ANY MORE, the bg-attr regex from RegexParser is used instead  ****/
 
     const NESTED_RULE = 1;
@@ -31,7 +40,6 @@ class ShortPixelCssParser {
 
 
     public function replace_inline_style_backgrounds($style) {
-
         $tokens = $this->get_all_tokens($style);
 
         $style = preg_replace_callback('/([^{};>]+\s*){([^{}]+\s*)}/s', function($matches) {
@@ -48,6 +56,40 @@ class ShortPixelCssParser {
         }, $style);
         return $style;
     }
+
+	public function replace_inline_style_fonts($style) {
+
+        $this->logger->log("REPLACE INLINE FONTS:", substr($style, 0, 1000));
+
+		if(!$this->ctrl->settings->areas->parse_css_files) {
+			$this->logger->log("REPLACE INLINE FONT - PARSE CSS OPTION IS OFF");
+			return $style;
+		}
+		$style = preg_replace_callback(self::REGEX_FONT_FACE, function($matches) {
+			$srcs = preg_replace_callback(self::REGEX_FONT_FACE_SRC, function($matches1) {
+				$urls = preg_replace_callback(self::REGEX_FONT_FACE_SRC_URL, function($matches2) {
+					$url = trim($matches2[1],'"\'');
+
+					$url = ShortPixelUrlTools::absoluteUrl($url);
+					if(   $this->ctrl->urlIsApi($url)
+					      || !ShortPixelUrlTools::isValid($url)
+					      || $this->ctrl->urlIsExcluded($url)) {
+						$this->logger->log("REPLACE INLINE FONT - IS INVALID OR EXCLUDED");
+						return $matches2[0];
+					}
+					$apiUrl = $this->ctrl->get_api_url(false, false, $this->ctrl->get_extension($url), false);
+					$retUrl = '"' . $apiUrl . '/' . $url . '"';
+
+					return str_replace($matches2[1],$retUrl, $matches2[0]);
+				},$matches1[1]);
+				return  str_replace($matches1[1], $urls, $matches1[0]);
+			},$matches[1]);
+
+			return  str_replace($matches[1], $srcs, $matches[0]);
+		}, $style);
+
+		return $style;
+	}
 
     public function replace_in_tag_style_backgrounds($style) {
         if(strpos($style, 'background') === false) return $style;
@@ -99,7 +141,7 @@ class ShortPixelCssParser {
             $this->logger->log("SOME DIFFERENT KIND OF BG - gradient-image?");
             $ret->text = $this->add_class($ret, ' spai-bg-prepared'); //we still need to flag it to be visible
         }
-        $this->logger->log("REPLACE TAG BK RETURNS: ", $ret);
+        $this->logger->log("REPLACE TAG BG RETURNS: ", $ret);
         return $ret->text;
     }
 

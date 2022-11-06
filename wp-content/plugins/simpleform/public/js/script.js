@@ -1,9 +1,9 @@
 (function( $ ) {
 	'use strict';
 	
-	 $( window ).load(function() {
+	 $( window ).on('load', function() {
  
-       $("form.sform").submit(function(event) {
+       $("form.sform").on('submit', function(event) {
 	     // Clear url parameters if the form has been submitted
 	     if ( window.location.href.indexOf("sending") > -1 ) {
 		    window.history.pushState({}, "", window.location.href.split("&sending")[0]);
@@ -32,10 +32,10 @@
                  $(this).find('label[for="sform-consent-' + form + '"]').addClass('is-invalid');
              }  
 	         if( $(this).hasClass("needs-focus") ) { 
-                 $(this).find(":invalid").first().focus();
+                 $(this).find(":invalid").first().trigger('focus');
 	         }
 	         else { 
-                 $(this).find('#errors-' + form).focus();
+                 $(this).find('#errors-' + form).trigger('focus');
 	         }
            }
            else {
@@ -47,7 +47,7 @@
          }
        });
 	
-       $( "input,textarea" ).on("input", function()  {
+       $( "input,textarea" ).on("input", function() {
 	     var form = $(this).attr('parent');
          var field = $(this).attr('id'); 
 	     if ( $(this).is(":valid") ) {   
@@ -88,24 +88,24 @@
     	 }
        });
 
-       $(":checkbox").on("click",function () {
+       $(":checkbox").on("click",function() {
   	     if( $(this).prop("checked") == false ) { $(this).val('false'); } 
          else { $(this).val('true'); }
        });  
 
-       $(".sform-field.captcha").focus(function(){
+       $(".sform-field.captcha").on('focus', function() {
          $(this).parent().addClass("focus");  
          $(this).prev().addClass("focus");
-         }).blur(function(){
+         }).on('blur', function() {
          $(this).parent().removeClass("focus");
          $(this).prev().removeClass("focus");
        })      
  
-       $('.sform-field.question').on('click',function (){
-         $(this).next().focus();
+       $('.sform-field.question').on('click',function(){
+         $(this).next().trigger('focus');
        })  
        
-       $(".sform-field.captcha").on('input', function(e)  {
+       $(".sform-field.captcha").on('input', function(e) {
 	      var field = $(this).attr('id');
 	      var form = $(this).attr('parent');   	 
 		  if ( $(this).is(":valid") ) {

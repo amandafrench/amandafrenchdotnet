@@ -20,6 +20,8 @@
 		 */
 		const NAMES = [
 			'settings'    => 'shortpixel-ai-settings',
+            'export-settings' => 'shortpixel-ai-export-settings',
+            'import-settings' => 'shortpixel-ai-import-settings',
 			'on-boarding' => 'shortpixel-ai-on-boarding',
 		];
 
@@ -175,6 +177,10 @@
 				if ( $current_user->last_name ) {
 					$name_pieces[] = $current_user->last_name;
 				}
+				if($spaiModeSwitchNotification = get_transient('spaiModeSwitchNotification')) {
+                    wp_add_inline_script('spai-settings' , 'window.spaiModeSwitchNotification = "' . str_replace('"', '\"', $spaiModeSwitchNotification) . '"');
+					delete_transient('spaiModeSwitchNotification');
+                }
 			}
 
 			if ( self::isCurrent( 'on-boarding' ) ) {
@@ -207,7 +213,60 @@
 				function() {
 					$this->render( 'settings.tpl.php' );
 				} );
-		}
+
+            add_submenu_page(
+                'admin.php',
+                'ShortPixel AI Export Settings',
+                null,
+                'manage_options',
+                self::NAMES[ 'export-settings' ],
+                function() {
+                    header('Content-Type: application/json');
+                    header('Content-Disposition: attachment; filename=SPAI-settings.json');
+                    echo(json_encode($this->ctrl->options->get()->settings, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+                    die();
+                } );
+
+            add_submenu_page(
+                'admin.php',
+                'ShortPixel AI Import Settings',
+                null,
+                'manage_options',
+                self::NAMES[ 'import-settings' ],
+                function() {
+                    echo('<h1>' . esc_html( get_admin_page_title() ) . '</h1>');
+                    if(isset($_FILES['import_settings_file']) && file_exists($_FILES['import_settings_file'] ["tmp_name"]))
+                    {
+                        $settings = json_decode(file_get_contents($_FILES['import_settings_file'] ["tmp_name"]));
+                        if(null !== $settings) {
+                            $settings = (array)$settings;
+                            foreach ($settings as $areaName => $areaValues) {
+                                $areaValues = (array)$areaValues;
+                                foreach($areaValues as $settingName => $value) {
+                                    $this->ctrl->options->set($value, $settingName, ['settings', $areaName]);
+                                }
+                            }
+                            ?>
+                            <div class="notice notice-success is-dismissible" data-icon="none" data-causer="" data-plugin="short-pixel-ai">
+                                <div class="body-wrap">
+                                    <div class="message-wrap">
+                                        <p><?= __("The settings were successfully imported. Redirecting you back to the settings page in a moment...", 'shortpixel-adaptive-images' ) ?></p>
+                                    </div>
+                                </div>
+                                <button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button>
+                            </div>
+                            <script>
+                                setTimeout(function(){
+                                    window.location.href = 'options-general.php?page=shortpixel-ai-settings';
+                                }, 5000);
+                            </script>
+                            <?php
+                        }
+
+                    }
+                    wp_die();
+                } );
+        }
 
 		/**
 		 * @param \WP_Admin_Bar $admin_bar

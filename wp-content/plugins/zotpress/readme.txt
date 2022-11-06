@@ -7,8 +7,8 @@ Tags: zotero, zotpress, citation manager, citations, citation, cite, citing, bib
 Author URI: http://katieseaborn.com/
 Author: Katie Seaborn
 Requires at least: 3.5
-Tested up to: 5.8.1
-Stable tag: 7.3
+Tested up to: 5.9.3
+Stable tag: 7.3.1.2
 License: Apache2.0
 
 Zotpress displays your Zotero citations on WordPress.
@@ -71,6 +71,25 @@ The F.A.Q. can be found on the "Help" page of every Zotpress installation. If yo
 6. Allow visitors to search your library by item metadata or tag, or both.
 
 == Changelog ==
+
+= 7.3.1.2 =
+
+* Fixed Library "Browse" page account, default account, and subcollection bugs.
+* Minor style fixes for Library.
+
+= 7.3.1.1 =
+
+* Fixed Library collection navigation bug.
+* Fixed minor Library style issues.
+* Added Library dropdown browsing scroll effect.
+
+= 7.3.1 =
+
+* New! Show or hide browse bar for Zotpress Library Dropdown.
+* Fixed single account library errors.
+* Fixed minor issues with thumbnail image.
+* Modified Library to allow multiple instances in one page.
+* Modified Library pagination styles for modernization.
 
 = 7.3 =
 

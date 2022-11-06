@@ -295,9 +295,7 @@ class SimpleForm_Admin {
 	
     public function shortcode_costruction() {
 
-      if( 'POST' !== $_SERVER['REQUEST_METHOD'] ) {	die ( 'Security checked!'); }
-      if ( ! wp_verify_nonce( $_POST['verification_nonce'], "ajax-verification-nonce")) { exit("Security checked!"); }      
-      if ( ! current_user_can('manage_options')) { exit("Security checked!"); }   
+      if ( 'POST' !== $_SERVER['REQUEST_METHOD'] || ! wp_verify_nonce( $_POST['verification_nonce'], "ajax-verification-nonce") || ! current_user_can('manage_options') ) { die ( 'Security checked!'); }
    
       else { 
        global $wpdb; 
@@ -409,7 +407,7 @@ class SimpleForm_Admin {
        $form_direction = isset($_POST['form-direction']) ? sanitize_key($_POST['form-direction']) : 'ltr';
        $css_code = isset($_POST['additional-css']) ? strip_tags($_POST['additional-css']) : '';
        $additional_css = htmlspecialchars($css_code, ENT_HTML5 | ENT_NOQUOTES | ENT_SUBSTITUTE, 'utf-8');
-
+              
        if ( !empty($newform) && $form_name_value == '' ) {
             echo json_encode(array('error' => true, 'update' => false, 'message' => __( 'Enter a name for this form', 'simpleform' ) ));
 	        exit;
@@ -498,19 +496,26 @@ class SimpleForm_Admin {
           
        if ( $newform == 'false' ) {          
             if ( $form_id == '1' ) {
-                 $update_attributes = update_option('sform_attributes', $sform_attributes);   
+	          $id = '1';
+              $update_attributes = update_option('sform_attributes', $sform_attributes);   
             }
             else {
-	             $update_attributes = update_option('sform_'.$form_id.'_attributes', $sform_attributes);   
+	          $id = $form_id;
+	          $update_attributes = update_option('sform_'.$form_id.'_attributes', $sform_attributes);   
             }
        }
        else {
-                  $update_attributes = update_option('sform_'.$shortcode_id.'_attributes', $sform_attributes);   
+	          $id = $shortcode_id;
+              $update_attributes = update_option('sform_'.$shortcode_id.'_attributes', $sform_attributes);   
        }           
        
        if ($update_attributes) { $update_result .= 'done'; }
-
+ 
        if ( $update_result ) {
+	       
+         // Update additional style to enqueue    
+         $util = new SimpleForm_Util();
+         $util->additional_style($id,$additional_css);
 
 	     if ( $newform == 'false' ) {
               echo json_encode(array('error' => false, 'update' => true, 'message' => __( 'The contact form has been updated', 'simpleform' ) ));
@@ -540,16 +545,16 @@ class SimpleForm_Admin {
 	/**
 	 * Edit settings
 	 *
-	 * @since    1.0
+	 * @since 1.0
+     * @version  2.1.8.2
 	 */
-	
+
     public function sform_edit_options() {
 
-      if( 'POST' !== $_SERVER['REQUEST_METHOD'] ) {	die ( 'Security checked!'); }
-      if ( ! wp_verify_nonce( $_POST['verification_nonce'], "ajax-verification-nonce")) { exit("Security checked!"); }   
-      if ( ! current_user_can('manage_options')) { exit("Security checked!"); }   
-   
+      if ( ! current_user_can('manage_options') || 'POST' !== $_SERVER['REQUEST_METHOD'] || ! wp_verify_nonce( $_POST['verification_nonce'], "ajax-verification-nonce") ) { die ( 'Security checked!' ); }
+
       else {
+	      
        $form_id = isset( $_POST['form-id'] ) ? absint($_POST['form-id']) : '1';
 	   $main_settings = get_option('sform_settings'); 
 	   $admin_notices = isset($_POST['admin-notices']) ? 'true' : 'false';
@@ -558,11 +563,10 @@ class SimpleForm_Admin {
        $ajax_submission = isset($_POST['ajax-submission']) ? 'true' : 'false';
        $html5_validation = isset($_POST['html5-validation']) ? 'true' : 'false';
        $focus = isset($_POST['focus']) ? sanitize_key($_POST['focus']) : 'field';
-       $spinner = isset($_POST['spinner']) ? 'true' : 'false';
+       $spinner = isset($_POST['spinner']) && $ajax_submission == 'true' ? 'true' : 'false';
        $template = isset($_POST['form-template']) ? sanitize_text_field($_POST['form-template']) : 'default';
-       $form_borders = isset($_POST['form-borders']) ? sanitize_text_field($_POST['form-borders']) : 'dark';       
        $stylesheet = isset($_POST['stylesheet']) ? 'true' : 'false';
-       $cssfile = isset($_POST['stylesheet-file']) ? 'true' : 'false';
+       $cssfile = isset($_POST['stylesheet-file']) && $stylesheet != 'false' ? 'true' : 'false';
        $javascript = isset($_POST['javascript']) ? 'true' : 'false';
        $uninstall = isset($_POST['deletion']) ? 'true' : 'false';
        $multiple_spaces = isset($_POST['multiple-spaces']) ? 'true' : 'false';
@@ -635,18 +639,29 @@ class SimpleForm_Admin {
 	   $confirmation_pageid = ! empty( $main_settings['confirmation_pageid'] ) && get_post_status($main_settings['confirmation_pageid']) ? absint($main_settings['confirmation_pageid']) : '';	 
 	   $duplicate = isset($_POST['duplicate']) ? 'true' : 'false';	
  
-       if ( $stylesheet != 'true' )  { $cssfile = 'false'; }
-       if ( $template != 'transparent' )  { $form_borders = 'dark'; }
-       if ( $ajax_submission != 'true' )  { $spinner = 'false'; }
-       if ( $success_action == 'message' )  { $confirmation_page = ''; }
+       if ( $success_action == 'message' ) { $confirmation_page = ''; }
+       
+       if ( $form_id != '1' ) {
+	     $admin_notices = $main_settings['admin_notices']; 
+		 $frontend_notice =	$main_settings['frontend_notice'];
+		 $admin_color =	$main_settings['admin_color'];
+		 $stylesheet = $main_settings['stylesheet'];
+		 $cssfile =	$main_settings['stylesheet_file'];
+		 $javascript = $main_settings['javascript'];
+		 $uninstall = $main_settings['deletion_data'];
+		 $server_smtp =	$main_settings['server_smtp'];
+		 $smtp_host = $main_settings['smtp_host'];
+		 $smtp_encryption =	$main_settings['smtp_encryption'];
+		 $smtp_port = $main_settings['smtp_port'];
+		 $smtp_authentication =	$main_settings['smtp_authentication'];
+		 $smtp_username = $main_settings['smtp_username'];
+		 $smtp_password = $main_settings['smtp_password'];
+		 $duplicate = $main_settings['duplicate'];
+       }
 
-       if (has_action('sform_validate_akismet_settings')):
-	       do_action('sform_validate_akismet_settings');	
-	   endif;
+       if ( has_action('sform_validate_akismet_settings') ) { do_action('sform_validate_akismet_settings');	}
 
-       if (has_action('sform_validate_recaptcha_settings')):
-	       do_action('sform_validate_recaptcha_settings');	
-	   endif;
+       if ( has_action('sform_validate_recaptcha_settings')) { do_action('sform_validate_recaptcha_settings'); }
 
        if ( $html5_validation == 'false' && $focus == 'alert' )  { 
 	        echo json_encode(array('error' => true, 'update' => false, 'message' => __( 'Focus is automatically set to first invalid field if HTML5 validation is not disabled', 'simpleform' ) ));
@@ -702,9 +717,7 @@ class SimpleForm_Admin {
        }
 	   endif;
 	   
-	   if ( $form_id == '1' ) { 
-
-         $settings = array(
+       $settings = array(
 	             'admin_notices' => $admin_notices,
 	             'frontend_notice' => $frontend_notice,
                  'admin_color' => $admin_color,
@@ -713,7 +726,6 @@ class SimpleForm_Admin {
 	             'html5_validation' => $html5_validation,
 	             'focus' => $focus,
                  'form_template' => $template,
-                 'form_borders' => $form_borders,
                  'stylesheet' => $stylesheet,
                  'stylesheet_file' => $cssfile, 
                  'javascript' => $javascript,
@@ -784,147 +796,18 @@ class SimpleForm_Admin {
 	             'form_pageid' => $form_pageid,
 	             'confirmation_pageid' => $confirmation_pageid,	
                  ); 
- 
-         $extra_fields = array('additional_fields' => '');
-         $submissions_sform_settings = array_merge($settings, apply_filters( 'sform_submissions_settings_filter', $extra_fields ));
-         $additional_sform_settings = array_merge($submissions_sform_settings, apply_filters( 'sform_akismet_settings_filter', $extra_fields ));
-         $extra_sform_settings = array_merge($additional_sform_settings, apply_filters( 'sform_recaptcha_settings', $extra_fields ));
-         $update_result = update_option('sform_settings', $extra_sform_settings); 
+
+       $extra_fields = array('additional_fields' => '');
+       $submissions_sform_settings = array_merge($settings, apply_filters( 'sform_submissions_settings_filter', $extra_fields ));
+       $additional_sform_settings = array_merge($submissions_sform_settings, apply_filters( 'sform_akismet_settings_filter', $extra_fields ));
+       $extra_sform_settings = array_merge($additional_sform_settings, apply_filters( 'sform_recaptcha_settings', $extra_fields ));
+       $update_result = $form_id == '1' ? update_option('sform_settings', $extra_sform_settings) : update_option("sform_{$form_id}_settings", $extra_sform_settings); 
                   
-         global $wpdb; 
-         $table = "{$wpdb->prefix}sform_shortcodes"; 
-         $forms = $wpdb->get_col( "SELECT id FROM $table" );
-         foreach($forms as $form) { 
-	       if ( $form != '1' ) {
-	         $settings_option = get_option('sform_'. $form .'_settings');
-             $form_settings = $settings_option != false ? $settings_option : '';
-	         if ( $form_settings != '' ) {
-			 $form_settings['admin_notices'] = $admin_notices;
-			 $form_settings['frontend_notice'] = $frontend_notice;
-			 $form_settings['admin_color'] = $admin_color;
-			 $form_settings['deletion_data'] = $uninstall;
-             $form_settings['multiple_spaces'] = $multiple_spaces;
-			 $form_settings['server_smtp'] = $server_smtp;
-			 $form_settings['smtp_host'] = $smtp_host;
-			 $form_settings['smtp_encryption'] = $smtp_encryption;
-			 $form_settings['smtp_port'] = $smtp_port;
-			 $form_settings['smtp_authentication'] = $smtp_authentication;
-			 $form_settings['smtp_username'] = $smtp_username;
-			 $form_settings['smtp_password'] = $smtp_password;
-			 $form_settings['duplicate'] = $duplicate;
-             update_option('sform_'. $form .'_settings', $form_settings); 
-	         }
-	       }
-         }
-      
-	   }
-      
-       else {
-	       
-	     $admin_notices = ! empty($main_settings['admin_notices']) ? esc_attr($main_settings['admin_notices']) : 'false';
-	     $frontend_notice = ! empty($main_settings['frontend_notice']) ? esc_attr($main_settings['frontend_notice']) : 'true';
-	     $admin_color = ! empty($main_settings['admin_color']) ? esc_attr($main_settings['admin_color']) : 'default';       
-	     $uninstall = ! empty($main_settings['deletion_data']) ? esc_attr($main_settings['deletion_data']) : 'false'; 
-	     $multiple_spaces = ! empty($main_settings['multiple_spaces']) ? esc_attr($main_settings['multiple_spaces']) : 'false';
-	     $server_smtp = ! empty($main_settings['server_smtp']) ? esc_attr($main_settings['server_smtp']) : 'false';       
-	     $smtp_host = ! empty($main_settings['smtp_host']) ? esc_attr($main_settings['smtp_host']) : '';
-	     $smtp_encryption = ! empty($main_settings['smtp_encryption']) ? esc_attr($main_settings['smtp_encryption']) : '';       
-	     $smtp_port = ! empty($main_settings['smtp_port']) ? esc_attr($main_settings['smtp_port']) : '';       
-	     $smtp_authentication = ! empty($main_settings['smtp_authentication']) ? esc_attr($main_settings['smtp_authentication']) : 'false';
-	     $smtp_username = ! empty($main_settings['smtp_username']) ? esc_attr($main_settings['smtp_username']) : '';       
-	     $smtp_password = ! empty($main_settings['smtp_password']) ? esc_attr($main_settings['smtp_password']) : '';       
-	     $duplicate = ! empty($main_settings['duplicate']) ? esc_attr($main_settings['duplicate']) : 'false';       
-	       
-         $settings = array(
-	             'form_pageid' => $form_pageid,
-	             'confirmation_pageid' => $confirmation_pageid,	
-	             'admin_notices' => $admin_notices,
-	             'frontend_notice' => $frontend_notice,
-                 'admin_color' => $admin_color,
-	             'html5_validation' => $html5_validation,
-	             'focus' => $focus,
-                 'ajax_submission' => $ajax_submission,
-                 'spinner' => $spinner,
-                 'form_template' => $template,
-                 'form_borders' => $form_borders,
-                 'stylesheet' => $stylesheet,
-                 'stylesheet_file' => $cssfile, 
-                 'javascript' => $javascript,
-                 'deletion_data' => $uninstall,
-                 'multiple_spaces' => $multiple_spaces,
-                 'outside_error' => $outside_error,
-                 'characters_length' => $characters_length,
-                 'empty_fields' => $empty_fields,
-                 'empty_name' => $empty_name,
-                 'empty_lastname' => $empty_lastname,
-                 'empty_phone' => $empty_phone,
-                 'empty_email' => $empty_email,
-                 'empty_subject' => $empty_subject,
-                 'empty_message' => $empty_message,
-                 'empty_captcha' => $empty_captcha,
-                 'incomplete_name' => $incomplete_name, 
-                 'invalid_name' => $invalid_name, 
-                 'name_error' => $name_error,      
-                 'incomplete_lastname' => $incomplete_lastname, 
-                 'invalid_lastname' => $invalid_lastname, 
-                 'lastname_error' => $lastname_error,      
-                 'invalid_email' => $invalid_email,  
-                 'email_error' => $email_error,  
-                 'invalid_phone' => $invalid_phone, 
-                 'phone_error' => $phone_error,      
-                 'incomplete_subject' => $incomplete_subject, 
-                 'invalid_subject' => $invalid_subject,  
-                 'subject_error' => $subject_error,                    
-                 'incomplete_message' => $incomplete_message,    
-                 'invalid_message' => $invalid_message,
-                 'message_error' => $message_error,
-                 'consent_error' => $consent_error,
-                 'invalid_captcha' => $invalid_captcha,    
-                 'captcha_error' => $captcha_error,    
-                 'honeypot_error' => $honeypot_error,    
-                 'server_error' => $server_error, 
-                 'duplicate_error' => $duplicate_error,
-                 'ajax_error' => $ajax_error,        
-                 'success_action' => $success_action,         
-                 'success_message' => $success_message, 
-                 'confirmation_page' => $confirmation_page,        
-                 'thanks_url' => $thanks_url,
-                 'server_smtp' => $server_smtp,
-                 'smtp_host' => $smtp_host,
-                 'smtp_encryption' => $smtp_encryption,
-                 'smtp_port' => $smtp_port,
-                 'smtp_authentication' => $smtp_authentication,
-                 'smtp_username' => $smtp_username,
-                 'smtp_password' => $smtp_password,
-                 'notification' => $notification,
-                 'notification_recipient' => $notification_recipients,
-                 'bcc' => $notification_bcc,
-                 'notification_email' => $notification_email,
-                 'notification_name' => $notification_name,
-                 'custom_sender' => $custom_sender,
-                 'notification_subject' => $notification_subject,
-                 'custom_subject' => $custom_subject,
-                 // 'notification_message' => $notification_message,
-                 'notification_reply' => $notification_reply,
-                 'submission_number' => $submission_number,  
-                 'autoresponder' => $autoresponder, 
-                 'autoresponder_email' => $autoresponder_email,
-                 'autoresponder_name' => $autoresponder_name,
-                 'autoresponder_subject' => $autoresponder_subject,
-                 'autoresponder_message' => $autoresponder_message,
-                 'autoresponder_reply' => $autoresponder_reply,
-                 'duplicate' => $duplicate,             
-                 ); 
-                 
-         $extra_fields = array('additional_fields' => '');
-         $submissions_sform_settings = array_merge($settings, apply_filters( 'sform_submissions_settings_filter', $extra_fields ));
-         $additional_sform_settings = array_merge($submissions_sform_settings, apply_filters( 'sform_akismet_settings_filter', $extra_fields ));
-         $extra_sform_settings = array_merge($additional_sform_settings, apply_filters( 'sform_recaptcha_settings', $extra_fields ));
-         $update_result = update_option("sform_{$form_id}_settings", $extra_sform_settings); 
-     
-	   }
-       
        if ( $update_result ) {
+	       
+         // Update additional scripts to enqueue    
+         $util = new SimpleForm_Util();
+         $util->additional_script($form_id,$settings);
 	       
 	     echo json_encode( array( 'error' => false, 'update' => true, 'message' => __( 'Settings were successfully saved', 'simpleform' ) ) ); 
 	     exit; 
@@ -950,13 +833,12 @@ class SimpleForm_Admin {
     public function sform_form_filter($attribute) { 
 		
      global $wpdb;
-     $table_name = $wpdb->prefix . 'sform_shortcodes';
      
      if ($attribute == '') {
-     $form_values = $wpdb->get_row( "SELECT * FROM {$table_name}", ARRAY_A );  
+     $form_values = $wpdb->get_row( "SELECT * FROM {$wpdb->prefix}sform_shortcodes", ARRAY_A );  
      }
      else {
-     $form_values = $wpdb->get_row( "SELECT * FROM {$table_name} WHERE shortcode = '{$attribute}'", ARRAY_A );  
+     $form_values = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}sform_shortcodes WHERE shortcode = %s", $attribute), ARRAY_A );
      }
      
      return $form_values;
@@ -985,9 +867,8 @@ class SimpleForm_Admin {
 	
     public function setting_privacy() {
 
-      if( 'POST' !== $_SERVER['REQUEST_METHOD'] ) {	die ( 'Security checked!'); }
-      if ( ! wp_verify_nonce( $_POST['verification_nonce'], "ajax-verification-nonce")) { exit("Security checked!"); }   
-      if ( ! current_user_can('manage_options')) { exit("Security checked!"); }   
+      if ( 'POST' !== $_SERVER['REQUEST_METHOD'] || ! wp_verify_nonce( $_POST['verification_nonce'], "ajax-verification-nonce") || ! current_user_can('manage_options') ) { die ( 'Security checked!'); }
+ 
       else { 
         $page = isset($_POST['page-id']) ? absint($_POST['page-id']) : 0;   
         $privacy_label = isset($_POST['consent-label']) ? wp_kses_post(trim($_POST['consent-label'])): ''; 
@@ -1105,151 +986,204 @@ class SimpleForm_Admin {
           require_once SIMPLEFORM_PATH . 'includes/class-activator.php';
 	      SimpleForm_Activator::create_db();
 		  SimpleForm_Activator::default_data_entry();          
-        }
-                
+ 		  SimpleForm_Activator::enqueue_additional_code();          
+       }
+
     }
     
 	/**
-	 * Update pages list containing simpleform when a page is edited.
+	 * Clean up the post content of any removed or duplicated form
      *
-	 * @since    2.0.5
+	 * @since    2.1.4
 	 */
 	
+    public function forms_cleaning($post_id,$post,$form_ids,$used_forms) {
+        
+        $cleanup = '';
+        $content = $post->post_content;
+        $removed = array_diff($used_forms, $form_ids);
+        $duplicated = array_unique(array_diff_assoc($used_forms, array_unique($used_forms)));
+        $block_pattern = '/<!-- wp:simpleform(.*)\/-->/';
+        $shortcode_pattern = '/<!-- wp:shortcode -->([^>]*)<!-- \/wp:shortcode -->/';
+        $pattern = '/\[simpleform(.*?)\]/';
+
+        if ( ! empty($removed) ) {
+          $cleanup = 'true';
+          foreach ($removed as $id) {	
+     	    $search_blockId = '"formId":"'.$id.'"';  
+     	    $search_shortcodeId = '[simpleform id="'.$id.'"]';  
+            preg_match_all($block_pattern, $content, $matches_block);     
+            if ( $matches_block ) {
+              foreach ( $matches_block[0] as $block ) {
+  		        if ( strpos($block, $search_blockId ) !== false ) {
+                  $content = str_replace($block, '', $content);
+                }
+              }
+            }
+            preg_match_all($shortcode_pattern, $content, $matches_shortcode);
+            if ( $matches_shortcode ) {
+              foreach ( $matches_shortcode[0] as $block ) {
+	            if ( strpos($block,$search_shortcodeId) !== false ) { 
+                  $content = str_replace($block, '', $content);
+                }
+              }
+            }
+            preg_match_all($pattern, $content, $matches_pattern);     
+            if ( $matches_pattern ) {
+              foreach ( $matches_pattern[0] as $shortcode ) {
+		         if ( $shortcode === $search_shortcodeId ) { 
+                   $content = str_replace($shortcode, '', $content);
+                 }
+              }
+            }
+          }
+        }       
+        
+        if ( ! empty($duplicated) ) {
+          $cleanup = 'true';
+          $matching = '';
+          foreach ($duplicated as $id) {	
+     	    $search_blockId = '"formId":"'.$id.'"';  
+     	    $search_shortcodeId = $id != '1' ? '[simpleform id="'.$id.'"]' : '[simpleform]';  
+            preg_match_all($block_pattern, $content, $matchesBlock);     
+            if ( $matchesBlock ) {
+              foreach ( $matchesBlock[0] as $block ) {
+  			    if ( strpos($block, $search_blockId ) !== false ) {
+	  		      $matching .= '1';
+                  $splitted_content = explode($block,$content,2);
+                  // Keep only the last one and delete the other duplicates
+                  if ( ! empty($splitted_content[1]) && strpos($splitted_content[1], $search_blockId ) !== false  ) {
+                    $content= implode('',$splitted_content);
+                  }
+                  else { $content = $content; }
+                }
+              }
+            }
+            preg_match_all($shortcode_pattern, $content, $matchesShortcode);
+            if ( $matchesShortcode ) {
+              foreach ( $matchesShortcode[0] as $block ) {
+		        if ( strpos($block,$search_shortcodeId) !== false ) { 
+	  	  		  if ( empty($matching) ) {
+	  		        $matching .= '1';
+                    $splitted_content = explode($block,$content,2);
+                    // Keep only the last one and delete the other duplicates
+                    if ( ! empty($splitted_content[1]) && strpos($splitted_content[1], $search_shortcodeId ) !== false  ) {
+                      $content= implode('',$splitted_content);
+                    }
+                    else { $content = $content; }
+  	   		      }
+  	   		      // Delete all shortcodes and keep the block
+	  			  else { $content = str_replace($block, '', $content); }
+                }
+              }
+            }
+            preg_match_all($pattern, $content, $matchesPattern);     
+            if ( $matchesPattern ) {
+              foreach ( $matchesPattern[0] as $shortcode ) {
+		         if ( $shortcode === $search_shortcodeId ) { 
+	  			   if ( empty($matching) ) {
+	  		         $matching .= '1';
+                     $splitted_content = explode($block,$content,2);
+                     // Keep only the last one and delete the other duplicates
+                     if ( ! empty($splitted_content[1]) && strpos($splitted_content[1], $search_shortcodeId ) !== false  ) {
+                       $content= implode('',$splitted_content);
+                     }
+                     else { $content = $content; }
+  		           }
+  		           // Delete all shortcodes and keep the block
+	  			   else { $content = str_replace($shortcode,'',$content); }
+                 }
+              }
+            }
+          }
+        }
+        
+        // Avoid infinite loop in save_post callback
+        if ( !empty($cleanup) ) {
+          remove_action( 'save_post', 'sform_pages_list' );
+          wp_update_post( array( 'ID' => $post_id, 'post_content' => $content ) );
+          add_action( 'save_post', 'sform_pages_list' );
+        }
+           
+    }
+
+	/**
+	 * Update pages list containing a form when a page is edited
+     *
+	 * @since    2.0.5
+     * @version  2.1.3
+	 */
+
 	public function sform_pages_list( $post_id, $post ) {
 
-      // Return if this is just a revision
-      if ( wp_is_post_revision( $post_id ) ) {
-        return;
-      }
-
-      // MERGE shortcode_pages AND block_pages
-      // - QUERIES
-
+      // Return if not yet published
+      if ( $post->post_status !== 'publish' )
+      return;
+      
+      $post_id = intval($post_id);
+      
+      // If this is a revision, get real post ID
+      if ( $parent_id = wp_is_post_revision($post_id) )
+      $post_id = intval($parent_id);
       $id = array($post_id);
+      
+      // Search simpleform in the post content
       $util = new SimpleForm_Util();      
-      // List of all forms IDs that have been created
-      $form_ids = $util->sform_ids();
-      // Retrieve all forms IDs used in the post content
       $used_forms = $util->used_forms($post->post_content,$type = 'all');
-      // Retrieve all forms IDs used as shortcode in the post content
-      $used_shortcodes = $util->used_forms($post->post_content,$type = 'shortcode');
-      global $wpdb;
-      $table_name = "{$wpdb->prefix}sform_shortcodes";
-      // Retrieve the option with all pages that use simpleform
-      $sform_pages = get_option('sform_pages') != false ? get_option('sform_pages') : $util->form_pages($form_id = '0');     
-
+      
       // If the post content contains simpleform
       if ( ! empty($used_forms) ) {
-	      
-        if ( !in_array($post_id,$sform_pages) ) {
-	       $updated_sform_pages = array_unique(array_merge($id,$sform_pages)); 
-	       update_option('sform_pages',$updated_sform_pages);
-        }
-
-        // List of all forms IDs used in the post content
+        global $wpdb;
+        $form_ids = $util->sform_ids();
+        
+        // Clean up the post content of any non-existent and ..........redundant form
+        do_action( 'forms_cleaning', $post_id, $post, $form_ids, $used_forms ); 
+        
         foreach ($form_ids as $form_id) {	       
-           
-           $shortcode_used_in = $wpdb->get_var( "SELECT shortcode_pages FROM $table_name WHERE id = {$form_id}" );
-           $shortcode_ids = ! empty($shortcode_used_in) ? explode(',', $shortcode_used_in) : array();           
-           $block_used_in = $wpdb->get_var( "SELECT block_pages FROM $table_name WHERE id = {$form_id}" );
-           $block_ids = ! empty($block_used_in) ? explode(',',$block_used_in) : array();
-          
-           // If a form ID is among those used in the post
-           if ( in_array($form_id,$used_forms) ) {
-	           
-             if ( in_array($form_id,$used_shortcodes) ) {	           
-             // Include the post ID in the shortcodes list if not yet inserted
-               if ( !in_array($post_id,$shortcode_ids) ) {
-                 // Turn it as string and update the value
-                 $new_used_in = implode(',', array_unique(array_merge($id,$shortcode_ids))); 
-                 // $wpdb->query( $wpdb->prepare("UPDATE $table_name SET shortcode_pages = '$new_used_in' WHERE id = %d", $form_id) );
-                 $wpdb->query( $wpdb->prepare("UPDATE $table_name SET shortcode_pages = '$new_used_in', status = 'published' WHERE id = %d", $form_id) );
-	           }
-               // Exclude the post ID from the blocks list if inserted
-               if ( in_array($post_id,$block_ids) ) {
-                 $updated_used_in = array_diff($block_ids,$id);
-                 $new_used_in = implode(",", $updated_used_in); 
-                 // $wpdb->query( $wpdb->prepare("UPDATE $table_name SET block_pages = '$new_used_in' WHERE id = %d", $form_id) );
-                 $wpdb->query( $wpdb->prepare("UPDATE $table_name SET block_pages = '$new_used_in', status = 'published' WHERE id = %d", $form_id) );
-	           }
-	         }
-	         
-	         else {
-               // Include the post ID in the blocks list if not yet inserted
-               if ( ! in_array($post_id,$block_ids) ) {
-	              $new_used_in = implode(',', array_unique(array_merge($id,$block_ids)));
-                  // $wpdb->update($table_name, array('block_pages' => $new_used_in), array('id' => $form_id ));
-                  $wpdb->update($table_name, array('block_pages' => $new_used_in, 'status' => 'published'), array('id' => $form_id ));
-	           }
-               // Exclude the post ID from the shortcodes list if inserted
-               if ( in_array($post_id,$shortcode_ids) ) {
-                 $updated_used_in = array_diff($shortcode_ids,$id);
-                 $new_used_in = implode(",", $updated_used_in); 
-                 // $wpdb->query( $wpdb->prepare("UPDATE $table_name SET shortcode_pages = '$new_used_in' WHERE id = %d", $form_id) );
-                 $wpdb->query( $wpdb->prepare("UPDATE $table_name SET shortcode_pages = '$new_used_in', status = 'published' WHERE id = %d", $form_id) );
-	           }
-	         }
-	         
-	       }	
-
-           // If a form ID is not among those used
-		   else {
-             // Exclude the post ID from all the lists
-             if ( in_array($post_id,$shortcode_ids) ) {
-               $updated_used_in = array_diff($shortcode_ids,$id);
-               $new_used_in = implode(",", $updated_used_in); 
-               // $wpdb->query( $wpdb->prepare("UPDATE $table_name SET shortcode_pages = '$new_used_in' WHERE id = %d", $form_id) );
-               $wpdb->query( $wpdb->prepare("UPDATE $table_name SET shortcode_pages = '$new_used_in', status = 'draft' WHERE id = %d", $form_id) );
-	         }
-             if ( in_array($post_id,$block_ids) ) {
-               $updated_used_in = array_diff($block_ids,$id);
-               $new_used_in = implode(",", $updated_used_in); 
-               // $wpdb->query( $wpdb->prepare("UPDATE $table_name SET block_pages = '$new_used_in' WHERE id = %d", $form_id) );
-               $wpdb->query( $wpdb->prepare("UPDATE $table_name SET block_pages = '$new_used_in', status = 'draft' WHERE id = %d", $form_id) );
-	         }
-	           
-	       }
-	       	
+          $form_pages = $wpdb->get_row( $wpdb->prepare( "SELECT form_pages, form_widgets FROM {$wpdb->prefix}sform_shortcodes WHERE id = %d", $form_id ) );
+          $form_pages_ids = ! empty($form_pages->form_pages) ? explode(',',$form_pages->form_pages) : array();
+          if ( in_array($form_id,$used_forms) ) {
+              if ( !in_array($post_id,$form_pages_ids) ) {
+                $new_form_pages = implode(',', array_unique(array_merge($id,$form_pages_ids))); 
+                $wpdb->query( $wpdb->prepare("UPDATE {$wpdb->prefix}sform_shortcodes SET form_pages = '%s', status = 'published' WHERE id = %d", $new_form_pages, $form_id) );
+              }
+	      }	
+		  else {
+            if ( in_array($post_id,$form_pages_ids) ) {
+              $updated_form_pages = array_diff($form_pages_ids,$id);
+              $new_form_pages = implode(",", $updated_form_pages); 
+              $form_status = !empty($form_pages->form_pages) || !empty($form_pages->form_widgets) ? 'published' : 'draft';
+              $wpdb->query( $wpdb->prepare("UPDATE {$wpdb->prefix}sform_shortcodes SET form_pages = '%s', status = '%s' WHERE id = %d", $new_form_pages, $form_status, $form_id) );
+            }
+	      }
         }
-         
+        $sform_pages = get_option('sform_pages') != false ? get_option('sform_pages') : $util->form_pages($form_id = '0');     
+        if ( !in_array($post_id,$sform_pages) ) {
+	      $updated_sform_pages = array_unique(array_merge($id,$sform_pages)); 
+	      update_option('sform_pages',$updated_sform_pages);
+        }
       }
       
       // If the post content does not contains simpleform
       else {
-	    
-	    // Check if the post ID is included in the pages list 
+        $sform_pages = get_option('sform_pages') != false ? get_option('sform_pages') : $util->form_pages($form_id = '0');     
         if ( in_array($post_id,$sform_pages) ) {
-	        
+          global $wpdb;
+          $form_ids = $util->sform_ids();
           foreach ($form_ids as $form_id) {
-            $shortcode_used_in = $wpdb->get_var( "SELECT shortcode_pages FROM $table_name WHERE id = {$form_id}" );
-            $shortcode_ids = ! empty($shortcode_used_in) ? explode(',', $shortcode_used_in) : array();           
-            $block_used_in = $wpdb->get_var( "SELECT block_pages FROM $table_name WHERE id = {$form_id}" );
-            $block_ids = ! empty($block_used_in) ? explode(',',$block_used_in) : array();            
-            if ( in_array($post_id,$shortcode_ids) ) {
-              $updated_used_in = array_diff($shortcode_ids,$id);
-              $new_used_in = implode(",", $updated_used_in); 
-              // $wpdb->query( $wpdb->prepare("UPDATE $table_name SET shortcode_pages = '$new_used_in' WHERE id = %d", $form_id) );
-              $form_status = !empty($updated_used_in) || !empty($block_used_in) ? 'published' : 'draft';
-              $wpdb->query( $wpdb->prepare("UPDATE $table_name SET shortcode_pages = '$new_used_in', status = '$form_status'  WHERE id = %d", $form_id) );
+            $form_pages = $wpdb->get_row( $wpdb->prepare( "SELECT form_pages, form_widgets FROM {$wpdb->prefix}sform_shortcodes WHERE id = %d", $form_id ) );
+            $form_pages_ids = ! empty($form_pages->form_pages) ? explode(',',$form_pages->form_pages) : array();
+            if ( in_array($post_id,$form_pages_ids) ) {
+              $updated_form_pages = array_diff($form_pages_ids,$id);
+              $new_form_pages = implode(",", $updated_form_pages); 
+              $form_status = !empty($form_pages->form_pages) || !empty($form_pages->form_widgets) ? 'published' : 'draft';
+              $wpdb->query( $wpdb->prepare("UPDATE {$wpdb->prefix}sform_shortcodes SET form_pages = %s, status = %s WHERE id = %d", $new_form_pages, $form_status, $form_id) );
 	        }
-            if ( in_array($post_id,$block_ids) ) {
-              $updated_used_in = array_diff($block_ids,$id);
-              $new_used_in = implode(",", $updated_used_in);
-              // $wpdb->query( $wpdb->prepare("UPDATE $table_name SET block_pages = '$new_used_in' WHERE id = %d", $form_id) );
-              $form_status = !empty($updated_used_in) || !empty($shortcode_used_in) ? 'published' : 'draft';
-              $wpdb->query( $wpdb->prepare("UPDATE $table_name SET block_pages = '$new_used_in', status = '$form_status' WHERE id = %d", $form_id) );
-	        }	        
  	      }
- 	      
 	      $updated_sform_pages = array_diff($sform_pages,$id); 
 	      update_option('sform_pages',$updated_sform_pages);
-	      
+	      	      
         }
-        
-        else { 
-	      // DO NOTHING !!!    
-        }
-
       }
                 
     }
@@ -1262,9 +1196,7 @@ class SimpleForm_Admin {
 	
     public function admin_color_scheme() {
 
-      if( 'POST' !== $_SERVER['REQUEST_METHOD'] ) {	die ( 'Security checked!'); }
-      if ( ! wp_verify_nonce( $_POST['verification_nonce'], "ajax-verification-nonce")) { exit("Security checked!"); }   
-      if ( ! current_user_can('manage_options')) { exit("Security checked!"); }   
+      if ( 'POST' !== $_SERVER['REQUEST_METHOD'] || ! wp_verify_nonce( $_POST['verification_nonce'], "ajax-verification-nonce") || ! current_user_can('manage_options') ) { die ( 'Security checked!'); }
       
       else { 
         $admin_color = isset($_POST['admin-color']) && in_array($_POST['admin-color'], array('default', 'light', 'modern', 'blue', 'coffee', 'ectoplasm', 'midnight', 'ocean', 'sunrise', 'foggy', 'polar' )) ? sanitize_text_field($_POST['admin-color']) : '';
@@ -1310,27 +1242,18 @@ class SimpleForm_Admin {
 	
     public function sform_delete_form() {
 
-      if( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {	die ( 'Security checked!'); }
-      if ( ! wp_verify_nonce( $_POST['sform_nonce'], "sform_nonce_deletion")) { exit("Security checked!"); }   
-      if ( ! current_user_can('manage_options')) { exit("Security checked!"); }   
+      if ( 'POST' !== $_SERVER['REQUEST_METHOD'] || ! wp_verify_nonce( $_POST['sform_nonce'], "sform_nonce_deletion") || ! current_user_can('manage_options') ) { die ( 'Security checked!'); }
       
       else {
         $form_id = isset( $_POST['form-id'] ) ? absint($_POST['form-id']) : '1';
         $form_name = isset($_POST['form-name']) ? sanitize_text_field($_POST['form-name']) : '';
         global $wpdb; 
-        $table = "{$wpdb->prefix}sform_shortcodes";
         $submission_table = "{$wpdb->prefix}sform_submissions";    
-        
         $where_submissions = defined('SIMPLEFORM_SUBMISSIONS_NAME') ? "AND object != '' AND object != 'not stored'" : '';
-
  		$entries = $wpdb->get_var("SELECT COUNT(id) FROM {$wpdb->prefix}sform_submissions WHERE form = '$form_id' $where_submissions");
         $confirmation = isset($_POST['confirmation']) ? sanitize_text_field($_POST['confirmation']) : '';
- 		$hidden_input = '<input type="hidden" id="confirmation" name="confirmation" value="true">
-';
-        $entries_message = sprintf( _n( 'The form contains %s message.', 'The form contains %s messages.', $entries ), $entries ) . '&nbsp;' . 
-       
-       //  __( 'Proceeding with the deletion all messages will also be deleted, and can no longer be restored.', 'simpleform' ) 
-         __( 'By Proceeding, all messages will be moved to trash, and hidden from list tables.', 'simpleform' ) . '&nbsp;' . __( 'If it is permanently deleted, all messages will also be permanently deleted.', 'simpleform' ) . '&nbsp;' . __( 'Are you sure you don’t want to move them to another form first?', 'simpleform' );        
+ 		$hidden_input = '<input type="hidden" id="confirmation" name="confirmation" value="true">';
+        $entries_message = sprintf( _n( 'The form contains %s message.', 'The form contains %s messages.', $entries ), $entries ) . '&nbsp;' . __( 'By Proceeding, all messages will be hidden from list tables.', 'simpleform' ) . '&nbsp;' . __( 'If it is permanently deleted, all messages will also be permanently deleted.', 'simpleform' ) . '&nbsp;' . __( 'Are you sure you don’t want to move them to another form first?', 'simpleform' );        
        
      	if ( $entries && $confirmation == '' ) {
             echo json_encode(array('error' => true, 'message' => $entries_message, 'confirm' => $hidden_input ));
@@ -1340,26 +1263,19 @@ class SimpleForm_Admin {
        	if ( !$entries || ( $entries && $confirmation == 'true' ) ) {
         
         $table_post = $wpdb->prefix . 'posts';
-	    // $pages_list = $wpdb->get_var( "SELECT pages FROM {$table} WHERE id = {$form_id}" );
-	    $shortcode_pages_list = $wpdb->get_var( "SELECT shortcode_pages FROM {$table} WHERE id = {$form_id}" );
-	    $block_pages_list = $wpdb->get_var( "SELECT block_pages FROM {$table} WHERE id = {$form_id}" );
-	    $widget = $wpdb->get_var( "SELECT widget FROM {$table} WHERE id = {$form_id} AND widget != 0" );
-	    $widget_id = $wpdb->get_var( "SELECT widget_id FROM {$table} WHERE id = {$form_id}" );
-    	// $pages = $pages_list ? explode(',',$pages_list) : array();
-  	    $shortcode_pages = $shortcode_pages_list ? explode(',',$shortcode_pages_list) : array();
-	    $block_pages = $block_pages_list ? explode(',',$block_pages_list) : array();
-        // $form_pages = array_unique(array_merge($shortcode_pages,$block_pages,$pages));
-        $form_pages = array_unique(array_merge($shortcode_pages,$block_pages));
-        // $deletion = $wpdb->query($wpdb->prepare("DELETE FROM {$table} WHERE id = '%d'", $form_id));
+	    $form_pages_list = $wpdb->get_var( "SELECT form_pages FROM {$wpdb->prefix}sform_shortcodes WHERE id = {$form_id}" );
+	    $widget = $wpdb->get_var( "SELECT widget FROM {$wpdb->prefix}sform_shortcodes WHERE id = {$form_id} AND widget != 0" );
+	    // $widget_id = $wpdb->get_var( "SELECT widget_id FROM {$wpdb->prefix}sform_shortcodes WHERE id = {$form_id}" );
+	    $widget_id = $wpdb->get_var( "SELECT form_widgets FROM {$wpdb->prefix}sform_shortcodes WHERE id = {$form_id}" );
+	    
+        $form_pages = $form_pages_list ? explode(',',$form_pages_list) : array();
 	    $deletion = $wpdb->query( $wpdb->prepare("UPDATE {$wpdb->prefix}sform_shortcodes SET relocation = '0', moveto = '0', to_be_moved = '', onetime_moving = '1', previous_status = status, status = 'trash', deletion = '1' WHERE id = '%d'", $form_id) );	
-	        
         $img = '<span class="dashicons dashicons-saved"></span>';
        
         if ( $deletion ) {
-
 	      $post_cleaning = '';
-          $wpdb->query( $wpdb->prepare("UPDATE {$wpdb->prefix}sform_submissions SET previous_status = status, status = 'trash', hidden = '1' WHERE form = %d", $form_id) );
-          
+          // $wpdb->query( $wpdb->prepare("UPDATE {$wpdb->prefix}sform_submissions SET previous_status = status, status = 'trash', hidden = '1' WHERE form = %d", $form_id) );
+          $wpdb->query( $wpdb->prepare("UPDATE {$wpdb->prefix}sform_submissions SET hidden = '1' WHERE form = %d", $form_id) );
           if ( $form_pages ) {
             foreach ($form_pages as $postID) {
 	          $post = get_post($postID);
@@ -1394,7 +1310,6 @@ class SimpleForm_Admin {
               if ( $cleaning ) { $post_cleaning .= 'done'; }
             }  
           }
-          
           if ( $widget ) { 
             $sform_widget = get_option('widget_sform_widget');         
             unset($sform_widget[$widget]);
@@ -1412,7 +1327,6 @@ class SimpleForm_Admin {
               }
             }
           }
-          
           if ( $widget_id ) { 
             $widget_block = get_option('widget_block');         
             if ( !empty($widget_block) ) {
@@ -1452,11 +1366,8 @@ class SimpleForm_Admin {
               }
             }
           }
-	        
           if ( ! empty($post_cleaning) ) {
-	          
-	        $wpdb->update($table, array('shortcode_pages' => '', 'block_pages' => '', 'widget' => '0', 'widget_id' => ''), array('id' => $form_id ));
-
+	        $wpdb->update($wpdb->prefix . 'sform_shortcodes', array('shortcode_pages' => '', 'block_pages' => '', 'form_pages' => '', 'form_widgets' => '', 'widget' => '0', 'widget_id' => ''), array('id' => $form_id ));
 	        $message = sprintf( __( 'Form "%s" moved to trash. All pages containing the form have been cleaned up.', 'simpleform' ), $form_name );
 	        echo json_encode(array('error' => false, 'message' => $message, 'img' => $img, 'redirect_url' => admin_url('admin.php?page=sform-forms') ));
 	        exit;
@@ -1465,12 +1376,13 @@ class SimpleForm_Admin {
 	        echo json_encode(array('error' => false, 'message' => sprintf( __( 'Form "%s" moved to trash', 'simpleform' ), $form_name ), 'img' => $img, 'redirect_url' => admin_url('admin.php?page=sform-forms') ));
 	        exit;
 	      }
-
         }
+        
         else {
 	        echo json_encode(array('error' => true, 'message' => __( 'Oops!', 'simpleform' ) .'<br>'. __( 'Error occurred deleting the form. Try again!', 'simpleform' ) ));
 	        exit; 
         }
+        
         }
         die();
       }
@@ -1550,9 +1462,7 @@ class SimpleForm_Admin {
 	
     public function form_update() {
 	    
-      if( 'POST' !== $_SERVER['REQUEST_METHOD'] ) {	die ( 'Security checked!'); }
-      if ( ! wp_verify_nonce( $_POST['verification_nonce'], "ajax-verification-nonce")) { exit("Security checked!"); }      
-      if ( ! current_user_can('manage_options')) { exit("Security checked!"); }   
+      if ( 'POST' !== $_SERVER['REQUEST_METHOD'] || ! wp_verify_nonce( $_POST['verification_nonce'], "ajax-verification-nonce") || ! current_user_can('manage_options') ) { die ( 'Security checked!'); }
    
       else { 
        
@@ -1576,6 +1486,7 @@ class SimpleForm_Admin {
          $onetime = isset($_POST['onetime']) ? true : false;
          $restoration = isset($_POST['restore']) ? true : false;
          $deletion = isset($_POST['deletion-form']) ? true : false;
+         $settings = isset($_POST['settings']) ? true : false;
          $form_to_name = isset($_POST['form-to']) ? sanitize_text_field($_POST['form-to']) : '';
          $submissions = isset($_POST['submissions']) ? intval($_POST['submissions']) : '0';       
          $moved_submissions = isset($_POST['moved-submissions']) ? intval($_POST['moved-submissions']) : '0';
@@ -1601,6 +1512,11 @@ class SimpleForm_Admin {
 	        exit; 
          }
          
+         // Not ovverride settings when the moving is not sheduled
+         if ( $relocation == false || $moveto == '0' || $to_be_moved == '' || ( $to_be_moved != 'next' && $onetime == true ) ) {
+            $settings = false;
+         }
+
 	     // Check if a moving is running 
          if ( $relocation == true && $moveto != '0' && $to_be_moved != '' && $restoration == false ) {	         
         
@@ -1611,25 +1527,21 @@ class SimpleForm_Admin {
 		     switch ($to_be_moved) {
                case $to_be_moved == 'lastyear':
                $where = $where_year;
-               // $timestamp_year = time() - (60 * 60 * 24);
                $timestamp_msg = strtotime("-1 year");
                break;
                case $to_be_moved == 'lastmonth':
                $where = $where_month;
-               // $timestamp_month = time() - (60 * 60 * 24);
                $timestamp_msg = strtotime("-1 month");
                break;
                case $to_be_moved == 'lastweek':
                $where = $where_week;
-               // $timestamp_week = time() - (60 * 60 * 24);
                $timestamp_msg = strtotime("-1 week");
                break;
                case $to_be_moved == 'lastday':
                $where = $where_day;
-               // $timestamp_day = time() - (60 * 60 * 24);
                $timestamp_msg = strtotime("-1 day");
                break;
-               default: // All messages moved
+               default:
                $where = '';
                $timestamp_msg = '';
              }
@@ -1639,10 +1551,9 @@ class SimpleForm_Admin {
 		     $message = sprintf( __( 'Messages successfully moved to %s', 'simpleform' ), $form_to_name );
 		                
            }
-           
 
            else {
-             $schedule = $wpdb->update($table_shortcodes, array('relocation' => '1', 'moveto' => $moveto, 'to_be_moved' => 'next', 'onetime_moving' => '0', 'deletion' => $deletion ), array('id' => $form_id ));
+             $schedule = $wpdb->update($table_shortcodes, array('relocation' => '1', 'moveto' => $moveto, 'to_be_moved' => 'next', 'onetime_moving' => '0', 'deletion' => $deletion, 'override_settings' => $settings ), array('id' => $form_id ));
 		     $update .= $schedule ? 'done' : '';
 		     $message = sprintf( __( 'Moving to %s successfully scheduled', 'simpleform' ), $form_to_name );
            }
@@ -1650,7 +1561,6 @@ class SimpleForm_Admin {
            if ( $update ) {
 	         
 	         if ( $to_be_moved != 'next' ) {
-		        
 		       $count_all = $wpdb->get_var("SELECT COUNT(id) FROM {$wpdb->prefix}sform_submissions WHERE form = '$form_id' $where_submissions");
                $count_last_day = $wpdb->get_var("SELECT COUNT(id) FROM {$wpdb->prefix}sform_submissions WHERE form = '$form_id' $where_submissions $where_day");
                $count_last_week = $wpdb->get_var("SELECT COUNT(id) FROM {$wpdb->prefix}sform_submissions WHERE form = '$form_id' $where_submissions $where_week");
@@ -1668,108 +1578,82 @@ class SimpleForm_Admin {
                $forms = $wpdb->get_results( "SELECT id, entries, moveto, moved_entries FROM {$wpdb->prefix}sform_shortcodes WHERE id != '$form_id'", 'ARRAY_A' );
                
                if ( $forms )  {
-                 
                  foreach($forms as $form) {
-	             
-	               $id = $form['id']; 
-	               $entries = $form['entries']; 
-	               $moved = $form['moved_entries'];
-	               // $form_status = $form['status'];
-	               $form_to = $form['moveto'];
-	               // $form_to = !empty($form['moveto']) ? $form['moveto'] : array();
-	 		       $count_moved = $wpdb->get_var("SELECT COUNT(id) FROM {$wpdb->prefix}sform_submissions WHERE moved_from = '$id' $where_submissions");
-	 		       $count_entries = $wpdb->get_var("SELECT COUNT(id) FROM {$wpdb->prefix}sform_submissions WHERE form = '$id' $where_submissions");
+	               $id = esc_sql(intval($form['id'])); 
+	               $entries = esc_sql($form['entries']); 
+	               $moved = esc_sql($form['moved_entries']);
+	               $form_to = esc_sql($form['moveto']);	 		       
+	               $count_moved = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(id) FROM {$wpdb->prefix}sform_submissions WHERE moved_from = %d $where_submissions", $id ) );
+	               $count_entries = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(id) FROM {$wpdb->prefix}sform_submissions WHERE form = %d $where_submissions", $id ) );
                    $update_to = $count_moved == '0' ? '0' : $form_to;
-                   // $update_to = $count_moved == '0' ? '' : $form_to;
                    $update_moved = $count_moved == '0' ? '0' : $count_moved;
-  	               
   	               $wpdb->update($table_shortcodes, array('entries' => $count_entries, 'moveto' => $update_to, 'moved_entries' => $update_moved ), array('id' => $id ) ); 
-                
 	             }
-	             
 	           }
-	           
                $be_moved = $onetime == false ? 'next' : '';
                $onetime = $to_be_moved == 'next' || $onetime == false ? false : true;
                $moving_value = $to_be_moved == 'next' || $onetime == false ? '1' : '0';
-               $wpdb->update($table_shortcodes, array('relocation' => $moving_value, 'moveto' => $moveto, 'to_be_moved' => $be_moved, 'onetime_moving' => $onetime, 'entries' => $count_updated_from, 'moved_entries' => $updated_moved_entries, 'deletion' => $deletion ), array('id' => $form_id ) );
-              
-               // Move the last message data to the new form
-               $last_form_message = get_option("sform_last_{$form_id}_message");
+               $wpdb->update($table_shortcodes, array('relocation' => $moving_value, 'moveto' => $moveto, 'to_be_moved' => $be_moved, 'onetime_moving' => $onetime, 'entries' => $count_updated_from, 'moved_entries' => $updated_moved_entries, 'deletion' => $deletion, 'override_settings' => $settings ), array('id' => $form_id ) );
+               $last_message_from = get_option("sform_last_{$form_id}_message");
+               $last_message_from_timestamp = $last_message_from != false ? explode('#',$last_message_from)[0] : '';
+               $before_last_message_from = get_option("sform_before_last_{$form_id}_message");
+               $before_last_message_from_timestamp = $before_last_message_from != false ? explode('#',$before_last_message_from)[0] : '';
+               $last_message_to = get_option("sform_moved_last_{$moveto}_message");
+               $last_message_to_timestamp = $last_message_to != false ? explode('#',$last_message_to)[0] : '';
+               $before_last_message_to = get_option("sform_moved_before_last_{$moveto}_message");
+               $before_last_message_to_timestamp = $before_last_message_to != false ? explode('#',$before_last_message_to)[0] : '';
                
-               if ( $last_form_message != false ) {
-                 update_option("sform_last_in_{$moveto}_message_{$form_id}", $last_form_message);
-	           }
-	           
-	           // Search all last messages imported from other forms
-               $search_last_in = 'sform_last_in_'.$id.'_message_';
-               $sql_in = "SELECT option_name, option_value FROM $wpdb->options WHERE option_name LIKE '%{$search_last_in}%'";
-               $results_in = $wpdb->get_results( $sql_in );
-               if ( $results_in ) {
-		         $options_to_be_moved = array();
-                 foreach ( $results_in as $result_in ) { 
-                   $from = explode('_message_', $result_in->option_name)[2];
-                   $timestamp_in = explode('#', $result_in->option_value)[0];
-                   if ( $timestamp_in > $timestamp_msg ) { 
-                      $options_to_be_moved[] = $result_in;
-                   }
+               if ( $last_message_from_timestamp > $last_message_to_timestamp ) {
+	             update_option("sform_moved_last_{$moveto}_message", $last_message_from);
+               }
+               
+	           if ( ( $before_last_message_from_timestamp > $timestamp_msg ) && ( $before_last_message_from_timestamp > $before_last_message_to_timestamp ) && ( $before_last_message_from_timestamp > $last_message_to_timestamp ) ) {
+                  update_option("sform_moved_before_last_{$moveto}_message", $before_last_message_from);            
+               }
+               else {
+	             if ( $last_message_to_timestamp ) {
+                   update_option("sform_moved_before_last_{$moveto}_message", $last_message_to);
                  }
-                 if ( !empty($options_to_be_moved) ) {  
-	                foreach ( $options_to_be_moved as $option ) { 
-		              update_option("sform_last_in_{$moveto}_message_{$form_id}_from_{$from}", $option);
+               }
 
-                    }
-                 }
-	           }
-               
                $message = $onetime == false ? sprintf( __( 'Messages moved to %s and successfully scheduled', 'simpleform' ), $form_to_name ) : sprintf( __( 'Messages successfully moved to %s', 'simpleform' ), $form_to_name );
 
 	           echo json_encode(array('error' => false, 'update' => true, 'moving' => true, 'onetime' => $onetime, 'messages' => $count_updated_from, 'moved' => $updated_moved_entries, 'select' => $select, 'message' => $message ));
 	           exit;
-    		      
 		     }
 			 
 			 else {
-				 
                echo json_encode(array('error' => false, 'update' => true, 'moving' => false, 'onetime' => false, 'message' => $message ));
 	           exit;
-	         
 		     }
 	         
            }
+           
            else {
              
              if ( $to_be_moved != 'next' ) {
-		       
 		       $entries = $wpdb->get_var("SELECT COUNT(id) FROM {$wpdb->prefix}sform_submissions WHERE form = '$form_id' $where_submissions $where");
-		     
 			   if ( $entries == '0' ) {   
 	             echo json_encode(array('error' => false, 'update' => false, 'message' => __('Messages have already been moved', 'simpleform' ) ));
 	             exit; 
 	           }
-	         
 	           else {
 	             echo json_encode(array('error' => true, 'message' => __('Error occurred moving the messages. Try again!', 'simpleform' ) ));
 	             exit;
 	           }
-	             
 	         }
 	          
 	         else {
-
 		       $to_be_moved = esc_attr($form_data->to_be_moved);
 		       $onetime_moving = esc_attr($form_data->onetime_moving);
-
 			   if ( $to_be_moved == 'next' && $onetime_moving == '0' ) {   
 	             echo json_encode(array('error' => false, 'update' => false, 'message' => __('Moving has already been scheduled', 'simpleform' ) ));
 	             exit; 
 	           }
-	         
 	           else {
 	             echo json_encode(array('error' => true, 'message' => __('Error occurred scheduling the moving. Try again!', 'simpleform' ) ));
 	             exit;
 	           }
-
 	         }
 		     
            }
@@ -1780,25 +1664,15 @@ class SimpleForm_Admin {
          elseif ( $restoration == true ) {
 	         
 		   $all_forms_to = $wpdb->get_col( "SELECT DISTINCT form FROM {$wpdb->prefix}sform_submissions WHERE moved_from = '$form_id'" );
-	        
 	       $updated_messages = $wpdb->update($table_submissions, array('form' => $form_id, 'moved_from' => '0' ), array('moved_from' => $form_id ) );
-
-	       $last_restored_date = $wpdb->get_var("SELECT date FROM {$wpdb->prefix}sform_submissions WHERE form = '$form_id' AND moved_from = '0' ORDER BY date DESC LIMIT 1");
+	       // $last_restored_date = $wpdb->get_var("SELECT date FROM {$wpdb->prefix}sform_submissions WHERE form = '$form_id' AND moved_from = '0' ORDER BY date DESC LIMIT 1");
 	       	
 	       if ( $updated_messages ) {
 		       
-		     $timestamps = array();
-             $last_message = '';
-			 
-	         foreach( $all_forms_to as $restored_from ) {
-		        $count_moved = $wpdb->get_var("SELECT COUNT(id) FROM {$wpdb->prefix}sform_submissions WHERE form = '$restored_from' $where_submissions");
+	         foreach( $all_forms_to as $restored_from ) {		        
+	            $count_moved = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(id) FROM {$wpdb->prefix}sform_submissions WHERE form = %d $where_submissions", $restored_from ) );
 	            $wpdb->update($table_shortcodes, array( 'entries' => $count_moved ), array('id' => $restored_from ) );
-               // Delete the last message data moved from the form in which the the messages are restored
-               $search_last_message_in = 'sform_last_in_'.$restored_from.'_message_'.$form_id;
-               $wpdb->query( "DELETE FROM $wpdb->options WHERE option_name LIKE '%{$search_last_message_in}%'");
-	             
              }
-
 		     $count_restored = $wpdb->get_var("SELECT COUNT(id) FROM {$wpdb->prefix}sform_submissions WHERE form = '$form_id' $where_submissions");
              $count_all = $wpdb->get_var("SELECT COUNT(id) FROM {$wpdb->prefix}sform_submissions WHERE form = '$form_id'");
              $count_last_day = $wpdb->get_var("SELECT COUNT(id) FROM {$wpdb->prefix}sform_submissions WHERE form = '$form_id' $where_submissions $where_day");
@@ -1812,54 +1686,44 @@ class SimpleForm_Admin {
              $option_day = $count_last_day > 0 ? '<option value="lastday">'.__( 'Last day', 'simpleform' ).'</option>' : '';
              $selected = $relocation == true && $moveto != '0' && $to_be_moved == 'next' ? 'selected="selected"' : ''; 
              $select = '<option value="">'.__( 'Select messages', 'simpleform' ).'</option>'.$option_all.$option_year.$option_month.$option_week.$option_day.'<option value="next" '.$selected.'>'. __( 'Not received yet', 'simpleform' ).'</option>';
-             
+	         
 	         // Check if a restoration with sheduling is running 
 	         if ( $relocation == true && $moveto != '0' && $to_be_moved == 'next' ) {
-
-		       $wpdb->update($table_shortcodes, array('relocation' => '1', 'moveto' => $moveto, 'to_be_moved' => 'next', 'entries' => $count_restored, 'moved_entries' => '0', 'onetime_moving' => '0', 'deletion' => $deletion ), array('id' => $form_id ));
-
+		       $wpdb->update($table_shortcodes, array('relocation' => '1', 'moveto' => $moveto, 'to_be_moved' => 'next', 'entries' => $count_restored, 'moved_entries' => '0', 'onetime_moving' => '0', 'deletion' => $deletion, 'override_settings' => $settings ), array('id' => $form_id ));
 		       $message = esc_attr($form_data->onetime_moving) == '0' ? __( 'Messages successfully restored', 'simpleform' ) : sprintf( __( 'Messages restored and moving to %s successfully scheduled', 'simpleform' ), $form_to_name );
-   
 	           echo json_encode(array('error' => false, 'update' => true, 'moving' => false, 'restore' => true, 'onetime' => false, 'messages' => $count_restored, 'moved' => '0', 'select' => $select, 'message' => $message ));
 	           exit;
-		     
 		     }
 		     
 		     else {
-
 	           $wpdb->update($table_shortcodes, array( 'relocation' => $relocation, 'moveto' => '0', 'to_be_moved' => '', 'entries' => $count_restored, 'moved_entries' => '0', 'deletion' => $deletion ), array('id' => $form_id ) );
-
 	           echo json_encode(array('error' => false, 'update' => true, 'moving' => false, 'restore' => true, 'messages' => $count_restored, 'moved' => '0', 'select' => $select, 'message' =>  __( 'Messages successfully restored', 'simpleform' ) ));
 	           exit;
-
 			 }
-			     
+			 
            }
            
   	       else {
-	  	       
 	         $check_moved = $wpdb->get_var( $wpdb->prepare( "SELECT moveto FROM {$wpdb->prefix}sform_shortcodes WHERE id = %d", $form_id) );
 	         $to_be_moved = $wpdb->get_var( $wpdb->prepare( "SELECT to_be_moved FROM {$wpdb->prefix}sform_shortcodes WHERE id = %d", $form_id) );
 	         $onetime_moving = $wpdb->get_var( $wpdb->prepare( "SELECT onetime_moving FROM {$wpdb->prefix}sform_shortcodes WHERE id = %d", $form_id) );
-	         
 	         if ( $check_moved == '0' || ( $check_moved != '0' && isset($to_be_moved) && $to_be_moved == 'next' && $onetime_moving == '0' ) ) {
 	            echo json_encode(array('error' => false, 'update' => false, 'message' => __('Messages have already been restored', 'simpleform' ) ));
 	            exit; 
 	         }
-	         
 	         else { 
                 echo json_encode(array('error' => true, 'message' => __('Error occurred restoring the messages. Try again!', 'simpleform' ) ));
 	            exit;
 	         }
-	         
            }
            
          }
 
 	     // It is not running any moving or any restoration  
 	     else {
-		   
-           $update_form_data = $wpdb->update($table_shortcodes, array('relocation' => $relocation, /* 'moveto' => '0', 'to_be_moved' => '', 'onetime_moving' => '1', */ 'deletion' => $deletion ), array('id' => $form_id ));
+		     
+           $moveto = $relocation == false ? '0' : esc_attr($form_data->moveto);
+           $update_form_data = $wpdb->update($table_shortcodes, array('relocation' => $relocation, 'moveto' => $moveto, /* 'to_be_moved' => '', 'onetime_moving' => '1', */ 'deletion' => $deletion ), array('id' => $form_id ));
        
            if ( $update_form_data ) {
              echo json_encode(array('error' => false, 'update' => true, 'message' => __( 'Settings were successfully saved', 'simpleform' ) ));
@@ -1934,5 +1798,5 @@ class SimpleForm_Admin {
       }
       
     }
-       
+           
 }

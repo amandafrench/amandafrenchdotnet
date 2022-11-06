@@ -44,7 +44,7 @@
 					if(!preg_match("/<script[^>]+json[^>]+>.+/", $script_tag) && !preg_match("/<script[^>]+text\/template[^>]+>.+/", $script_tag)){
 						if($href = $this->checkInternal($script_tag)){
 							if(strpos($this->jsLinksExcept, $href) === false){
-								if(($key + 1) && $this->check_exclude($href)){
+								if($key > 0 && $this->check_exclude($href)){
 									$this->mergeJs($prev_content, $this->jsLinks[$key - 1]);
 									$prev_content = "";
 									continue;

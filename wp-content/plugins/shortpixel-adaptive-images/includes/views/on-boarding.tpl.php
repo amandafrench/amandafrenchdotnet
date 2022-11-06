@@ -42,33 +42,33 @@
 				}
 				else if ( $domain_status->Status === -1 ) {
 					echo '<p><strong>' . __( 'Your ShortPixel Adaptive Images quota has been exceeded.', 'shortpixel-adaptive-images' ) . '</strong></p>';
-					echo '<p><span class="sp-obw-alert">' . __( 'Please solve the credits amount to continue using the ShortPixel Adaptive Images plugin.' ) . '</span></p>';
+					echo '<p><span class="sp-obw-alert">' . __( 'Please top-up your account to continue using the ShortPixel Adaptive Images plugin.' ) . '</span></p>';
 					echo '<p>' . __( 'The already optimized images will still be served from the ShortPixel CDN for up to 30 days but the images that weren\'t already optimized and cached via CDN will be served directly from your website.', 'shortpixel-adaptive-images' ) . '</p>';
 				}
 				else {
 					?>
-					<p><?= sprintf( __( 'The plugin is active and already serving optimized versions of your site’s images from the CDN; you have %s credits available. <a href="%s" target="_blank"><strong>What’s a credit?</strong></a>%s',
+					<p><?= sprintf( __( 'The plugin is active and already serving optimized versions of your site’s images from the CDN; you have %s traffic available. %s',
 							'shortpixel-adaptive-images' ),
 							!$domain_status->HasAccount
 								? ( $domain_status->FreeCredits - $domain_status->UsedFreeCredits <= 0
 									? 'no'
-									: $domain_status->FreeCredits - $domain_status->UsedFreeCredits ) . ' ' . __( 'free', 'shortpixel-adaptive-images' )
+									: ShortPixelDomainTools::credits2bytes($domain_status->FreeCredits - $domain_status->UsedFreeCredits) ) . ' ' . __( 'free', 'shortpixel-adaptive-images' )
 								:
 								( !!$domain_cdn_usage
 									? ( $domain_cdn_usage->quota->monthly->available > 0
-										? $domain_cdn_usage->quota->monthly->available . ' ' . __( 'monthly', 'shortpixel-adaptive-images' )
+										? ShortPixelDomainTools::credits2bytes($domain_cdn_usage->quota->monthly->available) . ' ' . __( 'monthly', 'shortpixel-adaptive-images' )
 										: '' ) .
 									  ( $domain_cdn_usage->quota->monthly->available > 0 && $domain_cdn_usage->quota->oneTime->available > 0
 										  ? ' ' . __( 'and', 'shortpixel-adaptive-images' )
 										  : '' ) .
 									  ( $domain_cdn_usage->quota->oneTime->available > 0
-										  ? ' ' . $domain_cdn_usage->quota->oneTime->available . ' ' . __( 'one-time', 'shortpixel-adaptive-images' )
+										  ? ' ' . ShortPixelDomainTools::credits2bytes($domain_cdn_usage->quota->oneTime->available) . ' ' . __( 'one-time', 'shortpixel-adaptive-images' )
 										  : '' )
 									: '' ) .
 								( !!$domain_cdn_usage && ( $domain_cdn_usage->quota->monthly->available <= 0 && $domain_cdn_usage->quota->oneTime->available <= 0 )
 									? 'no'
 									: '' ),
-							'https://help.shortpixel.com/article/96-how-are-the-credits-counted',
+							//'https://shortpixel.com/knowledge-base/article/96-how-are-the-credits-counted',
 							$domain_status->HasAccount && !$domain_cdn_usage
 								? '<br>' . sprintf( __( 'The domain %s is associated to the ShortPixel account %s.', 'shortpixel-adaptive-images' ), '<strong>' . ShortPixelDomainTools::get_site_domain() . '</strong>',
 									'<span>' . $domain_status->Email . '</span>' ) . ''

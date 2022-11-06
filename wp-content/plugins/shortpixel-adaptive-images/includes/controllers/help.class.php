@@ -28,7 +28,7 @@
 
 			$screen->set_help_sidebar(
 				'<p><strong>' . __( 'For more information:', 'shortpixel-adaptive-images' ) . '</strong></p>' .
-				'<p><a href="https://help.shortpixel.com/category/307-shortpixel-adaptive-images" target="_blank">' . __( 'Documentation & Help', 'shortpixel-adaptive-images' ) . '</a></p>' .
+				'<p><a href="https://shortpixel.com/knowledge-base/category/307-shortpixel-adaptive-images" target="_blank">' . __( 'Documentation & Help', 'shortpixel-adaptive-images' ) . '</a></p>' .
 				'<p><a href="' . apply_filters('spai_affiliate_link','https://shortpixel.com/contact') . '" target="_blank">' . __( 'Support', 'shortpixel-adaptive-images' ) . '</a></p>'
 			);
 		}
@@ -54,8 +54,8 @@
 						'content' =>
 							'<h2>' . __( 'Help & Support', 'shortpixel-adaptive-images' ) . '</h2>' .
 							'<p>' . sprintf( __( 'If you need help using the ShortPixel Adaptive Images plugin, <a href="%s">open a support request at ShortPixel.com</a>.', 'shortpixel-adaptive-images' ), apply_filters('spai_affiliate_link','https://shortpixel.com/contact') ) . '</p>' .
-							'<p>' . sprintf( __( 'Before asking our ShortPixel support team for help, we strongly recommend that you <a href="%s" target="_blank">read the articles on help.shortpixel.com</a>.', 'shortpixel-adaptive-images' ), 'https://help.shortpixel.com/category/307-shortpixel-adaptive-images' ) . '</p>' .
-							'<p><a href="https://help.shortpixel.com/category/307-shortpixel-adaptive-images" class="button button-primary" target="_blank">' . __( 'Documentation & Help', 'shortpixel-adaptive-images' )
+							'<p>' . sprintf( __( 'Before asking our ShortPixel support team for help, we strongly recommend that you <a href="%s" target="_blank">read the articles on shortpixel.com/knowledge-base/</a>.', 'shortpixel-adaptive-images' ), 'https://shortpixel.com/knowledge-base/category/307-shortpixel-adaptive-images' ) . '</p>' .
+							'<p><a href="https://shortpixel.com/knowledge-base/category/307-shortpixel-adaptive-images" class="button button-primary" target="_blank">' . __( 'Documentation & Help', 'shortpixel-adaptive-images' )
                             . '</a> <a href="' . apply_filters('spai_affiliate_link','https://shortpixel.com/contact') . '" class="button button-secondary" target="_blank">' . __( 'ShortPixel Support', 'shortpixel-adaptive-images' ) . '</a></p>',
 					];
 				case 'on-boarding':

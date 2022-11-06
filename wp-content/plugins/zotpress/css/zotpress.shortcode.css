@@ -79,21 +79,21 @@ a.zp-DownloadURL:after {
 
 /* START OF BROWSE LIB */
 
-#zp-Browse-Bar {
+.zp-Browse-Bar {
     background-color: #fff;
     border: 2px solid #000;
 }
-#zp-Browse-Bar:before,
-#zp-Browse-Bar:after {
+.zp-Browse-Bar:before,
+.zp-Browse-Bar:after {
     content: "";
     display: table;
 }
-#zp-Browse-Bar:after {
+.zp-Browse-Bar:after {
     clear: both;
 }
 
-#zp-Browse-Collections,
-#zp-Browse-Tags {
+.zp-Browse-Collections,
+.zp-Browse-Tags {
     float: left;
     width: 50%;
 }
@@ -101,7 +101,7 @@ a.zp-DownloadURL:after {
 .zp-Browse-Select {
     overflow: hidden;
     width: 100%;
-    height: 34px;
+    /* height: 34px; */
 }
 .zp-Browse-Select select {
     background: transparent;
@@ -114,7 +114,7 @@ a.zp-DownloadURL:after {
     width: 100%;
     height: 34px;
 }
-#zp-Browse-Collections-Select {
+.zp-Browse-Collections-Select {
     border-right: 2px solid #000;
 }
 
@@ -132,33 +132,33 @@ a.zp-DownloadURL:after {
     margin: 0 0 1em 1em;
 }
 
-#zp-Zotpress-SearchBox .zp-SearchBy-Container {
+.zp-Zotpress-SearchBox .zp-SearchBy-Container {
     border-top: 1px solid #ccc;
     display: flex;
     justify-content: flex-start;
     align-items: center;
     padding: 0.5em 0;
 }
-#zp-Zotpress-SearchBox .zpSearchFilterContainer {
+.zp-Zotpress-SearchBox .zpSearchFilterContainer {
     display: flex;
     justify-content: space-evenly;
     align-items: center;
     margin: 0 0.5em;
 }
-#zp-Zotpress-SearchBox input[type="radio"] {
+.zp-Zotpress-SearchBox input[type="radio"] {
     cursor: pointer;
     margin: 0 0.5em 0 0;
     vertical-align: middle;
 }
-#zp-Zotpress-SearchBox label {
+.zp-Zotpress-SearchBox label {
     cursor: pointer;
     margin: 0;
 }
-#zp-Zotpress-SearchBox .zp-SearchBy {
+.zp-Zotpress-SearchBox .zp-SearchBy {
     margin: 0 1.5em;
 }
-#zp-Zotpress-SearchBox label,
-#zp-Zotpress-SearchBox .zp-SearchBy {
+.zp-Zotpress-SearchBox label,
+.zp-Zotpress-SearchBox .zp-SearchBy {
     font-size: 0.5em;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -189,89 +189,107 @@ a.zp-DownloadURL:after {
     display: none;
 }
 
-#zp-Zotpress-SearchBox-Input {
+.zp-Zotpress-SearchBox-Input {
     border: none;
     width: 100%;
 }
 
-#zpSearchResultsPagingContainer {
-    margin: 2em 0;
+.zpSearchResultsPagingContainer {
+    display: none;
+    margin: 2rem 0;
 }
-#zpSearchResultsPagingContainer:before,
-#zpSearchResultsPagingContainer:after {
+
+.zpSearchResultsPagingContainer:before,
+.zpSearchResultsPagingContainer:after {
     content: "";
     display: table;
 }
-#zpSearchResultsPagingContainer:after {
+.zpSearchResultsPagingContainer:after {
     clear: both;
 }
-
-#zpSearchResultsPagingContainer span.title {
-    display: block;
-    float: left;
+.zpSearchResultsPagingContainerInner {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+.zpSearchResultsPagingContainer span.title {
+    /* display: block; */
+    /* float: left; */
     font-size: 0.8em;
     font-weight: bold;
     line-height: 2.6;
-    margin: 2px;
-    margin-left: 0;
-    padding: 0 20px 0;
+    margin-right: 2rem;
+    /* margin: 2px; */
+    /* margin-left: 0; */
+    /* padding: 0 20px 0; */
     text-transform: uppercase;
 }
 
-#zpSearchResultsPagingCrop {
+.zpSearchResultsPagingCrop {
     position: relative;
-    float: left;
+    /* float: left; */
     overflow: hidden;
-    width: 13em;
-    height: 3em;
+    width: calc(3.5rem * 5);
+    /* width: 13em; */
+    height: 3.5rem;
 }
 
-#zpSearchResultsPaging {
-    z-index: 0;
+.zpSearchResultsPaging {
+    /* z-index: 0; */
     position: absolute;
     top: 0;
     left: 0;
-    height: inherit;
+    /* height: inherit; */
+    display: flex;
 }
 
-#zpSearchResultsPaging a {
+.zpSearchResultsPaging a,
+.zpSearchResultsPaging a:link {
     display: block;
-    float: left;
+    /* float: left; */
     line-height: 0.9;
     margin: 0;
     text-align: center;
     text-decoration: none;
-    width: 50px;
+    flex-shrink: 0;
+    /* width: 50px; */
+    width: 3.5rem;
 }
-#zpSearchResultsPaging a span {
+.zpSearchResultsPaging a:focus {
+    box-shadow: none;
+    outline: none;
+}
+.zpSearchResultsPaging a span {
     border: 2px solid transparent;
     display: block;
-    padding: 10px 0;
+    padding: calc(1rem - 4px) calc(1.2rem - 4px);
 }
-#zpSearchResultsPaging a.selected span {
+.zpSearchResultsPaging a.selected span {
     border-color: #000;
 }
 
-#zpSearchResultsPagingScroller {
-    float: left;
-    background-color: #fff;
+.zpSearchResultsPagingScroller {
+    /* float: left; */
+    /* background-color: #fff; */
+    margin-left: 2rem;
     text-align: center;
-    width: 4.2em;
-    height: 3em;
+    /* width: 4.2em; */
+    /* height: 3rem; */
 }
-#zpSearchResultsPagingScroller span {
+.zpSearchResultsPagingScroller span {
     cursor: pointer;
     display: inline-block;
-    font-size: 2em;
+    font-size: 3.5rem;
     line-height: 0.8;
-    padding: 5px 10px;
+    /* padding: 5px 10px; */
+    padding: 0 1rem;
 
     -webkit-user-select: none;  /* Chrome all / Safari all */
     -moz-user-select: none;     /* Firefox all */
     -ms-user-select: none;      /* IE 10+ */
     user-select: none;
 }
-#zpSearchResultsPagingScroller span:active {
+.zpSearchResultsPagingScroller span:active {
     opacity: 0.2;
 }
 

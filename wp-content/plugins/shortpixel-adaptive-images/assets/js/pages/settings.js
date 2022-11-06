@@ -95,7 +95,14 @@
 			}
 		} );
 	} );
-
+	$(function() {
+		//open and load news section on page load
+		$('.box_dropdown.spai_news').addClass('opened');
+		Settings.loadNews();
+		if(window.spaiModeSwitchNotification) {
+			Settings.showDecoratedNotice(window.spaiModeSwitchNotification);
+		}
+	});
 	var Settings   = {},
 		Exclusions = {};
 
@@ -132,7 +139,16 @@
 				return undefined;
 		}
 	}
-
+	Settings.showDecoratedNotice = function( noticeText ) {
+		const notice = '<div class="notice notice-success is-dismissible" data-icon="none" data-causer=""\
+								data-plugin="short-pixel-ai">\
+				<div class="body-wrap">\
+					<div class="message-wrap"><p>' + noticeText + '</p></div>\
+					<div class="buttons-wrap"></div>\
+				</div>\
+			</div>';
+		Settings.showNotice( notice );
+	}
 	Settings.showNotice = function( noticeBody ) {
 		if ( typeof noticeBody !== 'string' || noticeBody === '' ) {
 			return;
@@ -186,6 +202,42 @@
 
 	Settings.getAjaxUrl = function() {
 		return typeof ajaxurl === 'string' && ajaxurl !== '' ? ajaxurl : '/wp-admin/admin-ajax.php';
+	}
+
+	Settings.topAction = function($this, action) {
+		var actionTexts = {
+			default : $this.html(),
+			onPress : $this.attr( 'data-pressed-text' )
+		};
+
+		$.ajax( {
+			method     : 'post',
+			url        : Settings.getAjaxUrl(),
+			data       : {
+				action : 'shortpixel_ai_handle_page_action',
+				page   : 'settings',
+				data   : {
+					action : action
+				}
+			},
+			beforeSend : function() {
+				//$this.addClass( 'button' );
+				$this.text( actionTexts.onPress );
+				$this.prop( 'disabled', true );
+			},
+			success    : function( response ) {
+				if ( typeof response.notice === 'string' && response.notice !== '' ) {
+					Settings.showNotice( response.notice );
+				}
+				$this.prop( 'disabled', false );
+				if ( response.reload ) {
+					window.location.href = 'options-general.php?page=shortpixel-ai-settings';
+				}
+			},
+			complete   : function() {
+				$this.html( actionTexts.default );
+			}
+		} );
 	}
 
 	Settings.save = function( event ) {
@@ -310,7 +362,43 @@
 			yAxisID         : 'credits'
 		} ];
 	};
+	Settings.loadNews = function () {
+		if( !$( '.box_dropdown.spai_news' ).hasClass('processed') ) {
+			$( '#spaiNewsFeed' ).addClass( 'loading' );
+			const url = `https://shortpixel.com/blog/feed/`;
 
+			fetch(url)
+				.then(response => response.text())
+				.then(str => new window.DOMParser().parseFromString(str, "text/xml"))
+				.then(xml => {
+					$( '#spaiNewsFeed' ).removeClass( 'loading' );
+					$( '.box_dropdown.spai_news' ).addClass( 'processed' );
+					const items = xml.querySelectorAll("item");
+					for(let i in items) {
+						renderItem(items[i]);
+						if(i>1) break;
+					}
+					//items = Object.entries(items).slice(0,3);
+					function renderItem(item) {
+						const htmlDescr = item.querySelector("description").textContent;
+						const div = document.createElement('div');
+						div.innerHTML = htmlDescr;
+						let img = div.querySelector("img").outerHTML;
+						let text = div.innerText.replace('→', '').substring(0,500) + '…';
+
+						const html = `
+<article class="item">
+    <h3><a href="${item.querySelector("link").innerHTML}" target="_blank">${item.querySelector("title").innerHTML}</a></h3>
+    <div class="image"><a href="${item.querySelector("link").innerHTML}" target="_blank">${img}</a></div>
+    <div class="description">${text}</div>
+    <div class="link"><a href="${item.querySelector("link").innerHTML}" target="_blank">${document.querySelector(".box_dropdown.spai_news").getAttribute('data-readmore')}</a></div>
+</article>`;
+						document.querySelector('#spaiNewsFeed').innerHTML += html;
+					}
+
+				});
+		}
+	}
 	Exclusions.validateSelector = function( selector ) {
 		try {
 			document.querySelector( selector );
@@ -643,11 +731,6 @@
 					$this.addClass( 'nav-tab-active' );
 					$soughtTab.addClass( 'active' );
 
-                    var wso = document.getElementsByClassName('shortpixel-offer-wso');
-                    if(wso.length) {
-                        wso[0].style.display = (id === '#compression' ? 'none' : 'block');
-                    }
-
 					if ( typeof window.Beacon === 'function' && typeof window.beaconConstants === 'object' ) {
 						var suggestion = $soughtTab.attr( 'id' );
 
@@ -678,46 +761,50 @@
 			}
 		} );
 
-		$document.on( 'change', 'input[type="checkbox"]', function() {
-			var $this                  = $( this ),
-				$depended              = $this.parent( '[data-depended]' ),
-				$dependedSiblings      = $depended.siblings( '[data-depended]' ),
-				$dependedEnabledFields = $dependedSiblings.find( 'input[type="checkbox"]:checked' ),
-				$popUp                 = $this.siblings( '.notification_popup' );
+        var spaiNotif = function () {
+            var $this = $(this),
+                $depended = $this.parent('[data-depended]'),
+                $dependedSiblings = $depended.siblings('[data-depended]'),
+                $dependedEnabledFields = $dependedSiblings.find('input[type="checkbox"]:checked'),
+                $popUp = $this.siblings('.notification_popup');
 
-			if($this.prop( 'checked' ) && $popUp.length > 0) {
-                $popUp.removeClass( 'hidden' );
-                $this.prop( 'checked', false );
-			} else {
+            if ($this.hasClass('spai_triggers_notification') || ($this.prop('checked') && $popUp.length > 0)) {
+                $popUp.removeClass('hidden');
+                $this.prop('checked', false);
+                $this.removeClass('spai_triggers_notification'); //a text box
+            } else {
                 var isChecked = $this.parent().find('input[data-depender]:checked').length;
 
-                if ( isChecked ) {
-                    $this.siblings( '.children-wrap' ).removeClass( 'hidden' );
-                    $this.siblings( '[data-depended]' ).find( 'input[type="checkbox"]' ).prop( 'checked', true );
+                if (isChecked) {
+                    $this.siblings('.children-wrap').removeClass('hidden');
+                    $this.siblings('[data-depended]').find('input[type="checkbox"]').prop('checked', true);
                 }
                 else {
-                    $this.siblings( '.children-wrap' ).addClass( 'hidden' );
+                    $this.siblings('.children-wrap').addClass('hidden');
 
-                    if ( $depended.length > 0 ) {
-                        if ( $dependedEnabledFields.length === 0 ) {
-                            var depended = $depended.data( 'depended' );
+                    if ($depended.length > 0) {
+                        if ($dependedEnabledFields.length === 0) {
+                            var depended = $depended.data('depended');
                             depended = typeof depended === 'string' && depended !== '' ? depended.split('|') : [];
 
                             var dependentFieldName = '';
-                            for(let dep in depended){
+                            for (let dep in depended) {
                                 dependentFieldName += 'input[name="' + depended[dep] + '"],'
                             }
-                            var $dependentField = $( dependentFieldName.slice(0, -1) );
+                            var $dependentField = $(dependentFieldName.slice(0, -1));
 
-                            console.log( $depended, $dependentField );
+                            console.log($depended, $dependentField);
 
-                            $dependentField.prop( 'checked', false )
-                                .siblings( '.children-wrap' ).addClass( 'hidden' );
+                            $dependentField.prop('checked', false)
+                                .siblings('.children-wrap').addClass('hidden');
                         }
                     }
                 }
-			}
-		} );
+            }
+        };
+		$document.on( 'change', 'input[type="checkbox"]', spaiNotif );
+        $document.on( 'keydown', 'input.spai_triggers_notification', spaiNotif ); //text fields notifications
+        $document.on( 'paste',   'input.spai_triggers_notification', spaiNotif );
 
 		$document.on( 'click', '.notification_popup input[type="button"]', function() {
 			var $this         = $( this ),
@@ -745,39 +832,51 @@
 			}
 		} );
 
-		$document.on( 'click', '#clear_css_cache', function( event ) {
-			var $this = $( this );
+		$document.on( 'click', '#clear_css_cache', function(event) { Settings.topAction($( this ), 'clear css cache')} );
 
-			var actionTexts = {
-				default : $this.text(),
-				onPress : $this.attr( 'data-pressed-text' )
-			};
+		$document.on( 'click', '#export_settings, .export-settings', function(event) { window.location.href = 'admin.php?page=shortpixel-ai-export-settings&noheader=true'; } );
 
-			$.ajax( {
-				method     : 'post',
-				url        : Settings.getAjaxUrl(),
-				data       : {
-					action : 'shortpixel_ai_handle_page_action',
-					page   : 'settings',
-					data   : {
-						action : 'clear css cache'
-					}
-				},
-				beforeSend : function() {
-					$this.addClass( 'button' );
-					$this.text( actionTexts.onPress );
-					$this.prop( 'disabled', true );
-				},
-				success    : function( response ) {
-					if ( typeof response.notice === 'string' && response.notice !== '' ) {
-						Settings.showNotice( response.notice );
-					}
-				},
-				complete   : function() {
-					$this.text( actionTexts.default );
-				}
-			} );
+		$document.on( 'change', '#spai_settings_advanced', function(event) {
+			if( !$('#spai_settings_advanced').prop('checked') && !$('#spai_settings_advanced').data('popup-confirmed') ) {
+				$('#spai_settings_advanced').prop('checked', true);
+				jQuery.spaiHelpOpenLocal($(event.target).siblings('.spai_settings_advanced_popup'));
+			} else {
+				Settings.topAction($('.shortpixel-settings-tabs'), 'enable advanced');
+				$('.shortpixel-settings-wrap').fadeOut('fast');
+				$('.wpf-settings').addClass('spai-loading');
+			}
 		} );
+		$document.on( 'click', '#spaiHelp .spai_settings_advanced_popup .button-yes', function(event) {
+			Settings.topAction($('.shortpixel-settings-tabs'), 'disable advanced');
+			$('#spai_settings_advanced').prop('checked', false)
+			$('.shortpixel-settings-wrap').fadeOut('fast');
+			$('.wpf-settings').addClass('spai-loading');
+		});
+		$document.on( 'click', '#spaiHelp .spai_settings_advanced_popup .button-no', function(event) {
+			jQuery.spaiHelpClose();
+		});
+		var importer;
+		if(importer = document.getElementById("import_settings_file")) {
+			importer.addEventListener("change", function () {
+				if (this.files && this.files[0]) {
+					var reader = new FileReader();
+					reader.onload = (e) => {
+						try {
+							var parsed = JSON.parse(e.target.result);
+							if(typeof parsed !== 'object') {
+								throw 'noobj';
+							}
+							if(window.confirm("Load these settings? \n" + e.target.result)) {
+								document.getElementById('import_settings_form').submit();
+							}
+						} catch (xx) {
+							alert("This file doesn't look like a SPAI Settings export.");
+						}
+					};
+					reader.readAsText(this.files[0]);
+				}
+			});
+		}
 
 		$document.on( 'submit', 'form#api-key-form', function( event ) {
 			event.preventDefault();
@@ -844,8 +943,12 @@
 			} );
 		} );
 
-		$document.on( 'click', '.spai_statusbox_wrap [data-action], .spai_settings_tab [data-action]', function( event ) {
+		$document.on( 'click', '.spai_statusbox_wrap div:not(".dismissed-notice") [data-action], .spai_settings_tab div:not(".dismissed-notice") [data-action]', function( event ) {
 			event.preventDefault();
+			//dismissed notices will be processed by notice.js
+			if($(event.target).closest('.dismissed-notice').length>0){
+				return;
+			}
 
 			var $this = $( this );
 

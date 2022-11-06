@@ -19,6 +19,7 @@ class TagRule
     public $callback;
     public $quickMatch; //this is a faster regex that checks if we go further for that particular
     public $frontEager;
+    public $noFront; // this indicates not to send the rule to the (Vanilla)JS as it should remain as it is. For example a lazy img href that is used for a lightbox, it doesn't need to be replaced until it's in the final img.
 
     //Only works with eager true
     private $customCompression = '';
@@ -28,7 +29,7 @@ class TagRule
     public $used = [];
 
     public function __construct($tag, $attr, $classFilter = false, $attrFilter = false, $attrValFilter = false, $mergeAttr = false, $eager = false,
-                                $type = 'url', $callback = false, $quickMatch = false, $frontEager = false) {
+                                $type = 'url', $callback = false, $quickMatch = false, $frontEager = false, $noFront = false) {
         $this->tag = $tag;
         $this->attr = $attr;
         $this->classFilter = $classFilter;
@@ -40,6 +41,7 @@ class TagRule
         $this->callback = $callback;
         $this->quickMatch = $quickMatch;
         $this->frontEager = $frontEager;
+        $this->noFront = $noFront;
     }
 
     /**
@@ -53,7 +55,7 @@ class TagRule
     /**
      * @param string $customCompression
      */
-    public function setCustomCompression(string $customCompression)
+    public function setCustomCompression($customCompression)
     {
         $this->customCompression = $customCompression;
     }

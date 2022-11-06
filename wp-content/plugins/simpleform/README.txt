@@ -2,11 +2,11 @@
 
 Contributors: simpleform
 Donate link: https://wpsform.com/
-Tags: contact form, form builder, form, custom form, smtp, email, message, contact, ajax, information, support, block
+Tags: contact form, form builder, form, custom form, smtp, email, captcha, contact, ajax, block
 Requires at least: 5.6
-Tested up to: 5.9
+Tested up to: 6.0
 Requires PHP: 5.6
-Stable tag: 2.1.2
+Stable tag: 2.1.9
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,7 +36,7 @@ We love clean and minimalist design, and for this reason we provide a contact fo
 
 It is a lightweight and responsive plugin. SimpleForm does not interfere with your site performance. The submission via AJAX, on the backend too, allows a seamless user experience without page refreshes. You can show users a success message or redirect them elsewhere after they complete the form. You can also send a confirmation email to thank whoever contacts you.
 
-https://www.youtube.com/watch?v=qNIP0IC9cMY&rel=0
+https://www.youtube.com/watch?v=G5rqtOE1UUU
 
 **What SimpleForm is not for now:**
 
@@ -147,17 +147,83 @@ We provide free support in the WordPress.org plugin repository. Please log into 
 == Screenshots ==
 
 1. Submissions page
-2. Editor page
-3. Settings page
-4. Validation tab
-5. Notifications tab
-6. Contact alert configuration
-7. Auto responder configuration
-8. Anti-Spam tab
-9. Default form template
-10. Form failed validation
+2. Forms page
+3. Form page
+4. Editor page
+5. Settings page
+6. Block settings
+7. Default form template
+8. Form failed validation
 
 == Changelog ==
+
+= 2.1.9 (1 June 2022) =
+* Changed: fields border color selector with transparent style has removed
+* Added: fields border color option in the block editor
+* Added: checked checkbox color option in the block editor
+
+= 2.1.8.1 (19 May 2022) =
+* Fixed: failure to load form stylesheet to the site editor in block themes
+
+= 2.1.8 (13 May 2022) =
+* Fixed: failure to load block style preferences if you are using custom CSS code in a separate file
+* Fixed: failure to load additional style if a block-based theme is active
+* Fixed: failure to submit the form via AJAX if a block-based theme is active
+* Fixed: displaying of form's wrap even if the settings do not allow the form displaying
+* Fixed: failure to show message before last
+* Changed: customization options no longer applies to single forms
+* Changed: multiple spaces option no longer applies to all forms
+* Changed: code cleaning and optimization
+
+= 2.1.7.2 (21 April 2022) =
+* Fixed: install errors
+
+= 2.1.7.1 (21 April 2022) =
+* Fixed: missing files
+
+= 2.1.7 (21 April 2022) =
+* Fixed: failure to prevent duplicate form submission
+* Fixed: failure to set focus on captcha field when is invalid
+* Fixed: failure to indicate where the form is visible when used in a widget area
+* Fixed: failure to load block style preferences if a block-based theme is active
+* Fixed: uninstall error
+* Changed: code cleaning and optimization
+* Added: option for choosing the notifications settings when messages will need to be moved
+
+= 2.1.6 (1 April 2022) =
+* Fixed: error when form submission is executed via AJAX
+* Fixed: line breaks preserved in the message
+* Fixed: backslashes removed in the message
+* Fixed: loss of block style preferences when updating the plugin
+* Fixed: insecure code
+* Changed: tab restyling to display the latest messages
+* Changed: images compressed to minimize bandwidth usage
+* Changed: data deletion when uninstalling the plugin is enabled by default
+* Added: reply to message button
+* Added: display of the message before the last one
+
+= 2.1.5 (10 March 2022) =
+* Fixed: database errors
+* Fixed: JavaScript errors
+* Fixed: failure to display the last message when entries have been moved
+* Fixed: error when form submission is executed via AJAX
+* Changed: reorganization of the editor page and the form page
+* Added: display of the number of moved messages in the entries page
+
+= 2.1.4 (5 March 2022) =
+* Fixed: the consent field is unable to receive focus when clicked or when a validation error should be displayed
+* Fixed: form creation date error when choosing a city in the WordPress timezone settings
+* Fixed: deprecated jQuery functions warning
+* Fixed: failure to display the last message
+* Changed: warning from the block editor when the same form is used more than once
+* Added: cleanup of the content of any removed or duplicated form when editing a post
+
+= 2.1.3 (25 February 2022) =
+* Fixed: database errors
+* Fixed: failure to block duplicate form submission
+* Fixed: switching the active theme cause deletion of simpleform widgets if the widget area is not present in the new theme
+* Changed: when the plugin is uninstalled, anything refers to it is now cleaned out
+* Changed: code cleaning and optimization
 
 = 2.1.2 (16 February 2022) =
 * Fixed: repeated creation of unwanted forms when visiting the widgets page if simpleform has been moved to inactive widgets area

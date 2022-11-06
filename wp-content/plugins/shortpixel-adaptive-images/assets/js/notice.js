@@ -4,9 +4,10 @@
 
 		var hasAjaxBeenFired = false; // flag to fire AJAX once while server won't response
 
-		$document.on( 'click', '.notice[data-plugin="short-pixel-ai"] .buttons-wrap [data-action], .notice[data-plugin="short-pixel-ai"] button.notice-dismiss', function() {
+		$document.on( 'click', '.notice[data-plugin="short-pixel-ai"] .buttons-wrap [data-action], .notice[data-plugin="short-pixel-ai"] button.notice-dismiss, .dismissed-notice[data-plugin="short-pixel-ai"] .buttons-wrap [data-action], .dismissed-notice[data-plugin="short-pixel-ai"] .buttons-wrap button.notice-dismiss', function() {
+
 			var $this   = $( this ),
-				$notice = $this.parents( '.notice[data-plugin="short-pixel-ai"]' );
+				$notice = $this.parents( '.notice[data-plugin="short-pixel-ai"], .dismissed-notice[data-plugin="short-pixel-ai"]' );
 
 			// Disabling the button to prevent multiple clicks
 			$this.prop( 'disabled', true );

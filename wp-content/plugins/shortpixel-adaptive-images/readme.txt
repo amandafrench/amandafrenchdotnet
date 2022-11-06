@@ -1,124 +1,137 @@
 === ShortPixel Adaptive Images ===
 Contributors: ShortPixel
-Tags: adaptive images, responsive images, resize images, scale images, cdn, optimize images, compress images, on the fly, webp, lazy load, avif
+Tags: image optimization, convert, webp, lazy load, avif, responsive images, image compressor, cdn
 Requires at least: 4.7
-Tested up to: 5.9
+Tested up to: 6.1
 Requires PHP: 5.6.40
-Stable tag: 3.2.1
+Stable tag: 3.5.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Start serving properly sized, smart cropped & optimized images, plus CSS, JS and fonts from our CDN with a click; On the fly convert AVIF & WebP support.
+
+Start serving properly sized, smart cropped & optimized images, plus CSS, JS and fonts from our CDN with a click; Automatic AVIF & WebP support.
 
 == Description ==
 
-**An easy to use plugin that can help you solve within minutes all your website’s image-related problems.**
+**An easy-to-use plugin that lets you solve any problems with images and improve your website's Core Web Vitals in a minute.**
 
-Display properly sized, smartly cropped and optimized images on your website; Images are processed on the fly and served from our CDN, in the next-gen WebP & AVIF formats, if the browser supports it.
+Imagine if you could solve all your website's image-related problems and increase pagespeed and performance with a simple click, would not that be great?
+Usually, images are the biggest resource on a web page. With just one click, ShortPixel Adaptive Images replaces all the pictures on your website with properly sized, smartly-cropped and optimized images and uploads them to ShortPixel's global CDN.
+And for even more Google love, the plugin delivers next-gen WebP or AVIF images to the right browsers auto-magically! :-)
+
+Using ShortPixel Adaptive Images also helps with <a href="https://web.dev/vitals/#core-web-vitals" target="_blank">Core Web Vitals (CWV)</a>'s Largest Contentful Paint (LCP), First Input Delay (FID) and Cumulative Layout Shift (CLS). 
+This is an important SEO factor that Google uses to rank pages. The smaller the CWV values are, the better for your website.
+
 
 = Do I need this plugin? =
-If you have a WordPress website with images then the answer is: most probably yes!
-Did you ever test your website with tools like <a href="https://developers.google.com/speed/pagespeed/insights/" target="_blank">PageSpeed Insights</a> or <a href="https://gtmetrix.com/">GTmetrix</a> and received complains about images not being properly sized or being too large? Or that you should use "next-gen" images like WebP or AVIF? Or that the website should "defer offscreen images"?
-ShortPixel Adaptive Images comes to the rescue and resolves your site's image-related problems in no time.
+If you have a WordPress website with images, the answer is most likely yes!
+Have you ever tested your website with tools like PageSpeed Insights or GTmetrix and received complaints that the images are not the right size or are too big? Or that you should be using "next gen" images like WebP or AVIF? Or that the website should "defer offscreen images"?
+ShortPixel Adaptive Images comes to the rescue and solves the problems with images on your website in no time.
+In addition to images, CSS, JS and font files are also minimized and delivered from our global CDN.
 
 = What are the benefits? =
 
-[vimeo https://vimeo.com/407181635 ]
-
-Imagine that you could have all your image-related website problems solved with a simple click, wouldn't that be great?
-Usually the images are the biggest resource on a website page. With just one click, ShortPixel Adaptive Images replaces all your website's pics with properly sized, smartly-cropped, optimized images and offloads them on to the ShortPixel's global CDN.
-And for more Google love the plugin serves <a href="https://en.wikipedia.org/wiki/WebP">WebP</a> and <a href="https://en.wikipedia.org/wiki/AV1#AV1_Image_File_Format_(AVIF)">AVIF</a> images to the right browsers auto-magically!
+<iframe src="https://player.vimeo.com/video/699250696?h=9fc61ec975&byline=0&portrait=0" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
 
 = What are the features? =
-* new, lightweight, pure JavaScript Adaptive Images engine (jQuery not required anymore) starting with version 3
-* same visual quality but smaller images thanks to ShortPixel algorithms
-* smart cropping - <a href="https://help.shortpixel.com/article/182-what-is-smart-cropping" target="_blank">see an example</a>
-* serve only appropriately sized images depending on the visitor's viewport
+* new, lightweight, pure JavaScript Adaptive Images Engine (jQuery no longer required)
+* same visual quality, but smaller images thanks to ShortPixel algorithms
+* smart cropping - <a href="https://shortpixel.com/knowledge-base/article/182-what-is-smart-cropping" target="_blank">see an example</a>
+* serve only images of appropriate size, depending on the viewport of the visitor
 * lazy load support with adjustable threshold; browser native lazy loading support is also available
-* automatically serves WebP & AVIF images to browsers that support this format. Animated Gifs are supported too!
-* caching and serving from a global CDN for images, as well as CSS, JS and fonts
-* all major image galleries, sliders, page builders are supported
-* onboarding wizard which includes a tool that suggests the best settings for each site
-* Low Quality Imaage Placeholders (LQIP) support
+* automatically serves WebP and AVIF images to browsers that support this format. Animated GIFs are also supported and can will converted to animated WebP and animated AVIF!
+* caching and serving from a global CDN for images as well as CSS, JS and fonts
+* CSS/JS files are minimized automatically
+* all major image galleries, sliders and page builders are supported
+* onboarding wizard with a tool that suggests the best settings for each website
+* support for low quality image placeholders (LQIP)
 * support for JPEG, PNG, GIF, TIFF, BMP
-* convert to WebP and AVIF on the fly
+* no need for a separate AVIF or WebP converter plugin, the original images are automatically converted to WebP or AVIF 
 * adjustable size breakpoints when resizing images
-* possibility to deactivate the plugin functionality for logged-in users
-* variety of settings for an increased flexibility in the plugin functionality
+* possibility to disable plugin functionality for logged in users
+* multiple types of exclusions available, including and advanced Image Checker Tool
+* Easy and Advanced mode for settings with a variety of settings for an increased flexibility of the plugin functionality
 
 
 = Do I need an account to test this plugin? =
-No, just go ahead and install then activate it on your WordPress website and you’ll automatically receive 500 image optimization credits, which equals to 2.5GB of CDN traffic, or approximately 2500 visits!
+No, just install it and activate it on your WordPress website. You will then automatically receive 500 MB of CDN traffic every month. That's about 500 visits/month!
 
 = How much does it cost? =
-When using ShortPixel Adaptive Images, only the CDN traffic <a href="https://help.shortpixel.com/article/460-spai-new-how-are-the-credits-counted">is counted</a>, if you choose to use our CDN. The free tier receives 100 image optimization credits, which equals to 500MB of CDN traffic, or approximately 500 visits. Paid plans start at $4.99 and both <a href="https://shortpixel.com/pricing-one-time">one-time</a> and <a href="https://shortpixel.com/pricing">monthly</a> plans are available.
-Even better: if you already use <a href="https://wordpress.org/plugins/shortpixel-image-optimiser/">ShortPixel Image Optimizer</a> then you can use the same credits with ShortPixel Adaptive Images!
+When using ShortPixel Adaptive Images, only CDN traffic <a href="https://shortpixel.com/knowledge-base/article/460-spai-new-how-are-the-credits-counted">is counted</a> if you choose to use our CDN. With the free plan, you get 100 credits for image optimization, which is equivalent to 500 MB of CDN traffic or about 500 visits/month. Paid plans start at $4.99 and are available as both <a href="https://shortpixel.com/pricing-one-time">one-time</a> and <a href="https://shortpixel.com/pricing">monthly</a> plans.
+Even better, if you already use <a href="https://wordpress.org/plugins/shortpixel-image-optimiser/">ShortPixel Image Optimizer</a>, you can use the same credits for ShortPixel Adaptive Images!
 
-= How does this work? =
-Different visitors have different devices (laptop, mobile phone, tablet) each with its own screen resolution. ShortPixel AI considers the device's resolution and then serves the right sized image for each placeholder.
-Let's consider a webpage with a single 640x480 pixels image.
-When viewed from a laptop the image will retain it 640x480px size but it will be optimized and served from a CDN.
-When the same webpage is viewed from a mobile phone, the image will be resized (for example) to 300x225px, optimized and served from CDN.
-This way, neither time nor bandwidth will be wasted by visitors.
-Please note that the first time the call for a specific image is made to our servers, the original image will be served temporarily.
+= How does it work? =
+Different visitors have different devices (laptop, mobile phone, tablet), each with its own screen resolution. ShortPixel AI takes into account the resolution of the device and then provides the right size image for each placeholder.
+Let us take a web page with a single image of 640×480 pixels.
+When viewed from a laptop, the image retains its 640×480 pixel size, but is optimized and delivered from our CDN.
+When the same web page is viewed from a mobile phone, the image (for example) is resized to 300x225 pixels, optimized, and delivered via our CDN.
+In this way, neither time nor bandwidth is wasted for visitors.
 
-**Other plugins by ShortPixel**
+**Other plugins by [ShortPixel](https://shortpixel.com):**
 
-* Image optimization & compression for all the images on your site, including WebP & AVIF delivery - <a href="https://wordpress.org/plugins/shortpixel-image-optimiser/" target="_blank">ShortPixel Image Optimizer</a> 
-* Easily replace images or files in Media Library - <a href="https://wordpress.org/plugins/enable-media-replace/" target="_blank">Enable Media Replace</a>
-* Regenerate thumbnails plugin compatible with the other ShortPixel plugins - <a href="https://wordpress.org/plugins/regenerate-thumbnails-advanced/" target="_blank">reGenerate Thumbnails Advanced</a>
-* Make sure you don't have huge images in your Media Library - <a href="https://wordpress.org/plugins/resize-image-after-upload/" target="_blank">Resize Image After Upload</a>
+* [ShortPixel Image Optimizer](https://wordpress.org/plugins/shortpixel-image-optimiser/) - Image optimization & compression for all the images on your website, including WebP & AVIF delivery
+* [Enable Media Replace](https://wordpress.org/plugins/enable-media-replace/) - Easily replace images or files in Media Library
+* [reGenerate Thumbnails Advanced](https://wordpress.org/plugins/regenerate-thumbnails-advanced/) - Easily regenerate thumbnails
+* [Resize Image After Upload](https://wordpress.org/plugins/resize-image-after-upload/) - Automatically resize each uploaded image
+* [WP SVG Images](https://wordpress.org/plugins/wp-svg-images/) - Secure upload of SVG files to Media Library 
+
+
+**Get in touch!**
+
+* Email <a href="https://shortpixel.com/contact" target="_blank">https://shortpixel.com/contact</a>
+* Twitter <a href="https://twitter.com/shortpixel" target="_blank">https://twitter.com/shortpixel</a>
 
 == Frequently Asked Questions ==
 
 = What happens when the quota is exceeded? =
 
-In your WP dashboard you'll be warned when your quota is about to be exhausted and also when it was exceeded. When the quota is exhausted, the plugin will simply serve the original images from your server, without compression or resizing, until the quota resets.
-The images that weren't already optimized will be served directly from your website.
+In your WP dashboard you will be warned when your quota is about to be exhausted and also when it has been exceeded. When the quota is exhausted, the plugin will simply serve the original images from your server, without compression or resizing, until the quota resets.
 
 = What Content Delivery Network (CDN) do you use? =
 
-ShortPixel Adaptive Images uses <a href="https://bunny.net/" target="_blank">bunny.net</a> to offload the images - a global CDN with <a href="https://bunny.net/network" target="_blank">54 edge locations</a> around the world.
-Both free and paid plans use the same CDN with the same number of locations.
-You can independently check out how the bunny.net CDN compares to other CDN providers <a href="https://www.cdnperf.com/">here</a> (wordlwide) and <a href="https://www.cdnperf.com/#!performance,North%20America">here</a> (North America).
+ShortPixel Adaptive Images uses <a href="https://bunny.net/" target="_blank">bunny.net</a> to offload the images - a global CDN with over <a href="https://bunny.net/network" target="_blank">90 edge locations</a> around the world.
+Both the free and paid plans use the same CDN with the same number of locations.
+You can check for yourself how the bunny.net CDN compares to other CDN providers - <a href="https://www.cdnperf.com/">here</a> (worldwide) and <a href="https://www.cdnperf.com/#!performance,North%20America">here</a> (North America).
+
 
 = Can I use a different CDN? =
 
-Sure. <a href="https://help.shortpixel.com/article/180-can-i-use-a-different-cdn-with-shortpixel-adaptive-images">Here</a> you can see how to configure it with Cloudflare and <a href="https://help.shortpixel.com/article/200-setup-your-stackpath-account-so-that-it-can-work-with-shortpixel-adaptive-images-api">here</a>’s how to configure it with STACKPATH. Please note that when using a different CDN, image credits will be consumed instead of CDN traffic.
-If you need further assistance please <a href="https://shortpixel.com/contact">contact us</a>
+Sure. <a href="https://shortpixel.com/knowledge-base/article/180-can-i-use-a-different-cdn-with-shortpixel-adaptive-images">Here</a> is how to configure it with Cloudflare and <a href="https://shortpixel.com/knowledge-base/article/200-setup-your-stackpath-account-so-that-it-can-work-with-shortpixel-adaptive-images-api">here</a>’ is how to configure it with STACKPATH. Please note that if you use another CDN instead of CDN traffic, image credits will be consumed.
+If you need further help, please <a href="https://shortpixel.com/contact">contact us</a>.
+
 
 = What happens if I deactivate the plugin? =
-You can stop using the SPAI whenever you want but this means your site will suddenly become slower.
-Basically, your website will revert to the original, un-optimized images served from your server.
+You can stop using SPAI at any time, but that means your website will suddenly slow down.
+Basically, your website will revert to the original, unoptimized images delivered by your server
 
 = Are there different image optimization levels available? =
 Yes, you can compress images as Lossy, Glossy or Lossless.
-You can find out more about each optimization level <a href="https://help.shortpixel.com/article/11-lossy-glossy-or-lossless-which-one-is-the-best-for-me">here</a> or can run some free tests to optimize images <a href="https://shortpixel.com/online-image-compression">here</a>
+You can learn more about the different optimization levels <a href="https://shortpixel.com/knowledge-base/article/11-lossy-glossy-or-lossless-which-one-is-the-best-for-me">here</a> or run some free image optimization tests <a href="https://shortpixel.com/online-image-compression">here</a>.
 
 = I already used ShortPixel Image Optimizer, can I also use this? =
 Certainly!
 
 = What is the difference between this plugin and ShortPixel Image Optimizer? =
-You can see <a href="https://help.shortpixel.com/article/179-shortpixel-adaptive-images-vs-shortpixel-image-optimizer">here</a> the differences between the two services.
+You can see <a href="https://shortpixel.com/knowledge-base/article/179-shortpixel-adaptive-images-vs-shortpixel-image-optimizer">here</a> the differences between the two services.
 
-= Where can I optimize my images? There's nothing on my admin panel. =
-SPAI works differently than a regular image optimizer. <a href="https://help.shortpixel.com/article/132-how-shortpixel-adaptive-images-work" target="_blank">Here's</a> what it does.
+= Where can I optimize my images? There's nothing in my admin panel. =
+SPAI works differently than a normal image optimizer. <a href="https://shortpixel.com/knowledge-base/article/132-how-shortpixel-adaptive-images-work" target="_blank">Here is</a> what it does.
 
 = How can I make sure that the plugin is working well? =
-You have more information about this <a href="https://help.shortpixel.com/article/240-is-shortpixel-adaptive-images-working-well-on-my-website" target="_blank">here</a>.
+You have more information about this <a href="https://shortpixel.com/knowledge-base/article/240-is-shortpixel-adaptive-images-working-well-on-my-website" target="_blank">here</a>.
 
-= I want to start using the plugin, what should I do? =
-The exact instructions for this are available <a href="https://help.shortpixel.com/article/231-step-by-step-guide-to-install-and-use-shortpixel-adaptive-images-spai" target="_blank">here</a>.
+= I want to use the plugin, what do I have to do? =
+You can find the detailed instructions <a href="https://shortpixel.com/knowledge-base/article/231-step-by-step-guide-to-install-and-use-shortpixel-adaptive-images-spai" target="_blank">here</a>. 
 
 = My images are getting redirected from cdn.shortpixel.ai, why? =
-Have a look at <a href="https://help.shortpixel.com/article/148-why-are-my-images-redirected-from-cdn-shortpixel-ai" target="_blank">this article</a>.
+Have a look at <a href="https://shortpixel.com/knowledge-base/article/148-why-are-my-images-redirected-from-cdn-shortpixel-ai" target="_blank">this article</a>.
 
-= SPAI is not working well, I'm having some issues. =
+= SPAI does not work well, I have some problems. =
 Please check the following things: 
-1) Make sure your domain <a href="https://help.shortpixel.com/article/94-how-to-associate-a-domain-to-my-account" target="_blank">is associated to your account</a>;
+1) Make sure your domain <a href="https://shortpixel.com/knowledge-base/article/94-how-to-associate-a-domain-to-my-account" target="_blank">is associated to your account</a>;
 2) Make sure you have enough credits available in your account;
-3) Have a look at <a href="https://help.shortpixel.com/article/220-i-installed-shortpixel-adaptive-images-but-it-doesnt-seem-to-work" target="_blank">this article</a>;
-4) Take a look at <a href="https://help.shortpixel.com/category/307-shortpixel-adaptive-images" target="_blank">our knowledge base</a>.
+3) Take a look at <a href="https://shortpixel.com/knowledge-base/article/220-i-installed-shortpixel-adaptive-images-but-it-doesnt-seem-to-work" target="_blank">this article</a>;
+4) Take a look at <a href="https://shortpixel.com/knowledge-base/category/307-shortpixel-adaptive-images" target="_blank">our knowledge base</a>.
 
 If nothing seems to work, please <a href="https://shortpixel.com/contact" target="_blank">contact us</a>.
 
@@ -130,11 +143,11 @@ Use the following WP CLI commands to clear the CSS cache and the Low Quality Ima
 
 == For developers ==
 
-If in Media Library there are main images which end in the usual thumbnail size suffix (eg. -100x100) please set in wp-config.php this:
+If there are main images in the Media Library that end with the usual thumbnail size suffix (e.g. -100x100), please set this in wp-config.php: 
 
     define('SPAI_FILENAME_RESOLUTION_UNSAFE', true);
 
-If you need to do a post-processing in JavaScript after the image/tag gets updated by ShortPixel AI, you can add a callback like this:
+If you need to do post-processing in JavaScript after the image/tag has been updated by ShortPixel AI, you can add a callback like this:
 
     jQuery( document ).ready(function() {
         ShortPixelAI.registerCallback('element-updated', function(elm){
@@ -143,17 +156,17 @@ If you need to do a post-processing in JavaScript after the image/tag gets updat
             });
     });
 
-For changing the original URL of the image, that is detected by ShortPixel, use this filter that receives the original URL:
+To change the original URL of the image that is detected by ShortPixel, use this filter that receives the original URL:
 
     add_filter('shortpixel/ai/originalUrl', 'my_function');
 
-Sometimes, when the option to crop the images is active, SPAI thinks it's not safe to crop an image, but you want to crop it anyway. Please add this attribute to force the cropping:
+Sometimes when the option to crop images is enabled, SPAI thinks it is not safe to crop an image, but you want to crop it anyway. Please add this attribute to force cropping:
 
     <img data-spai-crop="true" ....
 
-ShortPixel Adaptive Images triggers a JS event after the initial processing of  the HTML page in browser: spai-body-handled, an event after each processed DOM mutation, if at least one URL was replaced: spai-block-handled and an event after each element has its URL updated lazily (entering the viewport): spai-element-handled
+ShortPixel Adaptive Images triggers a JS event after the initial processing of the HTML page in the browser: spai-body-handled, an event after each processed DOM mutation when at least one URL has been replaced: spai-block-handled and an event after the URL of each element has its URL updated lazily ( entering the viewport): spai-element-handled
 
-In order to exclude specific images, you can also add the following attributes to the markup, inside the `IMG` tag:
+To exclude certain images, you can also add the following attributes within the 'IMG' tag to the markup:
 
     `<img data-spai-excluded="true" ...>` --> this will completely exclude from processing the image which has this attribute;
     `<img data-spai-eager="true" ...>` --> this will exclude the image from being lazy-loaded by the plugin;
@@ -163,8 +176,8 @@ For adding custom replacement rules use:
 
     add_filter('shortpixel/ai/customRules', 'my_function');
 
-The function will receive an array and should append to that array elements with the following structure: ['tagName', 'attrToBeChecked', 'classFilter', 'attributeFilter', false(reserved), 'attributeValueFilter', isEager(bool)]. Starting 3.0, you can also append ShortPixel\AI\TagRule instances, like this:
-A real-life example for custom image attributes, a custom srcset and a custom JSON data attribute:
+The function is given an array and should append to that array elements with the following structure: ['tagName', 'attrToBeChecked', 'classFilter', 'attributeFilter', false(reserved), 'attributeValueFilter', isEager(bool)]. As of version 3.0, you can also append ShortPixel\AI\TagRule instances, something like this.
+A real-world example of custom image attributes, a custom srcset, and a custom JSON data attribute:
 
 `add_filter('shortpixel/ai/customRules', 'spai_to_iconic');
 function spai_to_iconic($regexItems) {
@@ -208,6 +221,114 @@ The parameters of the rule are, in this order:
 6. Advanced settings page
 
 == Changelog ==
+
+= 3.5.3 =
+Release date: October 20th, 2022
+* Fix: an error was showing up on PHP 8 when trying to use the same API Key as for SPIO;
+* Fix: in some specific cases, the onboarding wizard wasn't fully working on PHP 5.6;
+* Fix: various CSS changes and fixes for the settings page;
+* Tweak: `content: url()` CSS rules are now parsed and replaced;
+* Tweak: updated the login URLs to the ShortPixel dashboard to work with the new website;
+* Fix: new AI Engine: infinite recursion on mutationCallback was triggering other mutations in some circumstances;
+* Fix: new AI Engine: relative URLs inside stylesheets were resolved to the stylesheet URL not the one of the page;
+* Fix: new AI Engine: added a check for exclusions in replaceBackgroundPseudoSrcs;
+* Language: 0 new strings added, 0 updated, 0 fuzzed, and 0 obsoleted.
+
+= 3.5.2 =
+Release date: September 21st, 2022
+* Fix: when more fonts were added from inline CSS, only the first font was properly replaced;
+* Fix: removed the doubled request to the site that was done for logged-in visitors;
+* Fix: various small CSS fixes and code cleanup;
+* Tweak: the import/export buttons are now hidden on mobiles and small screens;
+* Compat: excluded the Instagram feed added with Essential Grid;
+* Compat: fixed the settings CSS when the SEOPress plugin is active;
+* Language: 0 new strings added, 0 updated, 0 fuzzed, and 0 obsoleted.
+
+
+= 3.5.1 =
+Release date: August 17th, 2022
+* Fix: the compression level can now be saved correctly in both easy and advanced mode (sorry!);
+* Language: 0 new strings added, 0 updated, 0 fuzzed, and 0 obsoleted.
+
+= 3.5.0 =
+Release date: August 16th, 2022
+* New: added Easy and Advanced Mode for settings, for a smoother experience;
+* New: the New AI Engine is now set as the default engine for new plugin installations;
+* New: added the possibility to exclude pages, besides the other existing exclusions;
+* New: the plugin also serves the fonts declared in inline style blocks from the CDN;
+* New: added a menu in the wp-admin bar for settings, clear cache and the image checker tool (when visiting the public site while logged in);
+* New: added action buttons for the notifications that were dismissed and had buttons;
+* New: added a news block in the settings;
+* Fix: the LQIPs do not use the fade-in effect as it is not needed;
+* Fix: the CDN traffic is now displayed correctly, even for old AppSumo codes;
+* Language: 38 new strings added, 1 updated, 0 fuzzed, and 1 obsoleted.
+
+= 3.4.2 =
+Release date: June 22nd, 2022
+* Fix: removed `loading=lazy` also for rules that specify the element as eager;
+* Fix: updated the LQIP path to `/spai/` instead of `/client/`;
+* Fix: identify as valid HTML the content starting with Zero-Width Non-breaking Space `\uFEFF`;
+* Fix: removed a double slash when the API returns an empty string for `get_api_url`;
+* Tweak: added LQIP logging flag;
+* Compat: do not parse pages when the `DONOTCDN` constant is active;
+* Compat: added lazy attributes support for Essential Grid;
+* Compat: added integration with Jupiter Child themes;
+* Compat: added an eager exclusion for the MK slider;
+* Language: 0 new strings added, 0 updated, 0 fuzzed, and 0 obsoleted.
+
+= 3.4.1 =
+Release date: May 25th, 2022
+* Compat: make the image load eagerly if Perfmatters marked it with `data-perfmatters-preload`;
+* Compat: if a Global Gallery is present, replace all image a hrefs' eagerly;
+* Fix: Elementor `data-elementor-open-lightbox` not handled by JS, left as a placeholder to be handled when the lightbox is displayed;
+* Fix: updated the minify library to fix isolated cases of JS errors due to minify bugs;
+* Fix: increase the backtracking limit for PCRE regex, needed for certain complex pages;
+* Fix: remove `loading=lazy` if the image will be lazy-loaded by SPAI;
+* Fix: the LQIP width/height regex was matching other elements inside the `<svg>` width/height;
+* Language: 0 new strings added, 0 updated, 0 fuzzed, and 0 obsoleted.
+
+= 3.4.0 =
+Release date: April 21st, 2022
+* New: added a settings import & export functionality;
+* New: added a notification in case the MBString PHP library is missing;
+* Compat: excluded MailPoet email previews from processing to prevent missing images;
+* Compat: fixed the WP Rocket integration for sites without jQuery;
+* Fix: do not add `spai-bg-prepared` for DOM modifications unless at least one of the lazy bakgrounds options is set;
+* Fix: fixed potential security issue: in special conditions, low-privileged users could perform certain actions with the plugin;
+* Fix: added some CSS tweaks for the exclusions tab;
+* Fix: new AI Engine: fix typo that was throwing console errors in some cases;
+* Fix: new AI Engine: properly handle background-images that are non-url(), are defined on dynamically added `<style>` blocks and used in dynamically added DOM documents;
+* Language: 5 new strings added, 0 updated, 0 fuzzed, and 0 obsoleted.
+
+= 3.3.1 =
+Release date: March 23rd, 2022
+* Tweak: exclusions now work with attributes, server-side (e.g. `img[width=200]` excludes all images with the `width="200"` attribute;
+* Fix: properly handle multiple WooCommerce variation forms on the same page;
+* Fix: SPAI was not loading after dismissing the jQuery alert and then choosing the New AI Engine in the settings;
+* Fix: new AI Engine: properly split selectors that contain `,` inside them, e.g. `div (li.class1, span.class2)`;
+* Language: 0 new strings added, 1 updated, 0 fuzzed, and 0 obsoleted.
+
+= 3.3.0 =
+Release date: March 2nd, 2022
+* New: added notification when changing the API URL, about the credits consumption when using another CDN;
+* New: SPAI now deactivates/activates itself automatically when running out/topping up credits to avoid useless redirects;
+* Compat: updated the library used to minify CSS/JS files;
+* Fix: the notice that shows up when running out of credits wasn't always displayed;
+* Fix: a warning was showing up next to the upgrade notice sometimes;
+* Fix: parsing JS with `<script>` tags which would fail for `// --> </script>` old-style HTML comments for JS;
+* Fix: updated various strings still containing credits instead of traffic;
+* Fix: a PHP warning was showing up in some cases;
+* Fix: new AI Engine: certain backgrounds that are dynamically added to the page were not correctly handled;
+* Fix: new AI Engine: parsing styles that are not already loaded when the parseSelectors is fired;
+* Language: 4 new strings added, 28 updated, 1 fuzzed, and 0 obsoleted.
+
+= 3.2.2 =
+Release date: February 16th, 2022
+* Tweak: add param to take into account lazy-loaded images in style blocks (and resize even if the original width is not known);
+* Fix: the backgrounds with gradient and background weren't working correctly after 3.2.1;
+* Fix: new AI Engine: fix handling `<style>` blocks inside DOM modifications;
+* Fix: new AI Engine: fix displaying backgrounds that are inline images but not from SPAI, inside DOM modifications;
+* Language: 0 new strings added, 0 updated, 0 fuzzed, and 0 obsoleted.
 
 = 3.2.1 =
 Release date: January 25th, 2022
@@ -394,4 +515,4 @@ ShortPixel Adaptive Images version 2.1 is a major upgrade and it comes with some
 
 = 3.0.0 =
 SPAI 3 is a major update and it comes with a completely new Adaptive Images engine based on pure JS (no jQuery required anymore). Enable it from the Behavior tab in Settings -> ShortPIxel AI.
-= 3.0.0:END =
+= 3.0.0:END = 

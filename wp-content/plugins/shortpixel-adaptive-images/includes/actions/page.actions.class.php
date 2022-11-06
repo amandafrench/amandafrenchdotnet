@@ -21,6 +21,10 @@
 
 			$response = [ 'success' => false ];
 
+            if ( !is_admin() || !\ShortPixelAI::userCan( 'manage_options' ) ) {
+                return;
+            }
+
 			if ( !empty( $page ) && is_string( $page ) ) {
 				$page = Converter::toTitleCase( $page );
 
@@ -39,7 +43,6 @@
 
 			$response = [
 				'success' => $success,
-
 			];
 
 			if ( $action === 'save' ) {
@@ -50,6 +53,9 @@
                 if(parse_url($options->behaviour->api_url, PHP_URL_HOST) === NULL) {
                     $options->behaviour->api_url = ShortPixelAI::DEFAULT_API_AI . ShortPixelAI::DEFAULT_API_AI_PATH;
                 }
+
+				//translate simple meta options
+				$options = ShortPixelAI::translateSimpleOptions( $options );
 
 				$current_options = Options::_()->settings;
 
@@ -78,9 +84,14 @@
                                     }
                                 }
                                 $behaviour = Options::_()->get( 'behaviour', 'settings', [] );
-								if($category_name=='behaviour' && $option=='nojquery' && $behaviour->nojquery > 0 && $value==false) {
-                                    Options::_()->set( -1, $option, [ 'settings', $category_name ] );
+								if($category_name=='behaviour' && $option=='nojquery') {
+                                    if( $behaviour->nojquery > 0 && !$value) {
+                                        Options::_()->set( -1, $option, [ 'settings', $category_name ] );
+                                    } else if( $behaviour->nojquery <= 0 && $value) {
+                                        Options::_()->set( 1, $option, [ 'settings', $category_name ] );
+                                    }
                                 } else {
+
                                     Options::_()->set( $value, $option, [ 'settings', $category_name ] );
                                 }
 							}
@@ -130,6 +141,18 @@
 			else if ( $action === 'remove key' ) {
 				$response[ 'success' ] = !!Options::_()->delete( 'api_key', [ 'settings', 'general' ] );
 				$response[ 'reload' ]  = true;
+			}
+			else if ( $action === 'disable advanced' ) {
+				ShortPixelAI::_()->setSimpleDefaultOptions();
+				$response[ 'success' ] = !!Options::_()->set( 0, 'advanced', ['flags', 'all'] );
+				$response[ 'reload' ] = true;
+				set_transient('spaiModeSwitchNotification', __( 'Switched to simple mode', 'shortpixel-adaptive-images' ), 60);
+			}
+			else if ( $action === 'enable advanced' ) {
+				$response[ 'success' ] = !!Options::_()->set( 1, 'advanced', ['flags', 'all'] );
+				$response[ 'reload' ] = true;
+
+				set_transient('spaiModeSwitchNotification', __( 'Switched to advanced mode', 'shortpixel-adaptive-images' ), 60);
 			}
 			else if ( $action === 'clear css cache' ) {
 				$success = !!ShortPixelAI::clear_css_cache();
@@ -184,14 +207,16 @@
 				'success' => false,
 			];
 
+            $opts = Options::_();
+
 			switch ( $option ) {
 				case 'lazy-load-backgrounds':
-					Options::_()->settings_areas_backgroundsLazy = $data[ 'value' ] == 'true';
-                    Options::_()->settings_areas_backgroundsLazyStyle = $data[ 'value' ] == 'true';
+					$opts->settings_areas_backgroundsLazy = $data[ 'value' ] == 'true';
+                    $opts->settings_areas_backgroundsLazyStyle = $data[ 'value' ] == 'true';
 					$response[ 'success' ]                       = true;
 					break;
 				case 'parse-css':
-					Options::_()->settings_areas_parseCssFiles = $data[ 'value' ] == 'true';
+					$opts->settings_areas_parseCssFiles = $data[ 'value' ] == 'true';
 					if ( $data[ 'value' ] == 'true' ) {
 						ShortPixelAI::clear_css_cache();
 					}
@@ -199,21 +224,21 @@
 					$response[ 'success' ] = true;
 					break;
 				case 'parse-js':
-					Options::_()->settings_areas_parseJs = $data[ 'value' ] == 'true';
+					$opts->settings_areas_parseJs = $data[ 'value' ] == 'true';
 					$response[ 'success' ]               = true;
 					break;
 				case 'parse-json':
-					Options::_()->settings_areas_parseJson = $data[ 'value' ] == 'true';
+					$opts->settings_areas_parseJson = $data[ 'value' ] == 'true';
 					$response[ 'success' ]                 = true;
 					break;
 				case 'hover-handling':
-					Options::_()->settings_behaviour_hoverHandling = $data[ 'value' ] == 'true';
+					$opts->settings_behaviour_hoverHandling = $data[ 'value' ] == 'true';
 					$response[ 'success' ]                         = true;
 					break;
 			}
 
 			if ( $action === 'done' ) {
-				$front_worker = Options::_()->get( 'front_worker', [ 'pages', 'on_boarding' ], Options\Option::_() );
+				$front_worker = $opts->get( 'front_worker', [ 'pages', 'on_boarding' ], Options\Option::_() );
 				$front_worker = $front_worker instanceof Options\Option ? $front_worker : Options\Option::_();
 
 				$current_user_login = wp_get_current_user()->user_login;
@@ -222,7 +247,14 @@
 					unset( $front_worker->{$current_user_login} );
 				}
 
-				$response[ 'success' ]  = !!Options::_()->set( $front_worker, 'front_worker', [ 'pages', 'on_boarding' ] );
+                //decide if we need to switch to Advanced mode in Settings, depending on which options were activated during on-boarding.
+                if( $opts->get( 1, 'advanced', ['flags', 'all']) != 1
+                    && !ShortPixelAI::verifySimpleOptions($opts->settings) ) {
+                    //it means that the simple options cannot display the combination of options that were set by onboarding, so we need to switch to advanced mode.
+                    $opts->set( 1, 'advanced', ['flags', 'all'] );
+                }
+
+				$response[ 'success' ]  = !!$opts->set( $front_worker, 'front_worker', [ 'pages', 'on_boarding' ] );
 				$response[ 'cookie' ]   = 'shortpixel-ai-front-worker';
 				$response[ 'redirect' ] = [
 					'allowed' => true,

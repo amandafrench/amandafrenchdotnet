@@ -50,7 +50,7 @@ textarea.sform-field { width: 100%; height: auto; outline: none; line-height: 1.
 .highlighted textarea.sform-field { border: none; border-radius: 5px; background-color: #eaeaea; padding: 10px 16px; }
 
 /* Consent field */
-.sform-field-group.checkbox { margin-top: 20px; }
+.sform-field-group.checkbox { margin-top: 20px; position: relative; }
 input.checkbox { position: absolute; opacity: 0; height: 1px; width: 1px; appearance: none; -webkit-appearance: none; -moz-appearance: none; }
 input.checkbox + label { position: relative; cursor: default; display: inline-block; margin-left: 0; width: 100%; font-size: inherit; box-sizing: border-box; }
 input.checkbox + label a { color: inherit; text-decoration: underline; text-decoration-style: dotted; }
@@ -129,8 +129,9 @@ input[type=number] { appearance: textfield; -moz-appearance: textfield; -webkit-
 
 /* Invalid fields */
 input.sform-field.is-invalid, textarea.sform-field.is-invalid, input.sform-field.is-invalid + label .checkmark, div.captcha.is-invalid { border-color: #dc3545; }
+input.sform-field.is-invalid + label .checkmark { background-color: rgb(220 53 69 / 50%); }
 .sform-field.is-invalid:focus, div.captcha.is-invalid.focus { box-shadow: none; }
-div.captcha.is-invalid + .error-des span { display: block; }
+.captcha.is-invalid + .error-des span { display: block; }
 label.checkbox.is-invalid { color: #dc3545; }
 .basic .sform-field.is-invalid, .rounded .sform-field.is-invalid, .basic div.captcha.is-invalid , .rounded div.captcha.is-invalid { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 5px center; background-size: 1em; }
 .basic textarea.sform-field.is-invalid, .rounded textarea.sform-field.is-invalid { background-position: top 14px right 5px; }
@@ -166,7 +167,7 @@ input:focus, textarea:focus { -webkit-transition: none; -moz-transition: none; -
 .rounded .msgoutside span { border-radius: 5px; background-color: #dc3545; color: #FFF; opacity: 0.75; }
 .minimal .msgoutside span { border-radius: 5px; background-color: #f8d7da; color: #dc3545; }
 .noscript { position: absolute; top: 0; width: 100%; }
-.msgoutside.top { margin-bottom: 20px; }
+.msgoutside.top { margin-bottom: 30px; }
 
 /* Confirmation message after ajax submission */
 .form.confirmation { text-align: center; padding-top: 50px; outline: none; }
@@ -242,5 +243,6 @@ label.sform.col-sm-2 { letter-spacing: -0.05em; }
 
 .form-wrap.success { background-color: inherit !important; }
 
+/* SimpleForm Admin Notice */
 #sform-admin-message { font-size: 0.8em; border: 1px solid; margin-top: 20px; padding: 20px 15px; height: -webkit-fit-content; height: -moz-fit-content; height: fit-content; }
 #sform-admin-message p.heading { font-weight: 600; margin-bottom: 10px; }

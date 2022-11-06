@@ -140,6 +140,8 @@ class ShortPixelDomainTools {
         $return->quota->monthly->usedPercent      = $return->quota->monthly->total > 0 ? round( $return->quota->monthly->used / ( $return->quota->monthly->total / 100 ), 2 ) : 0.0;
         $return->quota->monthly->availablePercent = 100 - $return->quota->monthly->usedPercent;
 
+        $return->quota->monthly->totalCDN         = (int) $response->CDNQuota;
+
         $return->quota->monthly->nextBillingDate = new DateTime();
         $return->quota->monthly->nextBillingDate->add(new DateInterval('P' . $response->DaysToReset . 'D'));
         $return->quota->monthly->lastBillingDate = clone $return->quota->monthly->nextBillingDate;
@@ -294,6 +296,9 @@ class ShortPixelDomainTools {
         return false;
     }
 
+    public static function credits2bytes($credits, $precision = 2) {
+        return self::formatBytes($credits * ShortPixelAI::ONE_CREDIT_IN_TRAFFIC, $precision);
+    }
     /**
      * Transform a number of bytes in a human readable format.
      * @param $bytes
@@ -354,7 +359,7 @@ class ShortPixelDomainTools {
      *
      * @return bool
      */
-    public function use_shortpixel_account($ctrl) {
+    public static function use_shortpixel_account($ctrl) {
         $spio_api_key = get_option( 'wp-short-pixel-apiKey', false );
 
         if ( $spio_api_key ) {
@@ -402,6 +407,10 @@ class ShortPixelDomainTools {
 
             self::$domainStatus = $domain_status;
         }
+
+        //deactivate SPAI until the status gets back to 2
+        ShortPixelAI::_()->options->flags_all_credits = !( self::$domainStatus->Status == -1 );
+
         return self::$domainStatus;
     }
 

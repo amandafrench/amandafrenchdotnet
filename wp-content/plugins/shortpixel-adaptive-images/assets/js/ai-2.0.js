@@ -419,15 +419,18 @@ SPAI.prototype.updateImageUrl = function(elm, hasMutationObserver, fromIntersect
     if(spai_settings.active_integrations.woocommerce && elm.hasClass('attachment-shop_thumbnail')) {
         //this is a hack needed because WooCommerce searches the images of the product variations by thumbnail... URL :(
         //search for the form
-        var variationsForm = jQuery('form.variations_form');
-        if(variationsForm.attr('data-product_variations')) {
-            var pVar = variationsForm.data('product_variations');
-            for(var idx in pVar) {
-                if(pVar[idx].image.gallery_thumbnail_src.indexOf(origData.src) >= 0) {
-                    pVar[idx].image.gallery_thumbnail_src = origData.newSrc;
+        var variationsForms = jQuery('form.variations_form');
+        for(var i = 0; i < variationsForms.length; i++) {
+            var variationsForm = jQuery(variationsForms[i]);
+            if(variationsForm.attr('data-product_variations')) {
+                var pVar = variationsForm.data('product_variations');
+                for(var idx in pVar) {
+                    if(pVar[idx].image.gallery_thumbnail_src.indexOf(origData.src) >= 0) {
+                        pVar[idx].image.gallery_thumbnail_src = origData.newSrc;
+                    }
                 }
+                variationsForm.data('product_variations', pVar);
             }
-            variationsForm.data('product_variations', pVar);
         }
     }
 

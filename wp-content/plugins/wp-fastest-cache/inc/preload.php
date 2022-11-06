@@ -359,17 +359,23 @@
 
 						if(count($categories) > 0){
 							foreach ($categories as $key => $category) {
+								$term_link = get_term_link($category->slug, $category->taxonomy);
+
+								if(isset($term_link->errors)){
+									continue;
+								}
+
 								if($mobile_theme){
-									array_push($urls, array("url" => get_term_link($category->slug, $category->taxonomy), "user-agent" => "mobile"));
+									array_push($urls, array("url" => $term_link, "user-agent" => "mobile"));
 									$number--;
 								}
 
-								array_push($urls, array("url" => get_term_link($category->slug, $category->taxonomy), "user-agent" => "desktop"));
+								array_push($urls, array("url" => $term_link, "user-agent" => "desktop"));
 								$number--;
 
 								$pre_load->category = $pre_load->category + 1;
-
 							}
+
 						}else{
 							$pre_load->category = -1;
 						}

@@ -29,7 +29,7 @@ $extra_option = '';
 <div id="tab-builder" class="navtab">
 		
 <?php
-$show_for = isset($_GET['showfor']) && in_array($_GET['showfor'], array('all', 'in', 'out')) ? $_GET['showfor'] : 'all';
+$show_for = isset($_GET['showfor']) && in_array($_GET['showfor'], array('all', 'in', 'out')) ? sanitize_text_field($_GET['showfor']) : 'all';
 $name_field = $show_for == 'out' ? 'anonymous' : 'registered';
 $email_field = $show_for == 'out' ? 'anonymous' : 'registered';
 $subject_field = $show_for == 'out' ? 'anonymous' : 'registered';

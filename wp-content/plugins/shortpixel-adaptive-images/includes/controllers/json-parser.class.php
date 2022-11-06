@@ -13,7 +13,7 @@ class ShortPixelJsonParser {
 
     function __construct(ShortPixelAI $ctrl, $currentTagRule = false, $lazy = false) {
         $this->ctrl = $ctrl;
-        $this->lazy = $lazy === false ? ($ctrl->settings->areas->parse_json_lazy && !$currentTagRule->eager) : $lazy;
+        $this->lazy = $lazy === false ? ($ctrl->settings->areas->parse_json_lazy && (!$currentTagRule || !$currentTagRule->eager)) : $lazy;
         $this->logger = ShortPixelAILogger::instance();
         $this->tagRule = $currentTagRule;
     }

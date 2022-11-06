@@ -49,7 +49,8 @@ function Zotpress_shortcode_request( $checkcache = false )
 	*/
 
 	// Account for items + collection_id
-	if ( $zpr["item_type"] == "items" && $zpr["collection_id"] !== false )
+	if ( $zpr["item_type"] == "items"
+			&& $zpr["collection_id"] !== false )
 	{
 		$zpr["item_type"] = "collections";
 		$zpr["sub"] = "items";
@@ -57,23 +58,31 @@ function Zotpress_shortcode_request( $checkcache = false )
 	}
 
 	// Account for items + zp_tag_id
-	if ( $zpr["item_type"] == "items" && $zpr["tag_id"] !== false )
+	if ( $zpr["item_type"] == "items"
+			&& $zpr["tag_id"] !== false )
 		$zpr["get_top"] = false;
 
 	// Account for collection_id + get_top
-	if ( $zpr["get_top"] !== false && $zpr["collection_id"] !== false )
+	if ( $zpr["get_top"] !== false
+			&& $zpr["collection_id"] !== false )
 	{
 		$zpr["get_top"] = false;
 		$zpr["sub"] = "collections";
 	}
 
 	// Account for tag display - let's limit it
-	if ( $zpr["is_dropdown"] === true && $zpr["item_type"] == "tags" )
+	if ( $zpr["is_dropdown"] === true
+			&& $zpr["item_type"] == "tags" )
 	{
 		$zpr["sortby"] = "numItems"; // title
 		$zpr["order"] = "desc"; // asc
 		$zpr["limit"] = "100"; if ( $zpr["maxtags"] ) $zpr["limit"] = $zpr["maxtags"];
 		$zpr["overwrite_request"] = true;
+
+		// REVIEW: we don't want tags within a collection,
+		// accounting for Library Dropdown browse bar (7.3.1.1)
+		// $zpr["get_top"] = false;
+		// $zpr["collection_id"] = false;
 	}
 
 	// Account for $zpr["maxresults"]

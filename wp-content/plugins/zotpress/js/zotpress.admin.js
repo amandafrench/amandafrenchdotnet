@@ -50,12 +50,12 @@ jQuery(document).ready( function()
 
 	// FILTER BY ACCOUNT
 
-	jQuery('div#zp-Browse-Accounts').delegate("select#zp-FilterByAccount", "change", function()
+	jQuery('div.zp-Browse-Accounts').delegate("select#zp-FilterByAccount", "change", function()
 	{
 		var id = jQuery(this).val();
 
 		jQuery(this).addClass("loading");
-		jQuery("#zp-Browse-Account-Options a").addClass("disabled").unbind("click",
+		jQuery(".zp-Browse-Account-Options a").addClass("disabled").unbind("click",
 			function (e) {
 				e.preventDefault();
 				return false;
@@ -64,16 +64,6 @@ jQuery(document).ready( function()
 
 		window.location = "admin.php?page=Zotpress&api_user_id="+id;
 	});
-
-
-	// FILTER BY TAG
-
-	jQuery('div#zp-Browse-Bar').delegate("select#zp-List-Tags", "change", function()
-	{
-		if ( jQuery(this).attr('rel') != 'empty' )
-			window.location = "admin.php?page=Zotpress&api_user_id="+jQuery('select#zp-FilterByAccount option:selected').val()+"&tag_id="+jQuery("option:selected", this).attr("rel");
-	});
-
 
 
 	/*
@@ -309,109 +299,120 @@ jQuery(document).ready( function()
 
     */
 
-	jQuery(".zp-Accounts-Default").click(function()
-	{
-		var $this = jQuery(this);
+    // Remove set link if there's only one account
+    if ( jQuery(".zp-Account-Default").length > 0 )
+    {
+        if ( jQuery(".zp-IsDefaultAccount").length == 1 )
+        {
+            jQuery(".zp-Account-Default")
+                .click(function(e) { e.preventDefault() })
+                .addClass("inactive");
+        }
+        else // Multiple accounts
+        {
+            jQuery(".zp-Account-Default").click(function()
+        	{
+        		var $this = jQuery(this);
 
-		// Prep for data validation
-		$this.addClass("loading");
+        		// Prep for data validation
+        		$this.addClass("loading");
 
-		// Determine account
-		var zpTempType = "button";
-		var zpTempAccount = "";
+        		// Determine account
+        		var zpTempType = "button";
+        		var zpTempAccount = "";
 
-		if ( $this.attr("rel") != "undefined" )
-		{
-			zpTempType = "icon";
-			zpTempAccount = $this.attr("rel");
-		}
+        		if ( $this.attr("rel") != "undefined" )
+        		{
+        			zpTempType = "icon";
+        			zpTempAccount = $this.attr("rel");
+        		}
 
-		if ( jQuery("select#zp-Zotpress-Options-Account").length > 0 )
-		{
-			zpTempType = "form";
-			zpTempAccount = jQuery("select#zp-Zotpress-Options-Account option:selected").val();
-		}
+        		if ( jQuery("select#zp-Zotpress-Options-Account").length > 0 )
+        		{
+        			zpTempType = "form";
+        			zpTempAccount = jQuery("select#zp-Zotpress-Options-Account option:selected").val();
+        		}
 
-		// Prep for data validation
-		if ( zpTempType == "form" )
-		{
-			jQuery(this).attr('disabled','true');
-			jQuery('#zp-Zotpress-Options-Account .zp-Loading').show();
-		}
+        		// Prep for data validation
+        		if ( zpTempType == "form" )
+        		{
+        			jQuery(this).attr('disabled','true');
+        			jQuery('#zp-Zotpress-Options-Account .zp-Loading').show();
+        		}
 
-		// AJAX
-		jQuery.ajax(
-		{
-			url: zpAccountsAJAX.ajaxurl,
-			data: {
-				'action': 'zpAccountsViaAJAX',
-				'action_type': 'default_account',
-				'api_user_id': zpTempAccount,
-				'zpAccountsAJAX_nonce': zpAccountsAJAX.zpAccountsAJAX_nonce
-			},
-			xhrFields: {
-				withCredentials: true
-			},
-			success: function(xml)
-			{
-				var $result = jQuery('result', xml).attr('success');
+        		// AJAX
+        		jQuery.ajax(
+        		{
+        			url: zpAccountsAJAX.ajaxurl,
+        			data: {
+        				'action': 'zpAccountsViaAJAX',
+        				'action_type': 'default_account',
+        				'api_user_id': zpTempAccount,
+        				'zpAccountsAJAX_nonce': zpAccountsAJAX.zpAccountsAJAX_nonce
+        			},
+        			xhrFields: {
+        				withCredentials: true
+        			},
+        			success: function(xml)
+        			{
+        				var $result = jQuery('result', xml).attr('success');
 
-				if ( zpTempType == "form" )
-				{
-					jQuery('#zp-Zotpress-Options-Account .zp-Loading').hide();
-					jQuery('input#zp-Zotpress-Options-Account-Button').removeAttr('disabled');
+        				if ( zpTempType == "form" )
+        				{
+        					jQuery('#zp-Zotpress-Options-Account .zp-Loading').hide();
+        					jQuery('input#zp-Zotpress-Options-Account-Button').removeAttr('disabled');
 
-					if ($result == "true")
-					{
-						jQuery('#zp-Zotpress-Options-Account div.zp-Errors').hide();
-						jQuery('#zp-Zotpress-Options-Account div.zp-Success').show();
+        					if ($result == "true")
+        					{
+        						jQuery('#zp-Zotpress-Options-Account div.zp-Errors').hide();
+        						jQuery('#zp-Zotpress-Options-Account div.zp-Success').show();
 
-						jQuery.doTimeout(1000,function() {
-							jQuery('#zp-Zotpress-Options-Account div.zp-Success').hide();
-						});
-					}
-					else // Show errors
-					{
-						jQuery('#zp-Zotpress-Options-Account div.zp-Errors').html("<p>"+jQuery('errors', xml).text()+"</p>\n");
-						jQuery('#zp-Zotpress-Options-Account div.zp-Errors').show();
-					}
-				}
+        						jQuery.doTimeout(1000,function() {
+        							jQuery('#zp-Zotpress-Options-Account div.zp-Success').hide();
+        						});
+        					}
+        					else // Show errors
+        					{
+        						jQuery('#zp-Zotpress-Options-Account div.zp-Errors').html("<p>"+jQuery('errors', xml).text()+"</p>\n");
+        						jQuery('#zp-Zotpress-Options-Account div.zp-Errors').show();
+        					}
+        				}
 
-				else
-				{
-					$this.removeClass("success loading");
+        				else
+        				{
+        					$this.removeClass("success loading");
 
-					if ($result == "true")
-					{
-						jQuery(".zp-Accounts-Default")
-                            .removeClass("dashicons-star-filled")
-                            .addClass("dashicons-star-empty");
+        					if ($result == "true")
+        					{
+        						jQuery(".zp-Account-Default")
+                                    .removeClass("dashicons-star-filled")
+                                    .addClass("dashicons-star-empty");
 
-                        $this.removeClass("dashicons-star-empty")
-                            .addClass("dashicons-star-filled");
+                                $this.removeClass("dashicons-star-empty")
+                                    .addClass("dashicons-star-filled");
 
-                        if ( $this.hasClass("zp-Browse-Account-Default") )
-                            $this.addClass("disabled")
-                                .text( zpAccountsAJAX.txt_default );
-					}
-					else // Show errors
-					{
-						alert(jQuery('errors', xml).text());
-					}
-				}
-			},
-			error: function(errorThrown)
-			{
-				console.log(errorThrown);
-			}
-		});
+                                if ( $this.hasClass("zp-Account-Default") )
+                                    $this.addClass("disabled")
+                                        .text( zpAccountsAJAX.txt_default );
+        					}
+        					else // Show errors
+        					{
+        						alert(jQuery('errors', xml).text());
+        					}
+        				}
+        			},
+        			error: function(errorThrown)
+        			{
+        				console.log(errorThrown);
+        			}
+        		});
 
-		// Cancel default behaviours
-		return false;
+        		// Cancel default behaviours
+        		return false;
 
-	});
-
-
+        	});
+        }
+    }
 
 
 
@@ -726,7 +727,7 @@ jQuery(document).ready( function()
 				data: {
 					'action': 'zpAccountsViaAJAX',
 					'action_type': 'add_image',
-					'api_user_id': jQuery("#ZP_API_USER_ID").text(),
+					'api_user_id': jQuery(".ZP_API_USER_ID").text(),
 					'item_key': $this.attr('rel'),
 					'image_id': attachment.id,
 					'zpAccountsAJAX_nonce': zpAccountsAJAX.zpAccountsAJAX_nonce
@@ -755,8 +756,13 @@ jQuery(document).ready( function()
 						else // set image
                         {
 							$this.parent().addClass("hasImage");
-							$this.parent().prepend("<img class='thumb' src='"+thumbURL+"' alt='image' />");
+							$this.parent().prepend("<img class='thumb' src='"+thumbURL+"' alt='image'>");
 						}
+                        // Update button text
+                        $this.text(zpAccountsAJAX.txt_changeimg);
+
+                        // Add remove button
+                        $this.parent().prepend("<a title='"+zpAccountsAJAX.txt_removeimg+"' class='delete' rel='"+$this.attr('rel')+"' href='#'>&times;</a>\n");
 					}
 					else // Show errors
 					{
@@ -794,7 +800,7 @@ jQuery(document).ready( function()
 			data: {
 				'action': 'zpAccountsViaAJAX',
 				'action_type': 'remove_image',
-				'api_user_id': jQuery("#ZP_API_USER_ID").text(),
+				'api_user_id': jQuery(".ZP_API_USER_ID").text(),
 				'item_key': $this.attr('rel'),
 				'zpAccountsAJAX_nonce': zpAccountsAJAX.zpAccountsAJAX_nonce
 			},
@@ -809,6 +815,9 @@ jQuery(document).ready( function()
 				{
 					$this.parent().removeClass("hasImage");
 					$this.parent().find(".thumb").remove();
+
+                    // Update button text
+                    jQuery('.upload', $this.parent()).text(zpAccountsAJAX.txt_setimg);
 				}
 				else // Show errors
 				{

@@ -3,8 +3,9 @@ if ( ! defined( 'WPINC' ) ) die;
 
 $id = isset( $_REQUEST['form'] ) ? absint($_REQUEST['form']) : '1'; 
 $attributes = get_option("sform_{$id}_attributes") != false ? get_option("sform_{$id}_attributes") : get_option("sform_attributes");
-$settings = get_option("sform_{$id}_settings") != false ? get_option("sform_{$id}_settings") : get_option("sform_settings");
-$admin_notices = ! empty( $settings['admin_notices'] ) ? esc_attr($settings['admin_notices']) : 'false';
+$main_settings = get_option('sform_settings'); 
+$settings = get_option("sform_{$id}_settings") != false ? get_option("sform_{$id}_settings") : $main_settings;
+$admin_notices = ! empty( $main_settings['admin_notices'] ) ? esc_attr($main_settings['admin_notices']) : 'false';
 $color = ! empty( $settings['admin_color'] ) ? esc_attr($settings['admin_color']) : 'default';
 $notice = '';
 $extra_option = '';
@@ -40,7 +41,7 @@ foreach ( $sidebars_widgets as $sidebar => $widgets ) { if ( is_array( $widgets 
 
 <div id="page-description"><p><?php _e( 'Customize messages and whatever settings you want to better match your needs:','simpleform') ?></p></div>
 
-<div id="settings-tabs"><a class="nav-tab nav-tab-active" id="general"><?php _e( 'General','simpleform') ?></a><a class="nav-tab" id="messages"><?php _e( 'Validation','simpleform') ?></a><a class="nav-tab" id="email"><?php _e( 'Notifications','simpleform') ?></a><a class="nav-tab" id="spam"><?php _e( 'Anti-Spam','simpleform') ?></a><?php echo apply_filters( 'sform_itab', $extra_option ) ?><a class="form-button last <?php echo $color ?>" href="<?php $arg = $id != '1' ? '&form='. $id : ''; echo admin_url('admin.php?page=sform-editor') . $arg; ?>" target="_blank"><span><span class="dashicons dashicons-editor-table"></span><span class="text"><?php _e( 'Editor', 'simpleform' ) ?></span></span></a></div>
+<div id="settings-tabs"><a class="nav-tab nav-tab-active" id="general"><?php _e( 'General','simpleform') ?></a><a class="nav-tab" id="messages"><?php _e( 'Validation','simpleform') ?></a><a class="nav-tab" id="email"><?php _e( 'Notifications','simpleform') ?></a><a class="nav-tab" id="spam"><?php _e( 'Anti-Spam','simpleform') ?></a><?php echo apply_filters( 'sform_itab', $extra_option ) ?><a class="form-button last <?php echo $color ?>" href="<?php $arg = $id != '1' ? '&form='. $id : ''; echo admin_url('admin.php?page=sform-editor') . $arg; ?>" target="_blank"><span><span class="dashicons dashicons-editor-table"></span><span class="text"><?php _e( 'Editor', 'simpleform' ) ?></span></span></a><a class="form-button form-page <?php echo $color ?>" href="<?php $arg = $id != '1' ? '&id='. $id : ''; echo admin_url('admin.php?page=sform-form') . $arg; ?>" target="_blank"><span><span class="dashicons dashicons-tag"></span><span class="text"><?php _e( 'Specifics', 'simpleform' ) ?></span></span></a></div>
 						
 <form id="settings" method="post" class="<?php echo $color ?>">
 		
@@ -57,7 +58,6 @@ $focus_notes = $out_error == 'none' ? __('Do not move focus', 'simpleform' ) : _
 $ajax = ! empty( $settings['ajax_submission'] ) ? esc_attr($settings['ajax_submission']) : 'false';
 $spinner = ! empty( $settings['spinner'] ) ? esc_attr($settings['spinner']) : 'false';
 $form_template = ! empty( $settings['form_template'] ) ? esc_attr($settings['form_template']) : 'default';
-$form_borders = ! empty( $settings['form_borders'] ) ? esc_attr($settings['form_borders']) : 'dark';
 $style_notes = $form_template == 'customized' ? __('Create a directory inside your active theme\'s directory, name it "simpleform", copy one of the template files, and name it "custom-template.php"', 'simpleform' ) : '&nbsp;';
 $stylesheet = ! empty( $settings['stylesheet'] ) ? esc_attr($settings['stylesheet']) : 'false';
 $cssfile  = ! empty( $settings['stylesheet_file'] ) ? esc_attr($settings['stylesheet_file']) : 'false';
@@ -105,17 +105,23 @@ echo apply_filters( 'submissions_settings_filter', $id, $extra_option );
 
 </tbody></table></div>
 
-<h2 id="h2-custom" class="options-heading"><span class="heading" section="custom"><?php _e( 'Customization', 'simpleform' ); ?><span class="toggle dashicons dashicons-arrow-up-alt2 custom"></span></span></h2>
+<h2 id="h2-formstyle" class="options-heading"><span class="heading" section="formstyle"><?php _e( 'Form Style', 'simpleform' ); ?><span class="toggle dashicons dashicons-arrow-up-alt2 formstyle"></span></span></h2>
+
+<div class="section formstyle"><table class="form-table formstyle"><tbody>
+
+<tr><th class="option"><span><?php _e('Style','simpleform') ?></span></th><td class="select notes last"><select name="form-template" id="form-template" class="sform"><option value="default" <?php selected( $form_template, 'default'); ?>><?php _e('Default','simpleform') ?></option><option value="basic" <?php selected( $form_template, 'basic'); ?>><?php _e('Basic','simpleform') ?></option><option value="rounded" <?php selected( $form_template, 'rounded'); ?>><?php _e('Rounded','simpleform') ?></option><option value="minimal" <?php selected( $form_template, 'minimal'); ?>><?php _e('Minimal','simpleform') ?></option><option value="transparent" <?php selected( $form_template, 'transparent'); ?>><?php _e('Transparent','simpleform') ?></option><option value="highlighted" <?php selected( $form_template, 'highlighted'); ?>><?php _e('Highlighted','simpleform') ?></option><option value="customized" <?php selected( $form_template, 'customized'); ?>><?php _e('Customized','simpleform') ?></option></select><p id="template-notice" class="description"><?php echo $style_notes; ?></p></td></tr>
+
+</tbody></table></div>
+
+<h2 id="h2-custom" class="options-heading"><span class="heading" section="custom"><?php _e( 'Customization', 'simpleform' ); ?><span class="toggle dashicons dashicons-arrow-up-alt2 custom"></span></span><?php if ( $id != '1' ) { ?><a href="<?php echo menu_page_url( 'sform-settings', false ); ?>"><span class="dashicons dashicons-edit icon-button <?php echo $color ?>"></span><span class="settings-page wp-core-ui button"><?php _e( 'Go to main settings for edit', 'simpleform' ) ?></span></a><?php } ?></h2>
 
 <div class="section custom"><table class="form-table custom"><tbody>
+	
+<tr><th class="option"><span><?php _e('Form CSS Stylesheet','simpleform') ?></span></th><td class="checkbox-switch"><div class="switch-box"><label class="switch-input"><input type="checkbox" name="stylesheet" id="stylesheet" class="sform-switch" value="false" <?php checked( $stylesheet, 'true'); if ( $id != '1' ) { echo $disabled; } ?>><span></span></label><label for="stylesheet" class="switch-label <?php if ( $id != '1' ) { echo 'disabled'; } ?>"><?php _e( 'Disable the SimpleForm CSS stylesheet and use your own CSS stylesheet','simpleform') ?></label></div></td></tr>
 
-<tr><th class="option"><span><?php _e('Form Style','simpleform') ?></span></th><td class="select notes"><select name="form-template" id="form-template" class="sform"><option value="default" <?php selected( $form_template, 'default'); ?>><?php _e('Default','simpleform') ?></option><option value="basic" <?php selected( $form_template, 'basic'); ?>><?php _e('Basic','simpleform') ?></option><option value="rounded" <?php selected( $form_template, 'rounded'); ?>><?php _e('Rounded','simpleform') ?></option><option value="minimal" <?php selected( $form_template, 'minimal'); ?>><?php _e('Minimal','simpleform') ?></option><option value="transparent" <?php selected( $form_template, 'transparent'); ?>><?php _e('Transparent','simpleform') ?></option><option value="highlighted" <?php selected( $form_template, 'highlighted'); ?>><?php _e('Highlighted','simpleform') ?></option><option value="customized" <?php selected( $form_template, 'customized'); ?>><?php _e('Customized','simpleform') ?></option></select><select name="form-borders" id="form-borders" class="sform borders <?php if ($form_template !='transparent') { echo 'unseen'; } ?>"><option value="dark" <?php selected( $form_borders, 'dark'); ?>><?php _e('Dark borders','simpleform') ?></option><option value="light" <?php selected( $form_borders, 'light'); ?>><?php _e('Light borders','simpleform') ?></option></select><p id="template-notice" class="description"><?php echo $style_notes; ?></p></td></tr>
+<tr class="trstylesheet <?php if ($stylesheet !='true') { echo 'unseen'; } ?>"><th class="option"><span><?php _e( 'CSS Stylesheet File', 'simpleform' ) ?></span></th><td class="checkbox-switch notes"><div class="switch-box"><label class="switch-input"><input type="checkbox" id="stylesheet-file" name="stylesheet-file" class="sform-switch" value="false" <?php checked( $cssfile, 'true'); if ( $id != '1' ) { echo $disabled; } ?>><span></span></label><label for="stylesheet-file" class="switch-label <?php if ( $id != '1' ) { echo 'disabled'; } ?>"><?php _e( 'Include custom CSS code in a separate file', 'simpleform' ); ?></label></div><p id="stylesheet-description" class="description"><?php echo $css_notes; ?></p></td></tr>
 
-<tr><th class="option"><span><?php _e('Form CSS Stylesheet','simpleform') ?></span></th><td class="checkbox-switch"><div class="switch-box"><label class="switch-input"><input type="checkbox" name="stylesheet" id="stylesheet" class="sform-switch" value="false" <?php checked( $stylesheet, 'true'); ?>><span></span></label><label for="stylesheet" class="switch-label"><?php _e( 'Disable the SimpleForm CSS stylesheet and use your own CSS stylesheet','simpleform') ?></label></div></td></tr>
-
-<tr class="trstylesheet <?php if ($stylesheet !='true') { echo 'unseen'; } ?>"><th class="option"><span><?php _e( 'CSS Stylesheet File', 'simpleform' ) ?></span></th><td class="checkbox-switch notes"><div class="switch-box"><label class="switch-input"><input type="checkbox" id="stylesheet-file" name="stylesheet-file" class="sform-switch" value="false" <?php checked( $cssfile, 'true'); ?>><span></span></label><label for="stylesheet-file" class="switch-label"><?php _e( 'Include custom CSS code in a separate file', 'simpleform' ); ?></label></div><p id="stylesheet-description" class="description"><?php echo $css_notes; ?></p></td></tr>
-
-<tr><th class="option"><span><?php _e( 'Custom JavaScript Code', 'simpleform' ) ?></span></th><td class="checkbox-switch last notes"><div class="switch-box"><label class="switch-input"><input type="checkbox" id="javascript" name="javascript" class="sform-switch" value="false" <?php checked( $javascript, 'true'); ?>><span></span></label><label for="javascript" class="switch-label"><?php _e( 'Add your custom JavaScript code to your form', 'simpleform' ); ?></label></div><p id="javascript-description" class="description"><?php echo $js_notes; ?></p></td></tr>
+<tr><th class="option"><span><?php _e( 'Custom JavaScript Code', 'simpleform' ) ?></span></th><td class="checkbox-switch last notes"><div class="switch-box"><label class="switch-input"><input type="checkbox" id="javascript" name="javascript" class="sform-switch" value="false" <?php checked( $javascript, 'true'); if ( $id != '1' ) { echo $disabled; } ?>><span></span></label><label for="javascript" class="switch-label <?php if ( $id != '1' ) { echo 'disabled'; } ?>"><?php _e( 'Add your custom JavaScript code to your form', 'simpleform' ); ?></label></div><p id="javascript-description" class="description"><?php echo $js_notes; ?></p></td></tr>
 
 </tbody></table></div>
 
@@ -226,11 +232,11 @@ $duplicate_error = ! empty( $settings['duplicate_error'] ) ? stripslashes(esc_at
 $duplicate = ! empty( $settings['duplicate'] ) ? esc_attr($settings['duplicate']) : 'true';	
 ?>	
 
-<h2 id="h2-rules" class="options-heading"><span class="heading" section="rules"><?php _e( 'Fields Validation Rules', 'simpleform' ); ?><span class="toggle dashicons dashicons-arrow-up-alt2 rules"></span></span><?php if ( $id != '1' ) { ?><a href="<?php echo menu_page_url( 'sform-settings', false ); ?>"><span class="dashicons dashicons-edit icon-button <?php echo $color ?>"></span><span class="settings-page wp-core-ui button"><?php _e( 'Go to main settings for edit', 'simpleform' ) ?></span></a><?php } ?></h2>
+<h2 id="h2-rules" class="options-heading"><span class="heading" section="rules"><?php _e( 'Fields Validation Rules', 'simpleform' ); ?><span class="toggle dashicons dashicons-arrow-up-alt2 rules"></span></span></h2>
 
 <div class="section rules"><table class="form-table rules"><tbody>
 	
-<tr><th class="option"><span><?php _e('Multiple spaces','simpleform') ?></span></th><td class="checkbox-switch last"><div class="switch-box"><label class="switch-input"><input type="checkbox" name="multiple-spaces" id="multiple-spaces" class="sform-switch" value="false" <?php checked( $multiple_spaces, 'true'); if ( $id != '1' ) { echo $disabled; } ?>><span></span></label><label for="multiple-spaces" class="switch-label <?php if ( $id != '1' ) { echo 'disabled'; } ?>"><?php _e( 'Prevent the user from entering multiple white spaces in the fields','simpleform') ?></label></div></td></tr>
+<tr><th class="option"><span><?php _e('Multiple spaces','simpleform') ?></span></th><td class="checkbox-switch last"><div class="switch-box"><label class="switch-input"><input type="checkbox" name="multiple-spaces" id="multiple-spaces" class="sform-switch" value="false" <?php checked( $multiple_spaces, 'true'); ?>><span></span></label><label for="multiple-spaces" class="switch-label"><?php _e( 'Prevent the user from entering multiple white spaces in the fields','simpleform') ?></label></div></td></tr>
 
 </tbody></table></div>
 

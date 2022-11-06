@@ -43,8 +43,8 @@ class ShortPixelUrlTools {
 		}
 		if ( $isValid && isset( $parsed[ 'path' ] ) ) { //lastly check if is processable by ShortPixel
 			$ext = strtolower( pathinfo( $parsed[ 'path' ], PATHINFO_EXTENSION ) );
-			//treat the .css case separately, only for local CSS files
-			if ( $ext == 'css' || $ext == 'js') {
+			//treat the .css, .js and fonts case separately, only for local CSS files
+			if ( in_array($ext, [ 'css', 'js', 'woff2', 'woff', 'ttf' ])) {
 				if ( !isset( $parsed[ 'host' ] ) || $parsed[ 'host' ] == '' ) {
 					return true;
 				}

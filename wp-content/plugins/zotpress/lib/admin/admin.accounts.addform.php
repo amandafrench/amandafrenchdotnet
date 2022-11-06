@@ -3,7 +3,7 @@
             <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" id="zp-Add" name="zp-Add">
 
                 <fieldset>
-                    <input id="ZOTPRESS_PLUGIN_URL" name="ZOTPRESS_PLUGIN_URL" type="hidden" value="<?php echo ZOTPRESS_PLUGIN_URL; ?>" />
+                    <input class="ZOTPRESS_PLUGIN_URL" name="ZOTPRESS_PLUGIN_URL" type="hidden" value="<?php echo ZOTPRESS_PLUGIN_URL; ?>" />
 
                     <div class="field">
                         <label for="account_type" class="required" title="<?php _e('Account Type','zotpress'); ?>"><?php _e('Account Type','zotpress'); ?></label>

@@ -1,7 +1,7 @@
 (function( $ ) {
 	'use strict';
 	
-	 $( window ).load(function() {
+	 $( window ).on('load', function() {
 
       $("form.sform").on("submit", function (e) { 
 	      
@@ -9,12 +9,16 @@
 		   
 	      var form = $(this).attr('form');
 	      
+	      // Declare the variables added with inline scripts as global
+  	 	  var outsideMsg = window["outside" + form]; 
+	 	  var ajaxError = window["ajax_error" + form];
+	      
  	      if ( $( '#spinner-' + form ).length ) {
 	         $('#submission-' + form).addClass('d-none');
              $('#spinner-' + form).removeClass('d-none');
           }
          
-	      if ( ajax_sform_processing.outside !== true  ) {                                            
+	      if ( outsideMsg !== true ) {                                            
              $('#error-message-' + form).addClass("v-invisible");
           }
           
@@ -37,27 +41,30 @@
 	          var field = data['field'];
 	          var redirect = data['redirect'];
 	          var redirect_url = data['redirect_url'];
-              if( error === true ){
-	              
+  	          var field_focus = data['field_focus'];
+              if ( error === true ) {
 	            $.each(data, function(field, label) {
 	            $('#sform-' + field + '-' + form).addClass('is-invalid');
                 $('label[for="sform-' + field + '-' + form + '"].sform').addClass('is-invalid');
                 $('div#' + field + '-field-' + form).addClass('is-invalid');  
                 $('#' + field + '-error-' + form + ' span').text(label);
-	            if( $('form#form-' + form).hasClass("needs-focus") ) { $('input.is-invalid, textarea.is-invalid').first().focus(); }
-	            else { $('#errors-' + form).focus(); }
+	            if( $('form#form-' + form).hasClass("needs-focus") ) { $('input.is-invalid, textarea.is-invalid').first().trigger('focus'); }
+	            else { $('#errors-' + form).trigger('focus'); }
                 });
-	            $('#errors-' + form + ' span').addClass('v-visible');  
-	            if ( ajax_sform_processing.outside === true || ( ajax_sform_processing.outside !== true  && showerror === true ) ) {                                            
+	            $('#errors-' + form + ' span').addClass('v-visible'); 
+	            if ( outsideMsg === true || ( outsideMsg !== true  && showerror === true ) ) {                                        
                  $('#errors-' + form + ' span').removeClass("v-invisible");
                  $('#errors-' + form + ' span').html(data.notice);
+                }
+	            if ( field_focus === false ) {                                            
+                $('#errors-' + form).trigger('focus');
                 }
               }
               if( error === false ){	              
                 if( redirect === false ){
                   $('#form-' + form +', #sform-introduction-' + form +', #sform-bottom-' + form).addClass('d-none');
                   $('#sform-confirmation-' + form).html(data.notice);
-                  $('#sform-confirmation-' + form).focus();
+                  $('#sform-confirmation-' + form).trigger('focus');
                 }
                 else {
 	              document.location.href = redirect_url;
@@ -69,9 +76,9 @@
               $('#spinner-' + form).addClass('d-none');
               $('#submission-' + form).removeClass('d-none');	            
               $('#errors-' + form + ' span').removeClass("v-invisible");
-              $('#errors-' + form + ' span').addClass('v-visible');                                                
-              $('#errors-' + form + ' span').html(ajax_sform_processing.ajax_error);
-              $('#errors-' + form).focus();
+              $('#errors-' + form + ' span').addClass('v-visible');
+              $('#errors-' + form + ' span').html(ajaxError);
+              $('#errors-' + form).trigger('focus');
 	        } 	
 		  });
 		  e.preventDefault();

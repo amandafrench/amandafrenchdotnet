@@ -3,8 +3,9 @@ if ( ! defined( 'WPINC' ) ) die;
 
 $id = isset( $_REQUEST['form'] ) ? absint($_REQUEST['form']) : '1'; 
 $attributes = get_option("sform_{$id}_attributes") != false ? get_option("sform_{$id}_attributes") : get_option("sform_attributes");
-$settings = get_option("sform_{$id}_settings") != false ? get_option("sform_{$id}_settings") : get_option("sform_settings");
-$admin_notices = ! empty( $settings['admin_notices'] ) ? esc_attr($settings['admin_notices']) : 'false';
+$main_settings = get_option('sform_settings'); 
+$settings = get_option("sform_{$id}_settings") != false ? get_option("sform_{$id}_settings") : $main_settings;
+$admin_notices = ! empty( $main_settings['admin_notices'] ) ? esc_attr($main_settings['admin_notices']) : 'false';
 $color = ! empty( $settings['admin_color'] ) ? esc_attr($settings['admin_color']) : 'default';
 $notice = '';
 $extra_option = '';
@@ -34,7 +35,7 @@ if ( $all_forms > 1 ) { ?>
 
 <div id="page-description"><p><?php _e( 'Change easily the way your contact form is displayed. Choose which fields to use and who should see them:','simpleform') ?></p></div>
 
-<div id="editor-tabs"><a class="nav-tab nav-tab-active" id="builder"><?php _e( 'Form Builder','simpleform') ?></a><a class="nav-tab" id="appearance"><?php _e( 'Form Appearance','simpleform') ?></a><a class="form-button last <?php echo $color ?>" href="<?php $arg = $id != '1' ? '&form='. $id : ''; echo admin_url('admin.php?page=sform-settings') . $arg; ?>" target="_blank"><span><span class="dashicons dashicons-admin-settings"></span><span class="text"><?php _e( 'Settings', 'simpleform' ) ?></span></span></a></div>
+<div id="editor-tabs"><a class="nav-tab nav-tab-active" id="builder"><?php _e( 'Form Builder','simpleform') ?></a><a class="nav-tab" id="appearance"><?php _e( 'Form Appearance','simpleform') ?></a><a class="form-button last <?php echo $color ?>" href="<?php $arg = $id != '1' ? '&form='. $id : ''; echo admin_url('admin.php?page=sform-settings') . $arg; ?>" target="_blank"><span><span class="dashicons dashicons-admin-settings"></span><span class="text"><?php _e( 'Settings', 'simpleform' ) ?></span></span></a><a class="form-button form-page <?php echo $color ?>" href="<?php $arg = $id != '1' ? '&id='. $id : ''; echo admin_url('admin.php?page=sform-form') . $arg; ?>" target="_blank"><span><span class="dashicons dashicons-tag"></span><span class="text"><?php _e( 'More specifics', 'simpleform' ) ?></span></span></a></div>
 						
 <form id="attributes" method="post" class="<?php echo $color ?>">
 		
@@ -114,6 +115,7 @@ $allpagesid = $wpdb->get_col( "SELECT id FROM $table_post WHERE post_type != 'at
 <?php
 // Contact forms embedded in page 
 if ( in_array($id, $page_ids) ) { 
+
 $show_for_value = isset($_GET['showfor']) ? $_GET['showfor'] : 'all';
 $show_for = ! empty( $attributes['show_for'] ) && !isset($_GET['showfor']) ? esc_attr($attributes['show_for']) : $show_for_value;
 $user_role = ! empty( $attributes['user_role'] ) ? esc_attr($attributes['user_role']) : 'any';
@@ -122,59 +124,11 @@ $icon = SIMPLEFORM_URL . 'admin/img/copy_icon.png';
 
 <tr><th class="option"><span><?php _e('Form Name','simpleform') ?></span></th><td class="text"><input class="sform" name="form-name" placeholder="<?php esc_attr_e('Enter a name for this Form','simpleform') ?>" id="form-name" type="text" value="<?php echo $contact_form_name; ?>"></td></tr>
 
-<?php /*
-<tr><th class="option"><span><?php _e('Shortcode','simpleform') ?></span></th><td class="plaintext icon"><span id="shortcode">[<?php echo $shortcode ?>]</span><button id="shortcode-copy"><img src="<?php echo $icon ?>"></button><span id="shortcode-tooltip"><?php _e('Copy shortcode','simpleform') ?></span></td></tr>
-*/ ?>
+<tr><th class="option"><span><?php _e('Visible to','simpleform') ?></span></th><td class="select <?php if ( $show_for != 'in' ) { echo 'last'; } ?>"><select name="show-for" id="show-for" class="sform"><option value="all" <?php selected( $show_for, 'all'); ?>><?php _e('Everyone','simpleform') ?></option><option value="in" <?php selected( $show_for, 'in'); ?>><?php _e('Logged-in users','simpleform') ?></option><option value="out" <?php selected( $show_for, 'out'); ?>><?php _e('Logged-out users','simpleform') ?></option></select></td></tr>
 
-<tr><th class="option"><span><?php _e('Visible to','simpleform') ?></span></th><td class="select"><select name="show-for" id="show-for" class="sform"><option value="all" <?php selected( $show_for, 'all'); ?>><?php _e('Everyone','simpleform') ?></option><option value="in" <?php selected( $show_for, 'in'); ?>><?php _e('Logged-in users','simpleform') ?></option><option value="out" <?php selected( $show_for, 'out'); ?>><?php _e('Logged-out users','simpleform') ?></option></select></td></tr>
-
-<tr class="trlevel <?php if ( $show_for !='in') {echo 'unseen';} ?>"><th class="option"><span><?php _e('Restricted to','simpleform') ?></span></th><td class="select"><select name="user-role" id="user-role" class="sform"><option value="any" <?php selected( $user_role, 'any'); ?>><?php _e('Any','simpleform') ?></option><?php wp_dropdown_roles($user_role); ?></select></td></tr>
-
-<tr><th class="option"><span><?php _e('Visible on','simpleform') ?></span></th><td class="used-page last">	
+<tr class="trlevel <?php if ( $show_for !='in') {echo 'unseen';} ?>"><th class="option"><span><?php _e('Restricted to','simpleform') ?></span></th><td class="select <?php if ( $show_for == 'in' ) { echo 'last'; } ?>"><select name="user-role" id="user-role" class="sform"><option value="any" <?php selected( $user_role, 'any'); ?>><?php _e('Any','simpleform') ?></option><?php wp_dropdown_roles($user_role); ?></select></td></tr>
 
 <?php
-$util = new SimpleForm_Util();
-$ids_array = $util->form_pages($id);
-$ordered_list = array_intersect($allpagesid,$ids_array);
-$pages = '';	
-
-if( !empty($ordered_list) ) { 
-foreach ($ordered_list as $page) { 
-if( get_post_status($page) == 'draft' || get_post_status($page) == 'publish' ) {
-$publish_link = '<strong><a href="' . get_edit_post_link($page) . '" target="_blank" class="publish-link">' . __( 'Publish now','simpleform') . '</a></strong>';	
-$post_status = get_post_status($page) == 'draft' ? __( 'Page in draft status not yet published','simpleform').'&nbsp;-&nbsp;' . $publish_link : sprintf( __('%1$s or %2$s the page content', 'simpleform'), '<strong><a href="' . get_edit_post_link($page) .'" target="_blank" style="text-decoration: none;">'. $edit .'</a></strong>', '<strong><a href="' . get_page_link($page) . '" target="_blank" style="text-decoration: none;">'. $view .'</a></strong>' );
-$pages .= '<span>' . get_the_title($page) . '</span><span class="">&nbsp;[&nbsp;' . $post_status . '&nbsp;]<br>'; 
-}
-} 
-}
-
-$widget_block = get_option("widget_block") != false ? get_option("widget_block") : array();
-if ( !empty($widget_block) ) {		
-$sql = "SELECT widget_id FROM `$table_name` WHERE id = %d";
-$block_id_list = $wpdb->get_var( $wpdb->prepare( $sql, $id ) );
-$block_id_array = $block_id_list ? explode(',',$block_id_list) : array();
-if ($block_id_array) {
-   foreach($block_id_array as $item) { 
-   $split_key = ! empty($item) ? explode('block-', $item) : '';
-   $block_key = isset($split_key[1]) ? $split_key[1] : '0';
-   // Remove any non-existent ids
-   if ( !in_array($block_key,array_keys($widget_block)) ) {
-	$remove_id = array($item); 
-    $new_ids = implode(",", array_diff($block_id_array,$remove_id));
-    $wpdb->update($table_name, array('widget_id' => $new_ids), array('id' => $id ));
-   }
-   else { 
-	$widget_area = $util->widget_area_name($block_key);
-  	$pages .=  $widget_area ? $widget_area .'&nbsp;'.__('widget area','simpleform').'&nbsp;[&nbsp;<strong><a href="' . self_admin_url('widgets.php') . '" target="_blank" style="text-decoration: none;">'. __( 'Edit widget','simpleform') .'</a></strong>&nbsp;]<br>' : ''; 
-   }
-   }
-}   
-}
- 
-if ( empty($pages) ) { $pages = '<span>' . __('Still not used. Create a new page or choose an existing one and add the shortcode','simpleform') . '</span>'; }
-
-echo $pages . '</td></tr>'; 
-
 }
 
 // Contact forms embedded in widget area 
@@ -182,9 +136,9 @@ if ( in_array($id, $widget_ids) ) {
 $sform_widget = get_option('widget_sform_widget');
 $widget_id = $wpdb->get_var( "SELECT widget FROM $table_name WHERE id = {$id}" );
 if ( in_array($widget_id, array_keys($sform_widget)) ) { 
-$widget_area = $wpdb->get_var( "SELECT area FROM $table_name WHERE id = {$id}" );
 $widget_for = ! empty($sform_widget[$widget_id]['sform_widget_audience']) ? $sform_widget[$widget_id]['sform_widget_audience'] : 'all';
 $role = ! empty($sform_widget[$widget_id]['sform_widget_role']) ? $sform_widget[$widget_id]['sform_widget_role'] : 'any';
+
 global $wp_roles;
 $role_name = $role == 'any' ? __( 'Any','simpleform') : translate_user_role($wp_roles->roles[$role]['name']);
 if ( $widget_for == 'out' ) {
@@ -198,62 +152,15 @@ $audience = __( 'Logged-in users','simpleform');
 else {
 $audience = __( 'Everyone','simpleform');
 }
-
-$widget_visibility = ! empty($sform_widget[$widget_id]['sform_widget_visibility']) ? $sform_widget[$widget_id]['sform_widget_visibility'] : 'all';
-$hidden_pages = ! empty($sform_widget[$widget_id]['sform_widget_hidden_pages']) ? $sform_widget[$widget_id]['sform_widget_hidden_pages'] : '';        
-$visible_pages = ! empty($sform_widget[$widget_id]['sform_widget_visible_pages']) ? $sform_widget[$widget_id]['sform_widget_visible_pages'] : '';
-        
-if ( $widget_visibility == 'hidden' ) {	
-   if ( ! empty($hidden_pages)) { 
-     $pages_array = explode(',',$hidden_pages);
-     $ordered_pages_array = array_intersect( $allpagesid, $pages_array);
-	 $hidden_list = '';
-     foreach ($ordered_pages_array as $post) { 
-     if ( get_post_status($post) == 'draft' || get_post_status($post) == 'publish' ) {
-         $publish_link = '<strong><a href="' . get_edit_post_link($post) . '" target="_blank" class="publish-link">' . __( 'Publish now','simpleform') . '</a></strong>';	
-         $post_status = get_post_status($post) == 'draft' ? __( 'Page in draft status not yet published','simpleform').'&nbsp;-&nbsp;' . $publish_link : sprintf( __('%1$s or %2$s the page content', 'simpleform'), '<strong><a href="' . get_edit_post_link($post) .'" target="_blank" style="text-decoration: none;">'. $edit .'</a></strong>', '<strong><a href="' . get_page_link($post) . '" target="_blank" style="text-decoration: none;">'. $view .'</a></strong>' );
-         $hidden_list .= '<span>' . get_the_title($post). '</span><span class="">&nbsp;[&nbsp;' . $post_status . '&nbsp;]<br>'; 
-     }
-     }
-     $widget_pages = '<span>' . __( 'Not visible in:','simpleform') . '</span><br>' . $hidden_list; 
-   }
-   else { $widget_pages = __( 'Visible in all pages','simpleform'); }
-}
-elseif ( $widget_visibility == 'visible' ) { 
-   if ( ! empty($visible_pages)) {
-     $pages_array = explode(',',$visible_pages);
-     $ordered_pages_array = array_intersect( $allpagesid, $pages_array);
-     $visible_list = '';		    
-     foreach ($ordered_pages_array as $post) { 
-     if( get_post_status($post) == 'draft' || get_post_status($post) == 'publish' ) {
-         $publish_link = '<strong><a href="' . get_edit_post_link($post) . '" target="_blank" class="publish-link">' . __( 'Publish now','simpleform') . '</a></strong>';	
-         $post_status = get_post_status($post) == 'draft' ? __( 'Page in draft status not yet published','simpleform').'&nbsp;-&nbsp;' . $publish_link : sprintf( __('%1$s or %2$s the page content', 'simpleform'), '<strong><a href="' . get_edit_post_link($post) .'" target="_blank" style="text-decoration: none;">'. $edit .'</a></strong>', '<strong><a href="' . get_page_link($post) . '" target="_blank" style="text-decoration: none;">'. $view .'</a></strong>' );
-         $visible_list .= '<span>' . get_the_title($post). '</span><span class="">&nbsp;[&nbsp;' . $post_status . '&nbsp;]<br>'; 
-     }
-     }
-     $widget_pages = __( 'Visible only in:','simpleform') . '<br>' . $visible_list; 
-   }
-   else { $widget_pages = __( 'No page selected yet','simpleform'); }
-}
-else {
-   $widget_pages = __( 'Visible in all pages','simpleform'); 
-} ?>	 
+?>	
 
 <tr><th class="option"><span><?php _e('Form Name','simpleform') ?></span></th><td class="text"><input class="sform" name="form-name" placeholder="<?php esc_attr_e('Enter a name for this Form','simpleform') ?>" id="form-name" type="text" value="<?php echo $contact_form_name; ?>"></td></tr>
 
-<?php /*
-<tr><th class="option"><span><?php _e('Widget Area','simpleform') ?></span></th><td class="plaintext widget"><span><?php echo $widget_area; ?></span>&nbsp;[&nbsp;<a href="<?php echo self_admin_url('widgets.php') ?>" target="_blank" style="text-decoration: none"><b><span class=""><?php _e( 'Edit', 'simpleform' ) ?></b></span></a>&nbsp;]</td></tr>
-*/ ?>
-	
 <tr class="textbutton"><th class="option"><span><?php _e('Visible to','simpleform') ?></span></th><td class="plaintext"><?php echo $audience; ?></td></tr>
 
 <?php if ($widget_for == 'in') { ?>
 <tr class="textbutton"><th class="option"><span><?php _e('Restricted to','simpleform') ?></span></th><td class="plaintext"><?php echo $role_name; ?></td></tr>
 <?php } ?>
-
-<tr><th class="option"><span><?php _e('Visible on','simpleform') ?></span></th><td class="plaintext widget"><?php echo $widget_area .'&nbsp;'.__('widget area','simpleform'); ?>&nbsp;[&nbsp;<a href="<?php echo self_admin_url('widgets.php') ?>" target="_blank" style="text-decoration: none"><b><?php _e( 'Edit widget', 'simpleform' ) ?></b></a>&nbsp;]</td></tr>
-
-<tr><th class="option"><span><?php _e('Widget Visibility Rules','simpleform') ?></span></th><td class="used-page last"><?php echo $widget_pages; ?></td></tr> 
 
 <input type="hidden" id="widget-id" name="widget-id" value="<?php echo $widget_id ?>">
 
@@ -476,7 +383,7 @@ $extra_class .= !is_array($gcaptcha) && $gcaptcha != '' ? ' unseen' : '';
 
 <tr><th class="option"><span><?php _e( 'Form Direction', 'simpleform' ) ?></span></th><td class="radio"><fieldset><label for="ltr-direction"><input type="radio" name="form-direction" id="ltr-direction" value="ltr" <?php checked( $form_direction, 'ltr'); ?> ><?php _e( 'Left to Right', 'simpleform' ) ?></label><label for="rtl-direction"><input type="radio" name="form-direction" id="rtl-direction" value="rtl" <?php checked( $form_direction, 'rtl'); ?> ><?php _e( 'Right to Left', 'simpleform' ) ?></label></fieldset></td></tr>
 
-<tr><th class="option"><span><?php _e( 'Additional CSS', 'simpleform' ) ?></span></th><td class="textarea last"><textarea class="sform" name="additional-css" id="additional-css" placeholder="<?php esc_attr_e( 'Add your own CSS code to customize the appearance of your form', 'simpleform' ) ?>" ><?php echo $additional_css; ?></textarea><p class="description"></p></td></tr>
+<tr><th class="option"><span><?php _e( 'Additional CSS', 'simpleform' ) ?></span></th><td class="textarea last"><textarea class="sform" name="additional-css" id="additional-css" placeholder="<?php esc_attr_e( 'Add your own CSS code to customize the appearance of your form', 'simpleform' ) ?>" ><?php echo $additional_css; ?></textarea><p class="description"><?php _e('Be careful to correctly identify the form elements using their id, otherwise the CSS rules apply to all your forms!', 'simpleform' ) ?></p></td></tr>
 
 </tbody></table></div>
 </div>	

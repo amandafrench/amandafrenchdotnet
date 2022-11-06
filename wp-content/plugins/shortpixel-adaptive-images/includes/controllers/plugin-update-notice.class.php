@@ -71,13 +71,17 @@ class PluginUpdateNotice {
      */
     private static function parse_update_notice( $content, $response ) {
         $version_parts     = explode( '.', $response->new_version );
+        $maj = $version_parts[ 0 ];
+        $min = $version_parts[ 1 ];
+        $micro = isset($version_parts[ 2 ]) ? $version_parts[ 2 ] : '';
+        $build = isset($version_parts[ 3 ]) ? $version_parts[ 3 ] : '';
         $check_for_notices = [
-            $version_parts[ 0 ] . '.' . $version_parts[ 1 ] . '.' . $version_parts[ 2 ] . '.' . $version_parts[ 3 ], // build
-            $version_parts[ 0 ] . '.' . $version_parts[ 1 ] . '.' . $version_parts[ 2 ], // patch (micro)
-            $version_parts[ 0 ] . '.' . $version_parts[ 1 ] . '.0', // minor
-            $version_parts[ 0 ] . '.' . $version_parts[ 1 ], // minor
-            $version_parts[ 0 ] . '.0.0', // major
-            $version_parts[ 0 ] . '.0', // major
+            $maj . '.' . $min . '.' . $micro . '.' . $build, // build
+            $maj . '.' . $min . '.' . $micro, // patch (micro)
+            $maj . '.' . $min . '.0', // minor
+            $maj . '.' . $min, // minor
+            $maj . '.0.0', // major
+            $maj . '.0', // major
         ];
 
         $update_notice = '';

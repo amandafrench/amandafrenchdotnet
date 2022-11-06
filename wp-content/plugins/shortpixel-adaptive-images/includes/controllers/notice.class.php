@@ -76,7 +76,7 @@
 				$notice_classes[] = 'notice-' . strtolower( $data[ 'notice' ][ 'type' ] );
 			}
 
-			if ( !!$data[ 'notice' ][ 'dismissible' ] ) {
+			if ( isset($data[ 'notice' ][ 'dismissible' ]) && !!$data[ 'notice' ][ 'dismissible' ] ) {
 				$notice_classes[] = 'is-dismissible';
 			}
 
@@ -90,31 +90,32 @@
 				}
 			}
 
-			if ( !empty( $data[ 'buttons' ] ) ) {
-				foreach ( $data[ 'buttons' ] as $button ) {
-					$button_type    = isset( $button[ 'type' ] ) ? ( in_array( $button[ 'type' ], self::$allowed_button_types ) ? $button[ 'type' ] : 'button' ) : 'button';
-					$button_classes = [ 'button' ];
-
-					if ( isset( $button[ 'primary' ] ) && !!$button[ 'primary' ] ) {
-						$button_classes[] = 'button-primary';
-					}
-					else {
-						$button_classes[] = 'button-secondary';
-					}
-
-					$title      = empty( $button[ 'title' ] ) ? '' : $button[ 'title' ];
-					$action     = empty( $button[ 'action' ] ) ? '' : ' data-action="' . $button[ 'action' ] . '"';
-					$additional = empty( $button[ 'additional' ] ) ? '' : ' data-additional=' . json_encode( $button[ 'additional' ] ) . '';
-
-					if ( $button_type === 'link' ) {
-						$target  = empty( $button[ 'target' ] ) ? '' : ' target="' . $button[ 'target' ] . '"';
-						$url     = empty( $button[ 'url' ] ) ? '#' : $button[ 'url' ];
-						$buttons .= '<a href="' . $url . '" class="' . implode( ' ', $button_classes ) . '"' . $target . '>' . $title . '</a>';
-					}
-					else {
-						$buttons .= '<button type="button" class="' . implode( ' ', $button_classes ) . '"' . $action . $additional . '>' . $title . '</button>';
-					}
-				}
+			if ( !empty( $data[ 'message' ][ 'buttons' ] ) ) {
+				$buttons = self::renderButtons( $data[ 'message' ][ 'buttons' ] );
+//				foreach ( $data[ 'message' ][ 'buttons' ] as $button ) {
+//					$button_type    = isset( $button[ 'type' ] ) ? ( in_array( $button[ 'type' ], self::$allowed_button_types ) ? $button[ 'type' ] : 'button' ) : 'button';
+//					$button_classes = [ 'button' ];
+//
+//					if ( isset( $button[ 'primary' ] ) && !!$button[ 'primary' ] ) {
+//						$button_classes[] = 'button-primary';
+//					}
+//					else {
+//						$button_classes[] = 'button-secondary';
+//					}
+//
+//					$title      = empty( $button[ 'title' ] ) ? '' : $button[ 'title' ];
+//					$action     = empty( $button[ 'action' ] ) ? '' : ' data-action="' . $button[ 'action' ] . '"';
+//					$additional = empty( $button[ 'additional' ] ) ? '' : ' data-additional=' . json_encode( $button[ 'additional' ] ) . '';
+//
+//					if ( $button_type === 'link' ) {
+//						$target  = empty( $button[ 'target' ] ) ? '' : ' target="' . $button[ 'target' ] . '"';
+//						$url     = empty( $button[ 'url' ] ) ? '#' : $button[ 'url' ];
+//						$buttons .= '<a href="' . $url . '" class="' . implode( ' ', $button_classes ) . '"' . $target . '>' . $title . '</a>';
+//					}
+//					else {
+//						$buttons .= '<button type="button" class="' . implode( ' ', $button_classes ) . '"' . $action . $additional . '>' . $title . '</button>';
+//					}
+//				}
 			}
 
 			return str_replace(
@@ -127,6 +128,35 @@
 					$causer,
 				],
 				self::$template );
+		}
+
+		public static function renderButtons($buttonsArray) {
+			$buttons = '';
+			foreach ( $buttonsArray as $button ) {
+				$button_type    = isset( $button[ 'type' ] ) ? ( in_array( $button[ 'type' ], self::$allowed_button_types ) ? $button[ 'type' ] : 'button' ) : 'button';
+				$button_classes = [ 'button' ];
+
+				if ( isset( $button[ 'primary' ] ) && !!$button[ 'primary' ] ) {
+					$button_classes[] = 'button-primary';
+				}
+				else {
+					$button_classes[] = 'button-secondary';
+				}
+
+				$title      = empty( $button[ 'title' ] ) ? '' : $button[ 'title' ];
+				$action     = empty( $button[ 'action' ] ) ? '' : ' data-action="' . $button[ 'action' ] . '"';
+				$additional = empty( $button[ 'additional' ] ) ? '' : ' data-additional=' . json_encode( $button[ 'additional' ] ) . '';
+
+				if ( $button_type === 'link' ) {
+					$target  = empty( $button[ 'target' ] ) ? '' : ' target="' . $button[ 'target' ] . '"';
+					$url     = empty( $button[ 'url' ] ) ? '#' : $button[ 'url' ];
+					$buttons .= '<a href="' . $url . '" class="' . implode( ' ', $button_classes ) . '"' . $target . '>' . $title . '</a>';
+				}
+				else {
+					$buttons .= '<button type="button" class="' . implode( ' ', $button_classes ) . '"' . $action . $additional . '>' . $title . '</button>';
+				}
+			}
+			return $buttons;
 		}
 
 		/**
@@ -203,20 +233,7 @@
 							'icon' => 'scared',
 						],
 						'message' => Constants::_()->autoptimize,
-						'buttons' => [
-							[
-								'title'   => __( 'Deactivate it', 'shortpixel-adaptive-images' ),
-								'action'  => 'solve conflict',
-								'primary' => true,
-							],
-							[
-								'type'    => 'link',
-								'title'   => __( 'More info', 'shortpixel-adaptive-images' ),
-								'url'     => 'https://help.shortpixel.com/article/198-shortpixel-adaptive-images-vs-autoptimizes-optimize-images-option',
-								'target'  => '_blank',
-								'primary' => false,
-							],
-						],
+
 					] );
 			}
 			else if ( $conflict === 'avadalazy' ) {
@@ -227,14 +244,7 @@
 							'icon' => 'scared',
 						],
 						'message' => Constants::_()->avadalazy,
-						'buttons' => [
-							[
-								'type'    => 'link',
-								'title'   => __( 'Deactivate it', 'shortpixel-adaptive-images' ),
-								'url'     => 'themes.php?page=avada_options',
-								'primary' => true,
-							],
-						],
+
 					] );
 			}
 			else if ( $conflict === 'ginger' ) {
@@ -245,21 +255,7 @@
 							'icon' => 'scared',
 						],
 						'message' => Constants::_()->ginger,
-						'buttons' => [
-							[
-								'type'    => 'link',
-								'title'   => __( 'Ginger EU Cookie Law settings', 'shortpixel-adaptive-images' ),
-								'url'     => 'admin.php?page=ginger-setup',
-								'primary' => true,
-							],
-							[
-								'type'    => 'link',
-								'title'   => __( 'More info', 'shortpixel-adaptive-images' ),
-								'url'     => 'https://help.shortpixel.com/article/198-shortpixel-adaptive-images-vs-autoptimizes-optimize-images-option',
-								'target'  => '_blank',
-								'primary' => false,
-							],
-						],
+
 					] );
 			}
 			else if ( $conflict === 'divitoolbox' ) {
@@ -270,21 +266,7 @@
 							'icon' => 'scared',
 						],
 						'message' => Constants::_()->divitoolbox,
-						'buttons' => [
-							[
-								'type'    => 'link',
-								'title'   => __( 'Deactivate it', 'shortpixel-adaptive-images' ),
-								'url'     => 'admin.php?page=divi_toolbox&tab=blog',
-								'primary' => true,
-							],
-							[
-								'type'    => 'link',
-								'title'   => __( 'More info', 'shortpixel-adaptive-images' ),
-								'url'     => 'https://help.shortpixel.com/article/269-shortpixel-adaptive-image-errors-when-divi-toolbox-is-enabled',
-								'target'  => '_blank',
-								'primary' => false,
-							],
-						],
+
 					] );
 			}
 			/* Obsolete because of implemented hook for this
@@ -315,6 +297,19 @@
 			}
 			*/
 
+            // Information notifications
+            if ( !function_exists('mb_convert_case') ) {
+                self::render( 'mbstring',
+                    [
+                        'notice'  => [
+                            'type'        => 'error',
+                            'icon'        => 'scared',
+                            'dismissible' => false,
+                        ],
+                        'message' => Constants::_()->mbstring,
+                    ] );
+            }
+
 			// Information notifications
 			if ( ShortPixelAI::is_beta() && ( !isset( $dismissed->beta ) || $dismissed->beta !== SHORTPIXEL_AI_VERSION ) ) {
 				self::render( 'beta',
@@ -325,15 +320,7 @@
 							'dismissible' => true,
 						],
 						'message' => Constants::_()->beta,
-						'buttons' => [
-							[
-								'type'    => 'link',
-								'title'   => __( 'Contact us', 'shortpixel-adaptive-images' ),
-								'url'     => apply_filters('spai_affiliate_link',ShortPixelAI::DEFAULT_MAIN_DOMAIN. '/contact'),
-								'target'  => '_blank',
-								'primary' => true,
-							],
-						],
+
 					] );
 			}
 
@@ -346,17 +333,7 @@
 							'dismissible' => true,
 						],
 						'message' => Constants::_()->on_boarding,
-						'buttons' => [
-							[
-								'title'   => __( 'Open Wizard', 'shortpixel-adaptive-images' ),
-								'action'  => 'redirect',
-								'primary' => true,
-							],
-							[
-								'title'  => __( 'No, I do not need it!', 'shortpixel-adaptive-images' ),
-								'action' => 'dismiss',
-							],
-						],
+
 					] );
 			}
 
@@ -389,13 +366,7 @@
 						'dismissible' => true,
 					],
 					'message' => Constants::_()->wp_rocket_defer_js,
-					'buttons' => [
-						[
-							'title'   => __( 'Change conflicting settings', 'shortpixel-adaptive-images' ),
-							'action'  => 'solve conflict',
-							'primary' => true,
-						],
-					],
+
 				] );
 			}
 
@@ -408,14 +379,7 @@
 							'dismissible' => true,
 						],
 						'message' => Constants::_()->wp_rocket_lazy,
-						'buttons' => [
-							[
-								'type'    => 'link',
-								'title'   => __( 'Open the WP Rocket Settings', 'shortpixel-adaptive-images' ),
-								'url'     => 'options-general.php?page=wprocket#media',
-								'primary' => true,
-							],
-						],
+
 					] );
 			}
 
@@ -429,14 +393,7 @@
 							'dismissible' => true,
 						],
 						'message' => Constants::_()->wprocketcss,
-						'buttons' => [
-							[
-								'type'    => 'link',
-								'title'   => __( 'Open the WP Rocket Settings', 'shortpixel-adaptive-images' ),
-								'url'     => 'options-general.php?page=wprocket#file_optimization',
-								'primary' => true,
-							],
-						],
+
 					] );
 			}
 
@@ -452,84 +409,20 @@
 								'dismissible' => true,
 							],
 							'message' => [
-								'title' => __( 'ShortPixel account', 'shortpixel-adaptive-images' ),
+								'title' => Constants::_()->key['title'],
 								'body'  => [
-									sprintf( __( 'You already have a ShortPixel account for this website: <span>%s</span>. Do you want to use ShortPixel Adaptive Images with this account?', 'shortpixel-adaptive-images' ), $account->email ),
+									sprintf( Constants::_()->key['body'][0], $account->email ),
 								],
+								'buttons' => Constants::_()->key['buttons'],
 							],
-							'buttons' => [
-								[
-									'title'   => __( 'Use this account', 'shortpixel-adaptive-images' ),
-									'action'  => 'use account',
-									'primary' => true,
-								],
-							],
+
 						] );
 				}
 			}
 
-			if ( !isset( $account->key ) && !isset( $dismissed->credits ) ) {
-				$domain_status = \ShortPixelDomainTools::get_domain_status();
-
-				// echo $this->ctrl->options->settings_general_apiKey;
-
-				if ( $domain_status->Status !== 2 ) {
-					$buttons = [
-						[
-							'title'   => __( 'Check credits', 'shortpixel-adaptive-images' ),
-							'action'  => 'check',
-							'primary' => true,
-						],
-					];
-
-					if ( $domain_status->Status === 1 ) {
-						$messages = [
-							__( 'Please note that your ShortPixel Adaptive Images quota will be exhausted soon.', 'shortpixel-adaptive-images' ),
-						];
-					}
-					else if ( $domain_status->Status === -1 ) {
-						$messages = [
-							__( 'Your ShortPixel Adaptive Images quota has been exceeded.', 'shortpixel-adaptive-images' ),
-							__( 'The already optimized images will still be served from the ShortPixel CDN for up to 30 days but the images that weren\'t already optimized and cached via CDN will be served directly from your website.', 'shortpixel-adaptive-images' ),
-						];
-					}
-
-					if ( !!$domain_status->HasAccount ) {
-                        if(is_null( $this->ctrl->options->settings_general_apiKey )) {
-                            $messages[] = __( 'Please make sure that your domain is associated to your account.', 'shortpixel-adaptive-images' )  .
-                                ' <a href="https://help.shortpixel.com/article/94-how-to-associate-a-domain-to-my-account" target="_blank">' .
-                                __( 'How do I do this?', 'shortpixel-adaptive-images' ) . '</a>';
-                        }
-
-                        $title = __( 'Log-in', 'shortpixel-adaptive-images' );
-                        if ( $domain_status->Status === 1 ) {
-                            $title = __( 'Top-up', 'shortpixel-adaptive-images' );
-                        }
-
-						$buttons[]  = [
-							'type'    => 'link',
-							'title'   => $title,
-							'url'     => apply_filters('spai_affiliate_link',ShortPixelAI::DEFAULT_MAIN_DOMAIN. '/loginai/'.$this->ctrl->options->settings_general_apiKey),
-							'target'  => '_blank',
-							'primary' => false,
-						];
-					}
-					else {
-						$messages[] = __( 'If you <span>sign-up now</span> with ShortPixel you will receive 1,000 more free credits and also you\'ll get 50% bonus credits to any purchase that you\'ll choose to make. Image optimization credits can be purchased with as little as $4.99 for 7,500 credits (including the 50% bonus).',
-							'shortpixel-adaptive-images' );
-						$fsuUrl = apply_filters('spai_affiliate_link',ShortPixelAI::DEFAULT_MAIN_DOMAIN. '/fsu');
-						if(count(explode('/', $fsuUrl)) == 4) {
-						    $fsuUrl .= '/af/MNCMIUS28044';
-                        }
-						$buttons[]  = [
-							'type'    => 'link',
-							'title'   => __( 'Sign-up', 'shortpixel-adaptive-images' ),
-							'url'     => $fsuUrl,
-							'target'  => '_blank',
-							'primary' => false,
-						];
-					}
-
+			if ( !isset( $dismissed->credits ) ) {
+				$message = self::getCreditsNoticeInfo($this->ctrl);
+				if(!empty($message)) {
 					self::render( 'credits',
 						[
 							'notice'  => [
@@ -537,11 +430,8 @@
 								'icon'        => 'happy',
 								'dismissible' => true,
 							],
-							'message' => [
-								'title' => __( 'ShortPixel Adaptive Images notice', 'shortpixel-adaptive-images' ),
-								'body'  => $messages,
-							],
-							'buttons' => $buttons,
+							'message' => $message,
+
 						] );
 				}
 			}
@@ -558,20 +448,7 @@
 							'dismissible' => true,
 						],
 						'message' => Constants::_()->twicelossy,
-						'buttons' => [
-							[
-								'type'    => 'link',
-								'title'   => __( 'ShortPixel Image Optimizer options', 'shortpixel-adaptive-images' ),
-								'url'     => 'options-general.php?page=wp-shortpixel-settings',
-								'primary' => true,
-							],
-							[
-								'type'    => 'link',
-								'title'   => __( 'ShortPixel Adaptive Images options', 'shortpixel-adaptive-images' ),
-								'url'     => 'options-general.php?page=' . Page::NAMES[ 'settings' ],
-								'primary' => false,
-							],
-						],
+
 					] );
 			}
 
@@ -584,16 +461,7 @@
 							'dismissible' => true,
 						],
 						'message' => Constants::_()->missing_jquery,
-						'buttons' => [
-							[
-								'title'      => __( 'Re-Check', 'shortpixel-adaptive-images' ),
-								'action'     => 're-check',
-								'additional' => [
-									'return_url' => '//' . $_SERVER[ 'HTTP_HOST' ] . $_SERVER[ 'REQUEST_URI' ],
-								],
-								'primary'    => true,
-							],
-						],
+
 					]
 				);
 			}
@@ -608,13 +476,7 @@
 								'dismissible' => true,
 							],
 							'message' => Constants::_()->swift_performance,
-							'buttons' => [
-								[
-									'title'   => __( 'Change conflicting settings', 'shortpixel-adaptive-images' ),
-									'action'  => 'solve conflict',
-									'primary' => true,
-								],
-							],
+
 						] );
 				}
 			}
@@ -628,13 +490,7 @@
 							'dismissible' => true,
 						],
 						'message' => Constants::_()->imagify,
-						'buttons' => [
-							[
-								'title'   => __( 'Change conflicting settings', 'shortpixel-adaptive-images' ),
-								'action'  => 'solve conflict',
-								'primary' => true,
-							],
-						],
+
 					] );
 			}
 
@@ -646,13 +502,7 @@
 						'dismissible' => true,
 					],
 					'message' => Constants::_()->spio_webp,
-					'buttons' => [
-						[
-							'title'   => __( 'Deactivate option', 'shortpixel-adaptive-images' ),
-							'action'  => 'solve conflict',
-							'primary' => true,
-						],
-					],
+
 				] );
 			}
 
@@ -664,13 +514,7 @@
 						'dismissible' => true,
 					],
 					'message' => Constants::_()->litespeed_js_combine,
-					'buttons' => [
-						[
-							'title'   => __( 'Change conflicting settings', 'shortpixel-adaptive-images' ),
-							'action'  => 'solve conflict',
-							'primary' => true,
-						],
-					],
+
 				] );
 			}
 
@@ -682,18 +526,7 @@
 						'dismissible' => true,
 					],
 					'message' => Constants::_()->wpo_merge_css,
-					'buttons' => [
-						[
-							'title'   => __( 'Add exclusions', 'shortpixel-adaptive-images' ),
-							'action'  => 'add exclusions',
-							'primary' => true,
-						],
-						[
-							'title'   => __( 'Change conflicting settings', 'shortpixel-adaptive-images' ),
-							'action'  => 'solve conflict',
-							'primary' => false,
-						],
-					],
+
 				] );
 			}
       
@@ -710,6 +543,86 @@
 					'message' => Constants::_()->lqip_mkdir_failed,
 				] );
 			}
+		}
+
+		/**
+		 * Returns content for rendering credits notification
+		 * @param ShortPixelAI
+		 * @return array
+		 */
+		public static function getCreditsNoticeInfo(ShortPixelAI $ctrl) {
+			$ret = [];
+			$domain_status = \ShortPixelDomainTools::get_domain_status();
+
+			if ( $domain_status->Status !== 2 ) {
+				$buttons = [
+					[
+						'title'   => __( 'Check credits', 'shortpixel-adaptive-images' ),
+						'action'  => 'check',
+						'primary' => true,
+					],
+				];
+
+				if ( $domain_status->Status === 1 ) {
+					$messages = [
+						__( 'Please note that your ShortPixel Adaptive Images quota will be exhausted soon.', 'shortpixel-adaptive-images' ),
+					];
+				}
+				else if ( $domain_status->Status === -1 ) {
+					$messages = [
+						__( 'Your ShortPixel Adaptive Images quota has been exceeded.', 'shortpixel-adaptive-images' ),
+						__( 'Your images are served from the origin server until you top-up your account.', 'shortpixel-adaptive-images' ),
+						//__( 'The already optimized images will still be served from the ShortPixel CDN for up to 30 days but the images that weren\'t already optimized and cached via CDN will be served directly from your website.', 'shortpixel-adaptive-images' ),
+					];
+				}
+
+				if ( !!$domain_status->HasAccount ) {
+					if(is_null( $ctrl->options->settings_general_apiKey )) {
+						$messages[] = __( 'Please input your API Key in settings in order to get more details.', 'shortpixel-adaptive-images' )  .
+						              ' <a href="https://shortpixel.com/knowledge-base/article/94-how-to-associate-a-domain-to-my-account" target="_blank">' .
+						              __( 'How do I do this?', 'shortpixel-adaptive-images' ) . '</a>';
+					}
+
+					$title = __( 'Log-in', 'shortpixel-adaptive-images' );
+                    $redirect = '/dashboard';
+					if ( $domain_status->Status === 1 ) {
+						$title = __( 'Top-up', 'shortpixel-adaptive-images' );
+                        $redirect = '/pricing-adaptive-cdn/http' . urlencode( ($_SERVER['HTTPS'] ? 's' : '') . "://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}");
+					}
+                    $key = $ctrl->options->settings_general_apiKey ?: '_';
+                    $url = ShortPixelAI::DEFAULT_MAIN_DOMAIN. '/login/'. $key . $redirect;
+
+					$buttons[]  = [
+						'type'    => 'link',
+						'title'   => $title,
+						'url'     => $key === '_' ? apply_filters('spai_affiliate_link', $url) : $url, //apply affiliate filters only if no API key
+						'target'  => '_blank',
+						'primary' => false,
+					];
+				}
+				else {
+					$messages[] = __( 'If you <span>sign-up now</span> with ShortPixel you will receive 5Gb more free traffic and also you\'ll get 50% bonus credits to any purchase that you\'ll choose to make. Image optimization traffic can be purchased with as little as $3.99 for 52.5Gb monthly (including the 50% bonus).',
+						'shortpixel-adaptive-images' );
+					$fsuUrl = apply_filters('spai_affiliate_link',ShortPixelAI::DEFAULT_MAIN_DOMAIN. '/fsu');
+					if(count(explode('/', $fsuUrl)) == 4) {
+						$fsuUrl .= '/af/MNCMIUS28044';
+					}
+					$buttons[]  = [
+						'type'    => 'link',
+						'title'   => __( 'Sign-up', 'shortpixel-adaptive-images' ),
+						'url'     => $fsuUrl,
+						'target'  => '_blank',
+						'primary' => false,
+					];
+				}
+				$ret = [
+					'title' => __( 'ShortPixel Adaptive Images notice', 'shortpixel-adaptive-images' ),
+					'body'  => $messages,
+					'buttons' => $buttons,
+				];
+
+			}
+			return $ret;
 		}
 
 		public function enqueueAdminScripts() {

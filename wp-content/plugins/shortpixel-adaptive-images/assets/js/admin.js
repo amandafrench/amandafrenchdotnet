@@ -21,14 +21,26 @@
 	$.spaiHelpOpen = function(evt) {
         //$("#shortPixelProposeUpgrade .spai-modal-body").html("");
         $("#spaiHelpShade").css("display", "block");
-        $("#spaiHelp .spai-modal-body iframe").attr('src',  evt.target.dataset.link);
+		$("#spaiHelp").removeClass('local');
+        $("#spaiHelp .spai-modal-body .local-content").addClass('hidden');
+        $("#spaiHelp .spai-modal-body iframe").removeClass('hidden').attr('src',  evt.target.dataset.link);
         $("#spaiHelp").removeClass('spai-hide');
     }
+	$.spaiHelpOpenLocal = function(element) {
+		$("#spaiHelpShade").css("display", "block");
+		$("#spaiHelp").addClass('local');
+		$("#spaiHelp .spai-modal-body iframe").addClass('hidden');
+		$("#spaiHelp .spai-modal-body .local-content").removeClass('hidden').append(element.clone().removeClass('hidden'));
+		$("#spaiHelp").removeClass('spai-hide');
+		jQuery('div.spai-modal-shade').unbind('click');
+	}
 
     $.spaiHelpClose = function(){
         jQuery("#spaiHelpShade").css("display", "none");
         $("#spaiHelp .spai-modal-body iframe").attr('src',  'about:blank');
+		$("#spaiHelp .spai-modal-body .local-content").html('');
         jQuery("#spaiHelp").addClass('spai-hide');
+		jQuery('div.spai-modal-body').unbind('click');
 	}
 
 	/**

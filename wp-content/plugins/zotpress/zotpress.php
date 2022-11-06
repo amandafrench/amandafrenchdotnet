@@ -6,7 +6,7 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Bringing Zotero and scholarly blogging to your WordPress website.
     Author: Katie Seaborn
-    Version: 7.3
+    Version: 7.3.1.2
     Author URI: http://katieseaborn.com
     Text Domain: zotpress
     Domain Path: /languages/
@@ -15,7 +15,7 @@
 
 /*
 
-    Copyright 2021 Katie Seaborn
+    Copyright 2022 Katie Seaborn
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@
     define('ZOTPRESS_PLUGIN_FILE',  __FILE__ );
     define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( ZOTPRESS_PLUGIN_FILE ));
     define('ZOTPRESS_PLUGIN_DIR', dirname( __FILE__ ));
-    define('ZOTPRESS_VERSION', '7.3' );
+    define('ZOTPRESS_VERSION', '7.3.1.2' );
     define('ZOTPRESS_LIVEMODE', true ); // NOTE: Remember to set to TRUE
 
     $GLOBALS['zp_is_shortcode_displayed'] = false;
@@ -195,6 +195,9 @@
                     'txt_surecache' => __('Are you sure you want to clear the cache for this account?','zotpress'),
                     'txt_cachecleared' => __('Cache cleared!','zotpress'),
                     'txt_oops' => __('Oops!','zotpress'),
+                    'txt_changeimg' => __( 'Change Image', 'zotpress' ),
+                    'txt_setimg' => __( 'Set Image', 'zotpress' ),
+                    'txt_removeimg' => __( 'Remove Image', 'zotpress' ),
                     'txt_surereset' => __('Are you sure you want to reset Zotpress? This cannot be undone.','zotpress'),
                     'txt_default' => __('Default','zotpress')
 				)
@@ -314,7 +317,8 @@
 			array(
 				'ajaxurl' => admin_url( 'admin-ajax.php' ),
 				'zpShortcode_nonce' => wp_create_nonce( 'zpShortcode_nonce_val' ),
-				'action' => 'zpRetrieveViaShortcode',
+                'action' => 'zpRetrieveViaShortcode',
+                'txt_removeimg' => __('Remove Image', 'zotpress'),
                 'txt_zperror' => __('There was a Zotpress error:', 'zotpress'),
                 'txt_noitemsfound' => __( 'No items found.', 'zotpress' )
 			)

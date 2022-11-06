@@ -33,7 +33,7 @@
 							'dismissible' => true,
 						],
 						'message' => [
-							'body' => [ __( 'Something went wrong...', 'shortpixel-adaptive-images' ) . ' 😓 ' . __( 'Please contact the <a href="https://shortpixel.com/contact" target="_blank"><strong>ShortPixel Support</strong></a>.', 'shortpixel-adaptive-images' ) ],
+							'body' => [ __( 'Something went wrong...', 'shortpixel-adaptive-images' ) . __( 'Please contact the <a href="https://shortpixel.com/contact" target="_blank"><strong>ShortPixel Support</strong></a>.', 'shortpixel-adaptive-images' ) ],
 						],
 					] );
 			}
@@ -83,6 +83,7 @@
 						] ),
 				];
 			}
+
 		}
 
 		/**
@@ -529,8 +530,8 @@
 							'message' => [
 								'body' => [
 									$success
-										? __( 'Yay! Looks like <b>Deliver WebP</b> option has been disabled.', 'shortpixel-adaptive-images' )
-										: __( '<b>Deliver WebP</b> option has not been disabled.', 'shortpixel-adaptive-images' ) . ' ' . sprintf( __( 'Please check <span>%s\'s</span> <a href="%s" target="_blank">settings</a>.', 'shortpixel-adaptive-images' ),
+										? __( 'Yay! The <b>Deliver next generation images</b> option has been disabled.', 'shortpixel-adaptive-images' )
+										: __( 'The <b>Deliver next generation images</b> option has not been disabled.', 'shortpixel-adaptive-images' ) . ' ' . sprintf( __( 'Please check <span>%s\'s</span> <a href="%s" target="_blank">settings</a>.', 'shortpixel-adaptive-images' ),
 											'ShortPixel Image Optimizer',
 											admin_url( 'options-general.php?page=wp-shortpixel-settings&part=adv-settings' ) ),
 								],
@@ -688,7 +689,7 @@
 							'message' => [
 								'body' => [
 									$success
-										? __( 'Yay! Looks like exclusion rules have been successfully added.', 'shortpixel-adaptive-images' )
+										? __( 'Yay! The exclusion rules have been successfully added.', 'shortpixel-adaptive-images' )
 										: __( 'Exclusion rules have not been added.', 'shortpixel-adaptive-images' ) . ' ' . sprintf( __( 'Please check <span>%s\'s</span> <a href="%s" target="_blank">settings</a>.', 'shortpixel-adaptive-images' ),
 											'WP Optimize',
 											admin_url( 'admin.php?page=wpo_minify&tab=wp_optimize_css' ) ),

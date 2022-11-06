@@ -23,11 +23,8 @@ div.spai-snip-info {
     z-index  : 1000;
 }
 
-#wpadminbar #wp-toolbar li#wp-admin-bar-shortpixel_ai_sniper .ab-item .ab-icon {
-    background-position : center;
-    background-size     : contain;
-    background-repeat   : no-repeat;
-    background-image    : url(../img/robo-sniper.png) !important;
+#wp-admin-bar-shortpixel_ai_sniper{
+    width: 0;
 }
 
 div.spai-snip-info div {
@@ -727,6 +724,10 @@ body.spai-fw-sidebar-hidden .spai-fw-body-content {
     text-align : left;
     margin     : 0 auto 10px;
     width      : 100%;
+}
+
+.spai-fw-sidebar__body .option input[type="checkbox"] {
+    display : none;
 }
 
 .spai-fw-sidebar__header .buttons-wrap {

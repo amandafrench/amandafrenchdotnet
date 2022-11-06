@@ -40,7 +40,6 @@ class VanillaJsLoader extends JsLoader {
                     var s = d.createElement("script");
                     var v = ("IntersectionObserver" in w) ? "" : "-compat";
                     s.async = true; // This includes the script as async.
-                    //s.src = "https://dev.shortpixel.ai/assets/js/spai-lib-bg" + v + ".js";
                     s.src = "https://<?= $scriptDomain ?>/assets/js/bundles/spai-lib-bg<?= $convert === 'detect' ? '-webp' : '' ?>" + v
                         + ".<?=$vjsVer?><?=($dbg ? '.dev' : '')?>.min.js?v=<?= SHORTPIXEL_AI_VERSION ?>";
                     w.spaiDomain = "<?= $spaiDomain ?>";
@@ -66,14 +65,10 @@ class VanillaJsLoader extends JsLoader {
                         crop: <?= !!$this->settings->behaviour->crop ? 'true' : 'false' ?>,
                         sizeBreakpoints: <?= json_encode((object)['on' => $this->settings->behaviour->size_breakpoints, 'base' => $this->settings->behaviour->size_breakpoints_base, 'rate' => $this->settings->behaviour->size_breakpoints_rate]); ?>,
                         backgroundsMaxWidth: <?= (int) is_int( $this->settings->areas->backgrounds_max_width ) && $this->settings->areas->backgrounds_max_width >= 0 ? $this->settings->areas->backgrounds_max_width : 1920 ?>,
+                        resizeStyleBackgrounds: <?= $this->settings->areas->backgrounds_lazy_style ? 'true' : 'false' ?>,
+                        nativeLazyLoad: <?= $this->settings->behaviour->native_lazy ? 'true' : 'false' ?>,
+                        safeLazyBackgrounds: <?= $this->settings->areas->backgrounds_lazy_style || $this->settings->areas->backgrounds_lazy ? 'true' : 'false' ?>,
                         debug: <?= SHORTPIXEL_AI_DEBUG ? 'true' : 'false' ?>,
-                        <?php
-                        //NOT used any more, replaced by doSelectors. TODO remove
-                        //backgroundReplaceClasses: ["__SPAI_BACKGROUND_REPLACE_CLASSES__"],
-                        /*backgroundReplaceTags: "__SPAI_BACKGROUND_LAZY_TAGS__",*/
-                        //customTagsAttributes: "__SPAI_CUSTOM_TAGS_ATTRIBUTES__",
-                        //backgroundLazySelectors: "__SPAI_BACKGROUND_LAZY_SELECTORS__",
-                        ?>
                         doSelectors: "__SPAI_DO_SELECTORS__",
                         exclusions: "__SPAI_EXCLUSIONS__",
                         watchClasses: [],
@@ -137,16 +132,25 @@ class VanillaJsLoader extends JsLoader {
 
         if(ActiveIntegrations::_()->has('wp-rocket')) {
             add_filter('rocket_defer_inline_exclusions', [$this, 'wp_rocket_no_defer_spai_settings']);
+            add_filter('rocket_delay_js_exclusions', [$this, 'wp_rocket_no_defer_spai_lib']);
         }
 
         parent::enqueue();
     }
 
+    public function wp_rocket_no_defer_spai_lib($regex) {
+        $regex[] = 'spai_js';
+        $this->logger->log("WP ROCKET rocket_delay_js_exclusions: ");
+        return $regex;
+    }
+
     public function wp_rocket_no_defer_spai_settings($regex) {
         if( is_string( $regex ) ){
+            $this->logger->log("WP ROCKET ADDED SPAI as string");
             return $regex . '|spai_js';
         }
         $regex[] = 'spai_js';
+        $this->logger->log("WP ROCKET ADDED SPAI");
         return $regex;
     }
 
@@ -185,7 +189,7 @@ class VanillaJsLoader extends JsLoader {
                 }
             }*/
         }
-        if(!strlen($bgCss)) {
+        if(!strlen($bgCss) && $this->settings->areas->backgrounds_lazy) {
             $bgCss .= 'html.spai_has_js .spai-bg-on:not(.spai-bg-prepared)';
         }
         (SHORTPIXEL_AI_DEBUG & \ShortPixelAILogger::DEBUG_AREA_CSS) && $this->logger->log("BACKGROUND CSS RULES: " . $bgCss);
@@ -217,7 +221,7 @@ class VanillaJsLoader extends JsLoader {
                 }
             }
         }
-        if(count($this->ctrl->affectedTags->filter(AffectedTags::CSS_ATTR))) {
+        if(count($this->ctrl->affectedTags->filter(AffectedTags::CSS_ATTR)) && $this->settings->areas->backgrounds_lazy) {
             (SHORTPIXEL_AI_DEBUG & \ShortPixelAILogger::DEBUG_AREA_HTML) && $this->logger->log("IN TAG STYLE RULE: .spai-bg-on");
             $doSelectors[] = [
                 'selectors' => '.spai-bg-on',
@@ -226,7 +230,7 @@ class VanillaJsLoader extends JsLoader {
                 'attrType' => 'style',
             ];
         }
-        if($this->settings->areas->backgrounds_lazy_style || $this->settings->areas->parse_css_files) {
+        if($this->settings->areas->backgrounds_lazy_style) {
             (SHORTPIXEL_AI_DEBUG & \ShortPixelAILogger::DEBUG_AREA_HTML) && $this->logger->log("INLINE STYLE RULE");
             $doSelectors[] = [
                 'selectors' => 'style',
@@ -234,7 +238,7 @@ class VanillaJsLoader extends JsLoader {
                 'attrType' => 'style'
             ];
         }
-        if($this->settings->areas->parse_css_files) {
+        if($this->settings->areas->backgrounds_lazy_style && $this->settings->areas->parse_css_files) {
             (SHORTPIXEL_AI_DEBUG & \ShortPixelAILogger::DEBUG_AREA_HTML) && $this->logger->log("STYLESHEET RULE");
             $doSelectors[] = ['type' => '__stylesheet'];
         }

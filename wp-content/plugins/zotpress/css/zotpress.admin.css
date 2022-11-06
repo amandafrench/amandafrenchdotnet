@@ -16,7 +16,7 @@ div#zp-Zotpress div.zp-Col-2 {
 
 #adminmenu .current .wp-menu-image img {
     opacity: 1.0;
-    filter: alpha(opacity = 100);
+    /* filter: alpha(opacity = 100); */
 }
 
 div#zp-Zotpress del {
@@ -581,27 +581,37 @@ div#zp-Icon img {
 
 /* START BROWSE */
 
-div#zp-Options-Wrapper,
-div#zp-Browse-Wrapper {
+/* from ID to class:
+
+zp-Options-Wrapper
+zp-Browse-Wrapper
+zp-Browse-Bar
+.zp-Browse-Collections,
+.zp-Browse-Tags
+
+*/
+
+div#zp-Zotpress div#zp-Options-Wrapper,
+div#zp-Zotpress div.zp-Browse-Wrapper {
     position: relative;
     background-color: #fff;
     border-bottom: 1px solid #ccc;
     margin-top: -20px;
     padding: 1em 0 0;
 }
-div#zp-Options-Wrapper:before,
-div#zp-Options-Wrapper:after {
+div#zp-Zotpress div#zp-Options-Wrapper:before,
+div#zp-Zotpress div#zp-Options-Wrapper:after {
     content: "";
     display: table;
 }
-div#zp-Options-Wrapper:after {
+div#zp-Zotpress div#zp-Options-Wrapper:after {
     clear: both;
 }
-div#zp-Options-Wrapper h3,
-div#zp-Browse-Wrapper h3 {
+div#zp-Zotpress div#zp-Options-Wrapper h3,
+div#zp-Zotpress div.zp-Browse-Wrapper h3 {
     padding: 15px 30px 25px;
 }
-div#zp-Options-Wrapper h3 {
+div#zp-Zotpress div#zp-Options-Wrapper h3 {
     border-bottom: 1px solid #eee;
 }
 
@@ -622,44 +632,55 @@ div#zp-Zotpress div#zp-Options-Wrapper div.zp-Column-Inner {
 
 /* Browse Dropdowns */
 
-#zp-Browse-Bar {
+.zp-Browse-Bar {
     border: none;
+    padding: 0 30px;
 }
-#zp-Browse-Bar:after {
+.zp-Browse-Bar:after {
     clear: both;
     content: "";
     display: table;
 }
 
-#zp-Browse-Collections,
-#zp-Browse-Tags {
+.zp-Browse-Collections,
+.zp-Browse-Tags {
     float: left;
     width: 50%;
 }
 .zp-Browse-Select {
-    padding: 0 30px;
+    /* padding: 0 30px; */
+    margin-right: 15px;
     width: auto;
 }
+.zp-Browse-Tags .zp-Browse-Select {
+    margin-right: 0;
+    margin-left: 15px;
+}
+
 .zp-Browse-Select select {
     border: 1px solid #ccc;
     width: 100%;
+}
+
+.zp-Browse-Select .zp-List-Tags {
+    float: right;
 }
 
 
 
 /* Accounts */
 
-div#zp-Browse-Accounts {
+div.zp-Browse-Accounts {
     display: inline;
 }
-div#zp-Browse-Accounts label {
+div.zp-Browse-Accounts label {
     color: #ccc;
     display: none;
     font: normal 400 1em/1.75em "Georgia", serif;
     margin-right: 5px;
     padding: 0;
 }
-div#zp-Zotpress select#zp-FilterByAccount {
+div#zp-Zotpress select.zp-FilterByAccount {
     font-size: inherit;
     line-height: inherit;
     border: none;
@@ -670,13 +691,13 @@ div#zp-Zotpress select#zp-FilterByAccount {
     height: auto;
     vertical-align: baseline;
 }
-div#zp-Zotpress select#zp-FilterByAccount.loading {
+div#zp-Zotpress select.zp-FilterByAccount.loading {
     color: #ddd;
 }
 
-div#zp-Browse-Account-Options {
+div.zp-Browse-Account-Options {
     position: absolute;
-    top: 35px;
+    top: 27px;
     right: 30px;
 }
 .zp-Browse-Account-Default {
@@ -703,7 +724,8 @@ div#zp-Browse-Account-Options {
 .zp-Browse-Account-Default.loading:before {
     background-image: url("../images/loading_default.gif") !important;
     background-repeat: no-repeat;
-    background-position: 0 center !important;
+    background-position: center !important;
+    height: 1.5rem;
 }
 .zp-Browse-Account-Default.loading.dashicons-star-empty:before {
     content: " ";
@@ -747,10 +769,10 @@ div.zp-Collection-Title .item_key {
 
 /* START OF BROWSE CITATION LISTS */
 
-#zpSearchResultsContainer {
+.zpSearchResultsContainer {
     border-top: 1px solid #eee;
 }
-.wp-admin #zpSearchResultsContainer {
+.wp-admin .zpSearchResultsContainer {
     padding-bottom: 0;
 }
 .wp-admin div#zp-Zotpress div.zp-List .zp_display_progress {
@@ -764,7 +786,7 @@ div.zp-Collection-Title .item_key {
     margin-right: 30px;
     padding-right: 30px;
 }
-.wp-admin div#zp-Zotpress div.zp-List.loading #zpSearchResultsContainer {
+.wp-admin div#zp-Zotpress div.zp-List.loading .zpSearchResultsContainer {
     background: none;
 }
 
@@ -953,35 +975,45 @@ div#zp-Zotpress div.zp-Entry div.zp-Entry-ID input {
 
 /* Pagination */
 
-#zpSearchResultsPaging:after {
+.zpSearchResultsPaging:after {
     clear: both;
     content: "";
     display: table;
 }
 
-#zpSearchResultsPagingContainer {
+.zpSearchResultsPagingContainer {
+    margin: 0;
     margin-left: 30px;
 }
 
-#zpSearchResultsPagingContainer span.title {
-    font: italic 400 17px/21px "Georgia", serif;
-    float: left;
-    padding: 7px 15px 0 0;
+.zpSearchResultsPagingContainer span.title {
+    font: italic 400 1rem/2.6 "Georgia", serif;
+    /* float: left; */
+    /* padding: 7px 15px 0 0; */
     text-transform: none;
 }
 
-#zpSearchResultsPaging a {
-    float: left;
+.zpSearchResultsPaging a {
+    /* float: left; */
     display: block;
     text-align: center;
-    width: 40px;
+    /* width: 40px; */
+    /* height: 3.5rem; */
 }
-#zpSearchResultsPaging a.selected {
+.zpSearchResultsPaging a.selected {
     color: #000 !important;
 }
+.zpSearchResultsPaging a span {
+    margin: 0.5rem;
+    /* padding: calc(1.5rem - 4px) calc(1.2rem - 4px); */
+}
 
-#zpSearchResultsPagingScroller {
-    width: 5em;
+.zpSearchResultsPagingScroller {
+    /* width: 5em; */
+}
+.zpSearchResultsPagingScroller span {
+    font-size: 2.5rem;
+    margin-top: -0.5rem;
 }
 
 /* END OF BROWSE CITATIONS */
@@ -991,7 +1023,8 @@ div#zp-Zotpress div.zp-Entry div.zp-Entry-ID input {
 /* START IMAGE FORM */
 
 div#zp-Zotpress form#zp-Image {
-    -moz-border-radius: 10px;
+    /* -moz-border-radius: 10px; */
+    border-radius: 10px;
     background-color: #fafafa;
     margin: 0.75em 0 30px 0;
     width: 780px;
@@ -1073,6 +1106,10 @@ div#zp-ManageAccounts {
 }
 div#zp-ManageAccounts h3 {
     width: 50%;
+}
+
+a.zp-Account-Default.inactive {
+    cursor: default;
 }
 
 a.zp-AddAccountButton,
@@ -1187,9 +1224,9 @@ a.zp-AddAccountButton:active span.dashicons {
     /* color: #2ecc71; */
     margin-right: 0;
 
-    -webkit-transform: scaleX(-1) rotate(25deg);
+    /* -webkit-transform: scaleX(-1) rotate(25deg);
     -moz-transform: scaleX(-1) rotate(25deg);
-    -o-transform: scaleX(-1) rotate(25deg);
+    -o-transform: scaleX(-1) rotate(25deg); */
     transform: scaleX(-1) rotate(25deg);
 }
 #zp-AccountsList .cache a.cache.loading:before {

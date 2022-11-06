@@ -26,7 +26,8 @@ class SimpleForm_Activator {
          self::create_db();
          self::default_data_entry();
          self::sform_settings();
-         self::sform_fields();         
+         self::sform_fields();
+         self::enqueue_additional_code();        
          restore_current_blog();
         }
       } else {
@@ -34,12 +35,14 @@ class SimpleForm_Activator {
     	 self::default_data_entry();
          self::sform_settings();
          self::sform_fields();
+         self::enqueue_additional_code();        
       }
     } else {
         self::create_db();
     	self::default_data_entry();
         self::sform_settings();
         self::sform_fields();
+        self::enqueue_additional_code();        
     }
     
     }
@@ -67,6 +70,8 @@ class SimpleForm_Activator {
             shortcode tinytext NOT NULL,
             area varchar(250) NOT NULL DEFAULT 'page',
             name tinytext NOT NULL,
+            form_pages text NOT NULL,
+            form_widgets text NOT NULL,
             shortcode_pages text NOT NULL,
             block_pages text NOT NULL,
             widget_id varchar(128) NOT NULL default '',
@@ -82,6 +87,7 @@ class SimpleForm_Activator {
             deletion tinyint(1) NOT NULL DEFAULT '0',
             status tinytext NOT NULL,
             previous_status varchar(32) NOT NULL default '',
+            override_settings tinyint(1) NOT NULL DEFAULT '0',
             storing tinyint(1) NOT NULL DEFAULT '1',
             PRIMARY KEY  (id) 
           ) {$charset_collate};";
@@ -105,7 +111,6 @@ class SimpleForm_Activator {
 
           dbDelta($sql_shortcodes);
           dbDelta($sql_submissions);
-          
           update_option('sform_db_version', $current_db_version);
           
         }
@@ -121,29 +126,58 @@ class SimpleForm_Activator {
     public static function default_data_entry() {
 	  
         global $wpdb;
-        $shortcodes_table = $wpdb->prefix . 'sform_shortcodes';
-        $shortcode = 'simpleform';
-        $name = __( 'Contact Us Page','simpleform');
-        $shortcode_data = $wpdb->get_results("SELECT * FROM {$shortcodes_table}");
-        if(count($shortcode_data) == 0) { $wpdb->insert( $shortcodes_table, array( 'shortcode' => $shortcode, 'name' => $name, 'status' => 'draft' ) ); }
+        $shortcode_data = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}sform_shortcodes");
+        if(count($shortcode_data) == 0) { $wpdb->insert( $wpdb->prefix . 'sform_shortcodes', array( 'shortcode' => 'simpleform', 'name' => __( 'Contact Us Page','simpleform'), 'status' => 'draft' ) ); }
         else {
           $where_submissions = defined('SIMPLEFORM_SUBMISSIONS_NAME') ? "WHERE object != '' AND object != 'not stored'" : '';
           $msg = $wpdb->get_var("SELECT COUNT(id) FROM {$wpdb->prefix}sform_submissions $where_submissions");
           $entries = $wpdb->get_var("SELECT SUM(entries) as total_entries FROM {$wpdb->prefix}sform_shortcodes");
+          // If the entries counter has not been updated previously
           if ( $msg > 0 && $entries == 0 ) {
             $forms = $wpdb->get_col( "SELECT id FROM {$wpdb->prefix}sform_shortcodes" );
             foreach ($forms as $form) { 
               $form_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}sform_shortcodes WHERE id = %d", $form) );
 	          $status = esc_attr($form_data->shortcode_pages) != '' || esc_attr($form_data->block_pages) != '' || esc_attr($form_data->widget_id) != '' ? 'published' : 'draft'; 
 	          $where = defined('SIMPLEFORM_SUBMISSIONS_NAME') ? "AND object != '' AND object != 'not stored'" : '';
-	          $form_msg = $wpdb->get_var("SELECT COUNT(id) FROM {$wpdb->prefix}sform_submissions WHERE form = {$form} $where");
-	          $wpdb->update( $shortcodes_table, array( 'entries' => $form_msg, 'status' => $status ), array('id' => $form ) );
+	          $form_msg = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(id) FROM {$wpdb->prefix}sform_submissions WHERE form = %d $where", $form ) );
+	          $form_pages_separator = esc_attr($form_data->shortcode_pages) != '' && esc_attr($form_data->block_pages) != '' ? ',' : '';
+	          $form_pages = esc_attr($form_data->shortcode_pages) . $form_pages_separator . esc_attr($form_data->block_pages);
+	          $form_widgets_separator = esc_attr($form_data->widget_id) != '' && esc_attr($form_data->widget) != '' ? ',' : '';
+	          $form_widgets = esc_attr($form_data->widget_id) . $form_widgets_separator . esc_attr($form_data->widget);
+	          $wpdb->update( $wpdb->prefix . 'sform_shortcodes', array( 'form_pages' => $form_pages, 'form_widgets' => $form_widgets, 'entries' => $form_msg, 'status' => $status ), array('id' => $form ) );
+	          if ( false !== ( $last_form_message = get_transient( 'sform_last_'.$form.'_message' ) ) && get_option('sform_last_'.$form.'_message') === false ) {
+                add_option('sform_last_'.$form.'_message', $last_form_message);
+	          }
+	          if ( false !== ( $last_message = get_transient( 'sform_last_message' ) ) && get_option('sform_last_message') === false ) {
+                add_option('sform_last_message', $last_message);
+	          }
+            }
+          }
+          else {
+            $forms = $wpdb->get_col( "SELECT id FROM {$wpdb->prefix}sform_shortcodes" );
+            foreach ($forms as $form) { 
+              $form_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}sform_shortcodes WHERE id = %d", $form) );
+              if ( esc_attr($form_data->status) == 'used' || esc_attr($form_data->status) == 'unused' || ( esc_attr($form_data->form_pages) == '' && ( esc_attr($form_data->shortcode_pages) != '' || esc_attr($form_data->block_pages) != '' || esc_attr($form_data->widget_id) != '' ) ) ) {
+		        $status = esc_attr($form_data->shortcode_pages) != '' || esc_attr($form_data->block_pages) != '' || esc_attr($form_data->widget_id) != '' ? 'published' : 'draft'; 
+	            $form_pages_separator = esc_attr($form_data->shortcode_pages) != '' && esc_attr($form_data->block_pages) != '' ? ',' : '';
+	            $form_pages = esc_attr($form_data->shortcode_pages) . $form_pages_separator . esc_attr($form_data->block_pages);
+	            $form_widgets_separator = esc_attr($form_data->widget_id) != '' && esc_attr($form_data->widget) != '' ? ',' : '';
+	            $form_widgets = esc_attr($form_data->widget_id) . $form_widgets_separator . esc_attr($form_data->widget);
+	            $wpdb->update( $wpdb->prefix . 'sform_shortcodes', array( 'form_pages' => $form_pages, 'form_widgets' => $form_widgets, 'status' => $status ), array('id' => $form ) );
+              }
+	          if ( false !== ( $last_form_message = get_transient( 'sform_last_'.$form.'_message' ) ) && get_option('sform_last_'.$form.'_message') === false ) {
+                add_option('sform_last_'.$form.'_message', $last_form_message);
+	          }
+	          if ( false !== ( $last_message = get_transient( 'sform_last_message' ) ) && get_option('sform_last_message') === false ) {
+                add_option('sform_last_message', $last_message);
+	          }
+	          
             }
           }
         }
 
     }
-    
+
     /**
      *  Create a table whenever a new blog is created in a WordPress Multisite installation.
      *
@@ -172,9 +206,11 @@ class SimpleForm_Activator {
  	   $settings = get_option( 'sform_settings' );
        
        if ( !$settings ) {
-	       
-	   $form_page_content = '<!-- wp:simpleform/form-selector {"formId":"1","optionNew":"d-none","formOptions":"visible"} /-->';    
-       $form_page = array( 'post_type' => 'page', 'post_content' => $form_page_content, 'post_title' => __( 'Contact Us', 'simpleform' ), 'post_status' => 'draft' );
+	       	       
+	   // $shortcode_content = '[simpleform]';
+	   $block_content = '<!-- wp:simpleform/form-selector {"formId":"1","optionNew":"d-none","formOptions":"visible"} /-->';
+	    
+       $form_page = array( 'post_type' => 'page', 'post_content' => $block_content, 'post_title' => __( 'Contact Us', 'simpleform' ), 'post_status' => 'draft' );
        $thank_string1 = __( 'Thank you for contacting us.', 'simpleform' );
        $thank_string2 = __( 'Your message will be reviewed soon, and we\'ll get back to you as quickly as possible.', 'simpleform' );
        $confirmation_img = SIMPLEFORM_URL . 'public/img/confirmation.png';
@@ -199,7 +235,7 @@ class SimpleForm_Activator {
                  'stylesheet' => 'false',
                  'stylesheet_file' => 'false', 
                  'javascript' => 'false',
-                 'deletion_data' => 'false',
+                 'deletion_data' => 'true',
                  'multiple_spaces' => 'false',
                  'outside_error' => 'bottom',
                  'empty_fields' => __( 'There were some errors that need to be fixed', 'simpleform' ),
@@ -364,6 +400,50 @@ class SimpleForm_Activator {
 	       
        }
        
+    }
+    
+    /**
+     * Add additional styles and scripts to enqueue.
+     *
+     * @since    2.1.8
+     */
+
+    public static function enqueue_additional_code() {
+	  
+        if ( get_option('sform_additional_style') !== false && get_option('sform_additional_script') !== false )
+        return;
+        
+        global $wpdb;
+        $util = new SimpleForm_Util();
+        $forms = $util->sform_ids();
+        $additional_styles = '';
+        $additional_scripts = '';
+        
+        foreach ($forms as $form) { 
+		  $attributes = $util->sform_attributes($form);
+          $form_style = ! empty( $attributes['additional_css'] ) ? esc_attr($attributes['additional_css']) : '';
+		  $settings = $util->sform_settings($form);
+          $ajax = ! empty( $settings['ajax_submission'] ) ? esc_attr($settings['ajax_submission']) : 'false'; 
+          $ajax_error = ! empty( $settings['ajax_error'] ) ? stripslashes(esc_attr($settings['ajax_error'])) : __( 'Error occurred during AJAX request. Please contact support!', 'simpleform' );
+          $outside_error = ! empty( $settings['outside_error'] ) ? esc_attr($settings['outside_error']) : 'bottom';
+          $outside = $outside_error == 'top' || $outside_error == 'bottom' ? 'true' : 'false';
+          $multiple_spaces = ! empty( $settings['multiple_spaces'] ) ? esc_attr($settings['multiple_spaces']) : 'false';
+	      
+	      if ( $form_style ) {
+		    $additional_styles .= '/*'.$form.'*/' . $form_style . '/* END '.$form.'*/';
+          }
+
+          if ( $multiple_spaces == 'true' || $ajax == 'true' ) { 
+            $spaces_script = $multiple_spaces == 'true' ? 'jQuery(document).ready(function(){jQuery("input[parent=\''.$form.'\'],textarea[parent=\''.$form.'\']").on("input",function(){jQuery(this).val(jQuery(this).val().replace(/\s\s+/g," "));});});' : '' ;
+            $ajax_script = $ajax == 'true' ? 'var outside'. $form .' = "' .$outside .'"; var ajax_error'. $form .' = "' .$ajax_error .'";' : '' ;
+	        $additional_scripts .= '/*'.$form.'*/' . $spaces_script . $ajax_script . '/* END '.$form.'*/';
+          }
+          
+        }
+        
+	    update_option('sform_additional_style',$additional_styles);
+        update_option('sform_additional_script',$additional_scripts);
+
     }
     
 }

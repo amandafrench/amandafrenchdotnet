@@ -70,7 +70,9 @@ class TagRules
             $regexItems[] = new TagRule('a', 'href', 'modula-item-link');
         }
         if ($integrations['elementor']) {
-            $regexItems[] = new TagRule('a', 'href', false, 'data-elementor-open-lightbox'); //fourth param filters by attribute
+            $openLB = new TagRule('a', 'href', false, 'data-elementor-open-lightbox'); //fourth param filters by attribute
+            $openLB->noFront = true;
+            $regexItems[] = $openLB;
             $regexItems[] = new TagRule('a', 'href', 'viba-portfolio-media-link'); //third param filters by class
             $regexItems[] = new TagRule('header|section|div', 'data-settings|data-options', false, false, false, false, false,
                 'srcset', 'replace_custom_json_attr');
@@ -100,6 +102,18 @@ class TagRules
         if ($integrations['foo']) {
             $regexItems[] = new TagRule('img', 'data-src-fg', 'fg-image', false, false, false, true);
             $regexItems[] = new TagRule('a', 'href', 'fg-thumb', 'data-attachment-id');
+        }
+        if ($integrations['global-gallery']) {
+            for($i = 0; $i < count($regexItems); $i++) {
+                if($regexItems[$i]->tag === 'a' && $regexItems[$i]->attr === 'href') {
+                    unset($regexItems[$i]);
+                }
+            }
+            $regexItems[] = new TagRule('a', 'href', false, false, false, true);
+        }
+        if ($integrations['essential-grid']) {
+            $regexItems[] = new TagRule('img', 'data-lazythumb', false, false, false, false, true);
+            $regexItems[] = new TagRule('img', 'data-lazysrc', false, false, false, false, true);
         }
         if ($integrations['smart-slider']) {
             $regexItems[] = new TagRule('div', 'data-desktop', 'n2-ss-slide-background-image');  //third param filters by class
@@ -176,7 +190,7 @@ class TagRules
         }
         if ( $settings->areas->parse_css_files )
         {
-            $replaceUrls = $settings->behaviour->nojquery <= 0
+            $replaceUrls = ($settings->behaviour->nojquery <= 0 || !$settings->areas->backgrounds_lazy_style)
                 && !( $integrations[ 'wp-rocket' ][ 'minify-css' ] && $integrations[ 'wp-rocket' ][ 'css-filter' ] )
                 && !$integrations[ 'wp-fastest-cache' ] && !$integrations[ 'w3-total-cache' ]  && !$integrations[ 'wp-optimize']['enable_css'];
 
@@ -220,7 +234,7 @@ class TagRules
             $regexItems[] = new TagRule('div|a|span', 'style', false, false, false, false, false,
                 'srcset', 'replace_crowd2_img_styles');
         }
-        elseif($theme == 'Jupiter') {
+        elseif(strpos($theme, 'Jupiter') === 0) {
             //Jupiter has the mk slider in it, which uses srcsets encoded as JSON in data-mk-image-src-set atributes. How cool is that.
             $regexItems[] = new TagRule('img', 'data-mk-image-src-set', false, false, false, false, false,
                 'srcset', 'replace_custom_json_attr');
@@ -300,7 +314,7 @@ class TagRules
     public function usedLazy() {
         $used = [];
         foreach($this->items as $item) {
-            if(count($item->used) && !$item->eager) {
+            if(count($item->used) && !$item->eager && !$item->noFront) {
                 $used[] = $item;
             }
         }

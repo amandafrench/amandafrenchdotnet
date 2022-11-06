@@ -1,4 +1,0 @@
-[26-Nov-2021 20:09:32 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function plugin_dir_url() in /home/alfrench/public_html/wp-content/plugins/zotpress/zotpress.php:39
-Stack trace:
-#0 {main}
-  thrown in /home/alfrench/public_html/wp-content/plugins/zotpress/zotpress.php on line 39

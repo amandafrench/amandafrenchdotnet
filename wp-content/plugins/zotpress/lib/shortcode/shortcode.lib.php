@@ -3,7 +3,6 @@
 
 require('shortcode.class.lib.php');
 
-
 function Zotpress_zotpressLib( $atts )
 {
     extract( shortcode_atts( array(
@@ -23,6 +22,10 @@ function Zotpress_zotpressLib( $atts )
 		'sortby' => 'default',
 		'order' => 'asc',
 
+        'collection_id' => false,
+        'collection' => false,
+        'collections' => false, // only single for now, though
+
 		'style' => false,
 		'cite' => false,
 		'citeable' => false,
@@ -38,7 +41,9 @@ function Zotpress_zotpressLib( $atts )
         'toplevel' => 'toplevel',
 
 		'target' => false,
-		'urlwrap' => false
+		'urlwrap' => false,
+
+        'browsebar' => true // added 7.3.1
 
     ), $atts, "zotpress"));
 
@@ -57,6 +62,16 @@ function Zotpress_zotpressLib( $atts )
 	// Type of display
 	if ( $type ) $type = str_replace('"','',html_entity_decode($type)); else $type = "dropdown";
 
+    // Filter by collection
+    if ($collection_id) $collection_id = zp_clean_param( $collection_id );
+    else if ($collection) $collection_id = zp_clean_param( $collection );
+    else if ($collections) $collection_id = zp_clean_param( $collections );
+    else if ( isset($_GET['collection_id'])
+            && preg_match("/^[a-zA-Z0-9]+$/", $_GET['collection_id']) )
+       $collection_id = zp_clean_param( $_GET['collection_id'] );
+    else if ( isset($_GET['subcollection_id'])
+            && preg_match("/^[a-zA-Z0-9]+$/", $_GET['subcollection_id']) )
+       $collection_id = zp_clean_param( $_GET['subcollection_id'] );
 
 	// Filters
 	if ( $searchby ) $searchby = str_replace('"','',html_entity_decode($searchby));
@@ -102,7 +117,9 @@ function Zotpress_zotpressLib( $atts )
 
     if ( $toplevel ) $toplevel = str_replace('"','',html_entity_decode($toplevel));
 
-	if ( $target && $target != "no" ) $target = true; else $target = false;
+    if ( $target && $target != "no" ) $target = true; else $target = false;
+
+    if ( $browsebar ) $browsebar = str_replace('"','',html_entity_decode($browsebar));
 
 
 	// Get API User ID
@@ -153,7 +170,8 @@ function Zotpress_zotpressLib( $atts )
 	$zpLib->setMaxTags($maxtags);
 	$zpLib->setStyle($style);
 	$zpLib->setSortBy($sortby);
-	$zpLib->setOrder($order);
+    $zpLib->setOrder($order);
+    $zpLib->setCollection($collection_id);
 	$zpLib->setCiteable($cite);
 	$zpLib->setDownloadable($download);
     $zpLib->setShowTags($showtags);
@@ -161,6 +179,7 @@ function Zotpress_zotpressLib( $atts )
 	$zpLib->setURLWrap($urlwrap);
     $zpLib->setTopLevel($toplevel);
     $zpLib->setTarget($target);
+    $zpLib->setBrowseBar($browsebar);
 
 	// Show theme scripts
     $GLOBALS['zp_is_shortcode_displayed'] = true;

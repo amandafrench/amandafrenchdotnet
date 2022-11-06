@@ -213,6 +213,8 @@ class ActiveIntegrations {
             'woocommerce' => in_array('woocommerce/woocommerce.php' , $activePlugins),
             'wpc-variations' => in_array('wpc-variations-radio-buttons/wpc-variations-radio-buttons.php', $activePlugins),
             'foo' => in_array('foogallery/foogallery.php', $activePlugins),
+            'global-gallery' => in_array('global-gallery/global-gallery.php', $activePlugins),
+            'essential-grid' => in_array('essential-gridv1-9/essential-grid.php', $activePlugins),
             'oxygen' => in_array( 'oxygen/functions.php', $activePlugins),
             'slider-revolution' => in_array('revslider/revslider.php', $activePlugins),
             'custom-facebook-feed' => in_array('custom-facebook-feed-pro/custom-facebook-feed.php', $activePlugins),
@@ -229,6 +231,7 @@ class ActiveIntegrations {
             'soliloquy' => in_array('soliloquy/soliloquy.php', $activePlugins),
             'jetpack' => in_array('jetpack/jetpack.php', $activePlugins),
             'wp-rocket' => $rocket,
+            'perfmatters' => in_array('perfmatters/perfmatters.php', $activePlugins),
             'swift-performance' => isset( $swift_performance[ 'active' ] ) ? $swift_performance : false,
             'imagify' => isset( $imagify[ 'active' ] ) ? $imagify : false,
             'wp-fastest-cache' => $wp_fastest_cache,
@@ -253,6 +256,10 @@ class ActiveIntegrations {
                 }
             }
         }
+    }
+
+    public function themeIs($name) {
+        return strpos($this->integrations['theme'], $name) === 0;
     }
 
     public function has($plugin, $attr = false) {

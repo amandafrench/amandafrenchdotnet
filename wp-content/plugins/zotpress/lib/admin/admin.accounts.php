@@ -54,7 +54,7 @@ if ( current_user_can('edit_others_posts') )
 								// DEFAULT
 								$code .= "                          <td class='default first'>";
 								// if ( get_option("Zotpress_DefaultAccount") && get_option("Zotpress_DefaultAccount") == $account->api_user_id ) $code .= " selected";
-								$code .= "<a href='javascript:void(0);' rel='". $account->api_user_id ."' class='default zp-Accounts-Default dashicons dashicons-star-";
+								$code .= "<a href='javascript:void(0);' rel='". $account->api_user_id ."' class='default zp-Account-Default dashicons dashicons-star-";
 								if ( get_option("Zotpress_DefaultAccount") && get_option("Zotpress_DefaultAccount") == $account->api_user_id ) $code .= "filled"; else  $code .= "empty";
 								$code .= "' title='".__('Set as Default','zotpress')."'><span>".__('Set as Default','zotpress')."</span></a></td>\n";
 

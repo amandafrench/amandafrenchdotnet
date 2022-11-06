@@ -36,7 +36,7 @@ if ( current_user_can('edit_others_posts') )
 								?>
 							</select>
 
-							<input type="button" id="zp-Zotpress-Options-Account-Button" class="zp-Accounts-Default button-secondary" value="<?php _e('Set Default Account','zotpress'); ?>">
+							<input type="button" id="zp-Zotpress-Options-Account-Button" class="zp-Account-Default button-secondary" value="<?php _e('Set Default Account','zotpress'); ?>">
 							<div class="zp-Loading">loading</div>
 							<div class="zp-Success"><?php _e('Success','zotpress'); ?>!</div>
 							<div class="zp-Errors"><?php _e('Errors','zotpress'); ?>!</div>

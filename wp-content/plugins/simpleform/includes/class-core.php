@@ -41,7 +41,7 @@ class SimpleForm {
 	public function __construct() {
 		
 		if ( defined( 'SIMPLEFORM_VERSION' ) ) { $this->version = SIMPLEFORM_VERSION; } 
-		else { $this->version = '2.1.2'; }
+		else { $this->version = '2.1.9'; }
 		$this->plugin_name = 'simpleform';
 		$this->load_dependencies();
 		$this->define_admin_hooks();
@@ -51,7 +51,7 @@ class SimpleForm {
 		}
 
 	}
-
+	
 	/**
 	 * Load the required dependencies
 	 *
@@ -66,20 +66,28 @@ class SimpleForm {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-admin.php';
 		// The class responsible for defining actions that occur in the public-facing side of the site		 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-public.php';
-		// The class responsible for defining the widget
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-widget.php';	
 		// The class responsible for defining the block (requires WordPress 5.6 or later)
         if ( version_compare( $GLOBALS['wp_version'], '5.6', '>=' ) ) {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/block/class-block.php';
 		}
 		// The class responsible for defining utilities	 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-utilities.php';
-		// The base class for displaying a list of forms
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/includes/class-utilities.php';
+		// The base class for displaying a list of forms in an ajaxified HTML table		
         if ( ! class_exists( 'WP_List_Table' ) ) {
 	    require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
         }
         // The customized class that extends the base class
-        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-forms.php';
+        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/includes/class-forms.php';
+		// The core base class extended to register widgets
+        if ( ! class_exists( 'WP_Widget' ) ) {
+	    require_once ABSPATH . 'wp-includes/class-wp-widget.php';
+        }
+		// The class responsible for defining the widget
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/includes/class-widget.php';	
+		// The class responsible for notifications management	 
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/includes/class-notifications.php';
+		// The class responsible for form validation	 
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/includes/class-validation.php';
 
 		$this->loader = new SimpleForm_Loader();
 
@@ -123,10 +131,10 @@ class SimpleForm {
 		// Fallback for database table updating if plugin is already active 
 		$this->loader->add_action( 'plugins_loaded', $plugin_admin, 'db_version_check' );
         }	
-        // Update the pages list containing SimpleForm
+        // Update pages list containing a form when a page is edited
         $this->loader->add_action( 'save_post', $plugin_admin, 'sform_pages_list', 10, 2 );         
-	    // Clean up the post content of any non-existent and redundant form
-	    // $this->loader->add_filter('content_save_pre', $plugin_admin, 'clean_up_post_content', 10, 1 );
+	    // Clean up the post content of any removed or duplicated form
+	    $this->loader->add_action('forms_cleaning', $plugin_admin, 'forms_cleaning', 10, 4 );
 	    // Register ajax callback for change admin color scheme
 	    $this->loader->add_action('wp_ajax_admin_color_scheme', $plugin_admin, 'admin_color_scheme');
 	    // Register ajax callback for form deleting
@@ -141,7 +149,7 @@ class SimpleForm {
 	    $this->loader->add_action('wp_ajax_form_update', $plugin_admin, 'form_update');
         // Remove all unnecessary parameters leaving the original URL used before performing an action
 	    $this->loader->add_action( 'current_screen', $plugin_admin, 'url_cleanup' );
-
+	    
 	}
 
 	/**
@@ -168,7 +176,11 @@ class SimpleForm {
 	    // Register callback for form data validation
 		$this->loader->add_filter( 'sform_validation', $plugin_public, 'formdata_validation', 12, 1 ); 
 	    // Register callback for form data processing
-		$this->loader->add_filter( 'sform_send_email', $plugin_public, 'formdata_processing', 12, 2 );
+		$this->loader->add_filter( 'sform_send_email', $plugin_public, 'formdata_processing', 12, 10 );
+        // Send alert email
+	    $this->loader->add_filter('sform_alert', $plugin_public, 'alert_sending', 10, 8 ); 
+        // Send auto-reply
+	    $this->loader->add_action('sform_autoreply', $plugin_public, 'autoreply_sending', 10, 3 ); 
 
 	}
 
@@ -184,16 +196,15 @@ class SimpleForm {
 
 		// Register the block
 		$this->loader->add_action( 'init', $plugin_block, 'register_block' );
-		// Set the widgets check
-	    $this->loader->add_action( 'admin_init', $plugin_block, 'set_up_widgets_check', 100 );
-		// Clean up the widget areas of any non-existent and redundant form
-		$this->loader->add_action( 'sform_widgets_cleaning', $plugin_block, 'widgets_cleaning' );
 	    // Hide widget blocks if the form already appears in the page
 		$this->loader->add_filter( 'sidebars_widgets', $plugin_block, 'hide_widgets' );
-        // Add block customized style in a block theme
-        if ( version_compare( $GLOBALS['wp_version'], '5.9', '>=' ) ) {
-        $this->loader->add_action( 'after_setup_theme', $plugin_block, 'enqueue_block_styles' );		
-        }	    
+        // Add the theme support to load the form's stylesheet in the editor
+        $editor_styles_support = get_theme_support( 'editor-styles' );
+        if ( $editor_styles_support === false ) {
+          $this->loader->add_action( 'after_setup_theme', $plugin_block, 'editor_styles_support' );
+	    }
+        // Register the form stylesheet to use in the editor
+        $this->loader->add_action( 'admin_init', $plugin_block, 'add_editor_styles' );
 
 	}
 

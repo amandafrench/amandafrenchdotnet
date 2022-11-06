@@ -14,11 +14,12 @@ class zotpressLib
 	private $minlength = false;
 	private $maxresults = false;
 	private $maxperpage = false;
-	private $maxtags = false;
+	private $maxtags = 100;
 	private $style = false;
 	private $sortby = false;
 	private $order = false;
 	private $citeable = false;
+	private $collection = false;
 	private $downloadable = false;
 	private $showtags = false;
 	private $showimage = false;
@@ -27,6 +28,7 @@ class zotpressLib
 	private $toplevel = false;
 	private $target = false;
 	private $maxpages = 10; // not in shortcode yet
+	private $browsebar = true;
 
 	public function __construct()
 	{
@@ -98,6 +100,11 @@ class zotpressLib
 		$this->style = strtolower( $style );
 	}
 
+	public function setCollection($collection_id)
+	{
+		$this->collection = $collection_id;
+	}
+
 	public function setSortBy($sortby)
 	{
 		$this->sortby = strtolower( $sortby );
@@ -115,7 +122,7 @@ class zotpressLib
 
 	public function setShowTags($showtags)
 	{
-		if ( $showtags == "yes" || $showtags == "true" || $showtags == true ) $showtags = true;
+		if ( $showtags == "yes" || $showtags == "true" || $showtags === true ) $showtags = true;
 		else $showtags = false;
 
 		$this->showtags = $showtags;
@@ -123,7 +130,7 @@ class zotpressLib
 
 	public function setShowImage($showimage)
 	{
-		if ( $showimage == "yes" || $showimage == "true" || $showimage == true ) $showimage = true;
+		if ( $showimage == "yes" || $showimage == "true" || $showimage === true ) $showimage = true;
 		else $showimage = false;
 
 		$this->showimage = $showimage;
@@ -159,6 +166,13 @@ class zotpressLib
 		return $this->maxpages;
 	}
 
+	public function setBrowseBar($browsebar)
+	{
+		if ( $browsebar == "show" || $browsebar == "active" || $browsebar == "visible" || $browsebar == "yes" || $browsebar == "true" || $browsebar === true || $browsebar == 1 ) $browsebar = true;
+		else $browsebar = false;
+
+		$this->browsebar = $browsebar;
+	}
 
 	public function getLib()
 	{
@@ -181,43 +195,63 @@ class zotpressLib
 			wp_enqueue_script( 'zotpress.lib.searchbar'.$minify.'.js' );
 		}
 
-
 		// API User ID
 
 		global $api_user_id;
 
-		if ( isset($_GET['account_id']) && preg_match("/^[0-9]+$/", $_GET['account_id']) )
+		if ( isset($_GET['page'])
+				&& $_GET['page'] == "Zotpress" // REVIEW: only include GET if admin?
+				&& isset($_GET['account_id'])
+				&& preg_match("/^[0-9]+$/", $_GET['account_id']) )
 			$api_user_id = $wpdb->get_var("SELECT nickname FROM ".$wpdb->prefix."zotpress WHERE id='".$_GET['account_id']."'", OBJECT);
 		else
 			$api_user_id = $this->getAccount()->api_user_id;
 
 
 		// Collection ID
-
 		global $collection_id;
 
-		if (isset($_GET['collection_id'])
+		if ( isset($_GET['page'])
+				&& $_GET['page'] == "Zotpress" // REVIEW: only include GET if admin?
+				&& isset($_GET['collection_id'])
 				&& preg_match("/^[0-9a-zA-Z]+$/", $_GET['collection_id']))
 			$collection_id = trim($_GET['collection_id']);
+
+		// REVIEW: Added to make subcollctions on admin work (7.3.1.2)
+		else if ( isset($_GET['page'])
+				&& $_GET['page'] == "Zotpress" // REVIEW: only include GET if admin?
+				&& isset($_GET['subcollection_id'])
+				&& preg_match("/^[0-9a-zA-Z]+$/", $_GET['subcollection_id']))
+			$collection_id = trim($_GET['subcollection_id']);
+
+		// REVIEW: What happens here?
 		else
-			$collection_id = false;
+			$collection_id = $this->collection; // from false
 
 
 		// Collection Name
-
 		global $collection_name;
 
-		if ( isset($_GET['collection_name']) )
-			if ( strpos( $_GET['collection_name'], "- " ) == 0 )
-				$collection_name = stripslashes(htmlentities(strip_tags(preg_replace( "/- /", "", urldecode($_GET['collection_name']), 1 ))));
+		// if ( isset($_GET['page'])
+		// 		&& $_GET['page'] == "Zotpress" // REVIEW: only include GET if admin?
+		// 		&& isset($_GET['collection_name']) )
+		// 	if ( strpos( $_GET['collection_name'], "- " ) == 0 )
+		// 		$collection_name = stripslashes(htmlentities(strip_tags(preg_replace( "/- /", "", urldecode($_GET['collection_name']), 1 ))));
+		// 	else
+		// 		$collection_name = stripslashes(htmlentities(strip_tags(urldecode(trim($_GET['collection_name'])))));
+		// else
+		if ( isset($_GET['subcollection_name']) )
+			if ( strpos( $_GET['subcollection_name'], "- " ) == 0 )
+				$collection_name = stripslashes(htmlentities(strip_tags(preg_replace( "/- /", "", urldecode(trim($_GET['subcollection_name'])), 1 ))));
 			else
-				$collection_name = stripslashes(htmlentities(strip_tags(urldecode(trim($_GET['collection_name'])))));
+		       	$collection_name = stripslashes(htmlentities(strip_tags(urldecode(trim($_GET['subcollection_name'])))));
 		else
 			$collection_name = false;
 
-
 		// Top Level
-		if ( isset($_GET['toplevel']) )
+		if ( isset($_GET['page'])
+				&& $_GET['page'] == "Zotpress" // REVIEW: only include GET if admin?
+				&& isset($_GET['toplevel']) )
 			$this->toplevel = "toplevel";
 
 
@@ -225,192 +259,250 @@ class zotpressLib
 
 		global $tag_id;
 
-		if (isset($_GET['tag_id']) && strlen(trim($_GET['tag_id'])) > 0 )
-			$tag_id = htmlentities(strip_tags(trim($_GET['tag_id'])));
+		// if ( isset($_GET['page'])
+		// 		&& $_GET['page'] == "Zotpress" // REVIEW: only include GET if admin?
+		// 		&& isset($_GET['tag_id'])
+		// 		&& strlen(trim($_GET['tag_id'])) > 0 )
+		// 	$tag_id = htmlentities(strip_tags(trim($_GET['tag_id'])));
+		// else if
+		if ( isset($_GET['lib_tag'])
+				&& strlen(trim($_GET['lib_tag'])) > 0 )
+			$tag_id = urldecode(htmlentities(strip_tags(trim($_GET['lib_tag']))));
 		else
 			$tag_id = false;
+			// var_dump($tag_id);
+
+		// Remove default collection if tag selected
+		// REVIEW: But we want tags within collections ... I think?
+		// if ( $tag_id ) {
+		// 	$collection_id = false;
+		// 	$collection_name = false;
+		// }
 
 
-        $content .= "<div id=\"zp-Browse\">\n";
-        $content .= '<span id="ZP_API_USER_ID" style="display: none;">' .$api_user_id . '</span>';
+		// Browse instance ID
+		// REVIEW: Added post ID
+	    $instance_id = "zotpress-lib-"
+			.md5(
+				get_the_ID()
+				.$api_user_id
+				.$collection_id
+				.$collection_name
+				.$this->type
+				.$tag_id
+				.$this->style
+				.$this->sortby
+				.$this->order
+				.$this->citeable
+				.$this->downloadable
+				.$this->showtags
+				.$this->showimage
+				.$this->toplevel
+				.$this->target
+				.$this->urlwrap
+				.$this->is_admin
+				.$this->minlength
+				.$this->maxresults
+				.$this->maxperpage
+				.$this->maxtags
+				.$this->maxpages
+				.$this->filters
+				.$this->browsebar
+			);
+
+		$content .= "<a name=\"".$instance_id."\"></a>\n";
+		$content .= "<div id=\"".$instance_id."\" class=\"zp-Library zp-Browse\">\n";
+        $content .= '<span class="ZP_API_USER_ID" style="display: none;">' .$api_user_id . '</span>';
 		$content .= "\n";
-		if ( $collection_id ) $content .= '<span id="ZP_COLLECTION_ID" style="display: none;">'.$collection_id.'</span>';
-		if ( $collection_name ) $content .= '<span id="ZP_COLLECTION_NAME" style="display: none;">'.$collection_name.'</span>';
-		if ( $tag_id ) $content .= '<span id="ZP_TAG_ID" style="display: none;">'.$tag_id.'</span>';
+		if ( $collection_id ) $content .= '<span class="ZP_COLLECTION_ID" style="display: none;">'.$collection_id.'</span>';
+		if ( $collection_name ) $content .= '<span class="ZP_COLLECTION_NAME" style="display: none;">'.$collection_name.'</span>';
+		if ( $tag_id ) $content .= '<span class="ZP_TAG_ID" style="display: none;">'.$tag_id.'</span>';
 		$content .= "\n";
-		$content .= '<span id="ZP_MAXTAGS" style="display: none;">'.$this->maxtags.'</span>';
+		$content .= '<span class="ZP_MAXTAGS" style="display: none;">'.$this->maxtags.'</span>';
 		$content .= "\n";
-		$content .= '<span id="ZP_STYLE" style="display: none;">'.$this->style.'</span>';
+		$content .= '<span class="ZP_STYLE" style="display: none;">'.$this->style.'</span>';
 		$content .= "\n";
-		$content .= '<span id="ZP_SORTBY" style="display: none;">'.$this->sortby.'</span>';
+		$content .= '<span class="ZP_SORTBY" style="display: none;">'.$this->sortby.'</span>';
 		$content .= "\n";
-		$content .= '<span id="ZP_ORDER" style="display: none;">'.$this->order.'</span>';
+		$content .= '<span class="ZP_ORDER" style="display: none;">'.$this->order.'</span>';
 		$content .= "\n";
-		$content .= '<span id="ZP_CITEABLE" style="display: none;">'.$this->citeable.'</span>';
+		$content .= '<span class="ZP_CITEABLE" style="display: none;">'.$this->citeable.'</span>';
 		$content .= "\n";
-		$content .= '<span id="ZP_DOWNLOADABLE" style="display: none;">'.$this->downloadable.'</span>';
+		$content .= '<span class="ZP_DOWNLOADABLE" style="display: none;">'.$this->downloadable.'</span>';
 		$content .= "\n";
-		$content .= '<span id="ZP_SHOWTAGS" style="display: none;">'.$this->showtags.'</span>';
+		$content .= '<span class="ZP_SHOWTAGS" style="display: none;">'.$this->showtags.'</span>';
 		$content .= "\n";
-		$content .= '<span id="ZP_SHOWIMAGE" style="display: none;">'.$this->showimage.'</span>';
+		$content .= '<span class="ZP_SHOWIMAGE" style="display: none;">'.$this->showimage.'</span>';
 		$content .= "\n";
-		if ( $this->toplevel ) $content .= '<span id="ZP_TOPLEVEL" style="display: none;">'.$this->toplevel.'</span>';
-		$content .= '<span id="ZP_TARGET" style="display: none;">'.$this->target.'</span>';
+		if ( $this->toplevel ) $content .= '<span class="ZP_TOPLEVEL" style="display: none;">'.$this->toplevel.'</span>';
+		$content .= '<span class="ZP_TARGET" style="display: none;">'.$this->target.'</span>';
 		$content .= "\n";
-		$content .= '<span id="ZP_URLWRAP" style="display: none;">'.$this->urlwrap.'</span>';
-		if ( $this->is_admin ) $content .= '<span id="ZP_ISADMIN" style="display: none;">'.$this->is_admin.'</span>';
+		$content .= '<span class="ZP_URLWRAP" style="display: none;">'.$this->urlwrap.'</span>';
+		if ( $this->is_admin ) $content .= '<span class="ZP_ISADMIN" style="display: none;">'.$this->is_admin.'</span>';
+		$content .= '<span class="ZP_BROWSEBAR" style="display: none;">'.$this->browsebar.'</span>';
         $content .= "\n";
 
-            $content .= '<div id="zp-Browse-Bar">';
+		// Deal with Browse Bar by Type
+        if ( $this->type == "dropdown" ):
 
-                if ( $this->type == "dropdown" ):
+			if ( $this->browsebar ):
 
-                    $content .= '<div id="zp-Browse-Collections">';
-                        $content .= "<div class='zp-Browse-Select'>\n";
-                        $content .= "<select id='zp-Browse-Collections-Select' class='loading'>\n";
+	        	$content .= '<div class="zp-Browse-Bar">';
+	                $content .= '<div class="zp-Browse-Collections">';
+	                    $content .= "<div class='zp-Browse-Select'>\n";
+	                    $content .= "<select class='zp-Browse-Collections-Select' class='loading'>\n";
 
-                        // Set default option
-                        $content .= "<option class='loading' value='loading'>".__('Loading','zotpress')." ...</option>";
-                        if ( $tag_id ) $content .= "<option value='blank'>--".__('No Collection Selected','zotpress')."--</option>";
+	                    // Set default option
+	                    $content .= "<option class='loading' value='loading'>".__('Loading','zotpress')." ...</option>";
+	                    if ( $tag_id ) $content .= "<option value='blank'>--".__('No Collection Selected','zotpress')."--</option>";
 						// if ( ! $tag_id && ! $collection_id ) $content .= "<option value='toplevel'>".__('Top Level','zotpress')."</option>";
 						// REVIEW: Uhhhh
 						if ( ! $tag_id && ! $collection_id )
 							if ( $this->toplevel == "toplevel" || $this->toplevel === false ) $content .= "<option value='blank' class='blank'>".__('Top Level','zotpress')."</option>";
 							else if ( $this->toplevel != "toplevel" ) $content .= "<option value='blank' class='blank'>".__('Default Collection','zotpress')."</option>";
-                        $content .= "</select>\n";
-                        $content .= "</div>\n\n";
-                    $content .= '</div><!-- #zp-Browse-Collections -->';
-                    $content .= "\n";
+	                    $content .= "</select>\n";
+	                    $content .= "</div>\n\n";
+	                $content .= '</div><!-- .zp-Browse-Collections -->';
+	                $content .= "\n";
 
-                    $content .= '<div id="zp-Browse-Tags">';
-                        $content .= "<div class='zp-Browse-Select'>\n";
-                        $content .= '<select id="zp-List-Tags" name="zp-List-Tags" class="loading">';
-                        $content .= "\n<option class='loading' value='loading'>".__('Loading','zotpress')." ...</option>\n";
-                        $content .= "</select>\n";
-                        $content .= "</div>\n\n";
-                    $content .= '</div><!-- #zp-Browse-Tags -->';
-                    $content .= "\n";
+	                $content .= '<div class="zp-Browse-Tags">';
+	                    $content .= "<div class='zp-Browse-Select'>\n";
+	                    $content .= '<select class="zp-List-Tags" name="zp-List-Tags" class="loading">';
+	                    $content .= "\n<option class='loading' value='loading'>".__('Loading','zotpress')." ...</option>\n";
+	                    $content .= "</select>\n";
+	                    $content .= "</div>\n\n";
+	                $content .= '</div><!-- .zp-Browse-Tags -->';
+	                $content .= "\n";
+				$content .= '</div><!-- .zp-Browse-Bar -->';
 
-                else:
+			endif; // if Browse Bar
 
-                    $content .= '<div id="zp-Zotpress-SearchBox">';
-                        $content .= '<input id="zp-Zotpress-SearchBox-Input" class="help" type="text" value="'.__('Type to search','zotpress').'" />';
+        else: // Search Bar needs the Browse Bar / search input to function
 
-                        if ( $this->filters ):
+			$content .= '<div class="zp-Browse-Bar">';
+	            $content .= '<div class="zp-Zotpress-SearchBox">';
+	                $content .= '<input class="zp-Zotpress-SearchBox-Input" class="help" type="text" placeholder="'.__('Type to search','zotpress').'" />';
 
-                        $content .= "<div class='zp-SearchBy-Container'>";
-                        $content .= "<span class=\"zp-SearchBy\">".__('Search by','zotpress').":</span>";
+	                if ( $this->filters ):
 
-                        // Turn filter string into array
-                        $filters = explode( ",", $this->filters );
+	                $content .= "<div class='zp-SearchBy-Container'>";
+	                $content .= "<span class=\"zp-SearchBy\">".__('Search by','zotpress').":</span>";
 
-                        foreach ( $filters as $id => $filter )
-                        {
-                            // Account for singular words
-                            if ( $filter == "tags" ) $filter = "tag";
-                            else $filter = "item";
+	                // Turn filter string into array
+	                $filters = explode( ",", $this->filters );
 
-                            $content .= '<div class="zpSearchFilterContainer">';
-                            $content .= '<input type="radio" name="zpSearchFilters" id="'.$filter.'" value="'.$filter.'"';
-                            if ( $id == 0 || count($filters) == 1 ) $content .= ' checked="checked"';
-                            $content .= '><label for="'.$filter.'">'.$filter.'</label>';
-                            $content .= '</div>';
-                            $content .= "\n";
-                        }
-                        $content .= "</div>\n\n";
+	                foreach ( $filters as $id => $filter )
+	                {
+	                    // Account for singular words
+	                    if ( $filter == "tags" ) $filter = "tag";
+	                    else $filter = "item";
 
-                        endif; // Filters
+	                    $content .= '<div class="zpSearchFilterContainer">';
+	                    $content .= '<input type="radio" name="zpSearchFilters" class="'.$filter.'" value="'.$filter.'"';
+	                    if ( $id == 0 || count($filters) == 1 ) $content .= ' checked="checked"';
+	                    $content .= '><label for="'.$filter.'">'.$filter.'</label>';
+	                    $content .= '</div>';
+	                    $content .= "\n";
+	                }
+	                $content .= "</div>\n\n";
 
-
-                        // Min Length
-                        $minlength = 3; if ( $this->getMinLength() ) $minlength = intval($this->getMinLength());
-                        $content .= '<input type="hidden" id="ZOTPRESS_AC_MINLENGTH" name="ZOTPRESS_AC_MINLENGTH" value="'.$minlength.'" />';
-
-                        // Max Results per Request
-                        $maxresults = 50; if ( $this->getMaxResults() ) $maxresults = intval($this->getMaxResults());
-                        $content .= '<input type="hidden" id="ZOTPRESS_AC_MAXRESULTS" name="ZOTPRESS_AC_MAXRESULTS" value="'.$maxresults.'" />';
-
-                        // Max Per Page
-                        $maxperpage = 10; if ( $this->getMaxPerPage() ) $maxperpage = intval($this->getMaxPerPage());
-                        $content .= '<input type="hidden" id="ZOTPRESS_AC_MAXPERPAGE" name="ZOTPRESS_AC_MAXPERPAGE" value="'.$maxperpage.'" />';
-
-                        // Max Pages
-                        $maxpages = intval($this->getMaxPages());
-                        $content .= '<input type="hidden" id="ZOTPRESS_AC_MAXPAGES" name="ZOTPRESS_AC_MAXPAGES" value="'.$maxpages.'" />';
-
-                        // Downloadable, Citeable, Showimages
-                        $downloadable = false; if ( $this->downloadable ) $downloadable = $this->downloadable;
-                        $citeable = false; if ( $this->citeable ) $citeable = $this->citeable;
-                        $showimages = false; if ( $this->showimage ) $showimages = $this->showimage;
-
-                        $content .= '<input type="hidden" id="ZOTPRESS_AC_DOWNLOAD" name="ZOTPRESS_AC_DOWNLOAD" value="'.$downloadable.'" />';
-                        $content .= '<input type="hidden" id="ZOTPRESS_AC_CITE" name="ZOTPRESS_AC_CITE" value="'.$citeable.'" />';
-                        if ( $showimages ) $content .= '<input type="hidden" id="ZOTPRESS_AC_IMAGES" name="ZOTPRESS_AC_IMAGES" value="true" />';
-
-                        $content .= '<input type="hidden" id="ZOTPRESS_PLUGIN_URL" name="ZOTPRESS_PLUGIN_URL" value="'. ZOTPRESS_PLUGIN_URL.'" />';
-                        $content .= '<input type="hidden" id="ZOTPRESS_USER" name="ZOTPRESS_USER" value="'.$this->getAccount()->api_user_id.'" />';
-                    $content .= '</div>';
-                    $content .= "\n";
-
-                endif; // Type
-
-            $content .= '</div><!-- #zp-Browse-Bar -->';
-            $content .= "\n\n";
+	                endif; // Filters
 
 
-            $content .= '<div class="zp-List';
+	                // Min Length
+	                $minlength = 3; if ( $this->getMinLength() ) $minlength = intval($this->getMinLength());
+	                $content .= '<input type="hidden" class="ZOTPRESS_AC_MINLENGTH" name="ZOTPRESS_AC_MINLENGTH" value="'.$minlength.'" />';
 
-            if ( $this->type == "dropdown" )
+	                // Max Results per Request
+	                $maxresults = 50; if ( $this->getMaxResults() ) $maxresults = intval($this->getMaxResults());
+	                $content .= '<input type="hidden" class="ZOTPRESS_AC_MAXRESULTS" name="ZOTPRESS_AC_MAXRESULTS" value="'.$maxresults.'" />';
+
+	                // Max Per Page
+	                $maxperpage = 10; if ( $this->getMaxPerPage() ) $maxperpage = intval($this->getMaxPerPage());
+	                $content .= '<input type="hidden" class="ZOTPRESS_AC_MAXPERPAGE" name="ZOTPRESS_AC_MAXPERPAGE" value="'.$maxperpage.'" />';
+
+	                // Max Pages
+	                $maxpages = intval($this->getMaxPages());
+	                $content .= '<input type="hidden" class="ZOTPRESS_AC_MAXPAGES" name="ZOTPRESS_AC_MAXPAGES" value="'.$maxpages.'" />';
+
+	                // Downloadable, Citeable, Showimages
+	                $downloadable = false; if ( $this->downloadable ) $downloadable = $this->downloadable;
+	                $citeable = false; if ( $this->citeable ) $citeable = $this->citeable;
+	                $showimages = false; if ( $this->showimage ) $showimages = $this->showimage;
+
+	                $content .= '<input type="hidden" class="ZOTPRESS_AC_DOWNLOAD" name="ZOTPRESS_AC_DOWNLOAD" value="'.$downloadable.'" />';
+	                $content .= '<input type="hidden" class="ZOTPRESS_AC_CITE" name="ZOTPRESS_AC_CITE" value="'.$citeable.'" />';
+	                if ( $showimages ) $content .= '<input type="hidden" class="ZOTPRESS_AC_IMAGES" name="ZOTPRESS_AC_IMAGES" value="true" />';
+
+	                $content .= '<input type="hidden" class="ZOTPRESS_PLUGIN_URL" name="ZOTPRESS_PLUGIN_URL" value="'. ZOTPRESS_PLUGIN_URL.'" />';
+	                $content .= '<input type="hidden" class="ZOTPRESS_USER" name="ZOTPRESS_USER" value="'.$this->getAccount()->api_user_id.'" />';
+	            $content .= '</div>';
+	            $content .= "\n";
+
+			$content .= '</div><!-- .zp-Browse-Bar -->';
+
+        endif; // Type
+
+        $content .= "\n\n";
+
+
+        $content .= '<div class="zp-List';
+
+        if ( $this->type == "dropdown" )
+        {
+            $content .= ' loading">';
+
+            // Display title on dropdown version
+            if ( $collection_id )
             {
-                $content .= ' loading">';
-
-                // Display title on dropdown version
-                if ( $collection_id )
-                {
-                    $content .= "<div class='zp-Collection-Title'>";
-                        $content .= "<span class='name'>";
-                        if ( $collection_name )
-                            $content .= $collection_name;
-                        else
-                            $content .= __('Collection items','zotpress').":";
-                        $content .= "</span>";
-                        if ( is_admin() )
-                            $content .= "<label for='item_key'>".__('Collection Key','zotpress').":</label><input type='text' name='item_key' class='item_key' value='".$collection_id."'>\n";
-                    $content .= "</div>\n";
-                }
-                else if ( $tag_id ) // Top Level
-                {
-                    $content .= "<div class='zp-Collection-Title'>".__('Viewing items tagged','zotpress')." \"<strong>".str_replace("+", " ", $tag_id)."</strong>\"</div>\n";
-                }
-                else
-                {
-					// REVIEW
-					if ( $this->toplevel == "toplevel" || $this->toplevel === false )
-						$content .= "<div class='zp-Collection-Title'>".__('Top Level Items','zotpress')."</div>\n";
-					else
-						$content .= "<div class='zp-Collection-Title'>".__('Default Collection Items','zotpress')."</div>\n";
-                }
+                $content .= "<div class='zp-Collection-Title'>";
+                    $content .= "<span class='name'>";
+                    if ( $collection_name )
+                        $content .= $collection_name;
+                    else
+                        $content .= __('Collection items','zotpress').":";
+                    $content .= "</span>";
+                    if ( is_admin() )
+                        $content .= "<label for='item_key'>".__('Collection Key','zotpress').":</label><input type='text' name='item_key' class='item_key' value='".$collection_id."'>\n";
+                $content .= "</div>\n";
             }
-
-            // Searchbar
+            else if ( $tag_id ) // Top Level
+            {
+                $content .= "<div class='zp-Collection-Title'>".__('Viewing items tagged','zotpress')." \"<strong>".str_replace("+", " ", $tag_id)."</strong>\"</div>\n";
+            }
             else
             {
-                $content .= "\">";
-
-                // Autocomplete will fill this up
-                $content .= '<img class="zpSearchLoading" src="'.ZOTPRESS_PLUGIN_URL.'/images/loading_default.gif" alt="thinking" />';
+				// REVIEW
+				if ( $this->toplevel == "toplevel" || $this->toplevel === false )
+					$content .= "<div class='zp-Collection-Title'>".__('Top Level Items','zotpress')."</div>\n";
+				else
+					$content .= "<div class='zp-Collection-Title'>".__('Default Collection Items','zotpress')."</div>\n";
             }
+        }
 
-            // Container for results
-            $content .= '<div id="zpSearchResultsContainer"></div>';
+        // Searchbar
+        else
+        {
+            $content .= "\">";
 
-            // Pagination
-            $content .= '<div id="zpSearchResultsPagingContainer"><div id="zpSearchResultsPagingCrop"><div id="zpSearchResultsPaging"></div></div></div>';
+            // Autocomplete will fill this up
+            $content .= '<img class="zpSearchLoading" src="'.ZOTPRESS_PLUGIN_URL.'/images/loading_default.gif" alt="thinking" />';
+        }
 
-            $content .= '</div><!-- .zp-List -->';
-            $content .= "\n";
+        // Container for results
+        $content .= '<div class="zpSearchResultsContainer"></div>';
 
-        $content .= '</div><!-- #zp-Browse -->';
+        // Pagination
+        $content .= '<div class="zpSearchResultsPagingContainer">';
+		$content .= '<div class="zpSearchResultsPagingContainerInner">';
+		$content .= '<div class="zpSearchResultsPagingCrop">';
+		$content .= '<div class="zpSearchResultsPaging">';
+		$content .= '</div></div></div></div>';
+
+        $content .= '</div><!-- .zp-List -->';
+        $content .= "\n";
+
+        $content .= '</div><!-- .zp-Browse -->';
         $content .= "\n\n";
 
         return $content;

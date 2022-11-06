@@ -1,17 +1,19 @@
 (function( $ ) {
 	'use strict';
 	
-	 $( window ).load(function() {
+	 $( window ).on('load', function() {
 
-       $("ul#submissions-data").hover(function () {
+       $("ul#submissions-data").on('mouseenter', function() {
           $('#last-submission').addClass('unseen');
           $('#submissions-notice').removeClass('unseen');
-          }, function () {
+       });
+       
+       $("ul#submissions-data").on('mouseleave', function() {
           $('#last-submission').removeClass('unseen');
           $('#submissions-notice').addClass('unseen');
        });
        
-       $('#shortcode-copy').click(function() {
+       $('#shortcode-copy').on( 'click', function() {
 	     event.preventDefault();
          var tempInput = document.createElement('input');
          tempInput.style = "position: absolute; left: -1000px; top: -1000px";
@@ -21,26 +23,22 @@
          document.execCommand("copy");
          document.body.removeChild(tempInput);
          $('#shortcode-tooltip').text(ajax_sform_settings_options_object.copied);
-         setTimeout(function(){ $('#shortcode-tooltip').hide(); }, 1500); 
+         $('#shortcode-tooltip').removeClass('unseen');
+         setTimeout(function(){ $('#shortcode-tooltip').addClass('unseen'); $('#shortcode-tooltip').text(ajax_sform_settings_options_object.copy); }, 2000); 
        });  
        
-       $( "#shortcode-copy" ).hover(
-         function() {
-	       $('#shortcode-tooltip').text(ajax_sform_settings_options_object.copy);  
-           $('#shortcode-tooltip').show();
-         }, function() {
-           $('#shortcode-tooltip').hide();
-         }         
-       );       
+       $( "#shortcode-copy" ).on('mouseenter', function() { $('#shortcode-tooltip').removeClass('unseen'); } );     
        
-	   $('#show-for').change(function(){
+       $( "#shortcode-copy" ).on('mouseleave', function() { $('#shortcode-tooltip').addClass('unseen'); } );     
+       
+	   $('#show-for').on('change', function() {
          var user = $(this).val();
          var url = $(location).attr('href');
          var redirect_url = url + '&showfor=' + user;
          document.location.href = redirect_url;
        });
 
-       $('#name-field').on('change', function () {
+       $('#name-field').on('change', function() {
          var selectVal = $("#name-field option:selected").val();
          if ( selectVal == 'hidden' ) { $('.trname').addClass('unseen'); }
          else { $('.trname').removeClass('unseen'); 
@@ -151,10 +149,10 @@
 	        if ( selectVal == page ) { $('#set-page, #set-page-icon').addClass('unseen'); } 
 	        else { $('#set-page, #set-page-icon').removeClass('unseen'); } 
 	      } 
-          else { $('#set-page, #set-page-icon').addClass('unseen'); $('#privacy-link').click(); }
+          else { $('#set-page, #set-page-icon').addClass('unseen'); $('#privacy-link').trigger('click'); }
        });          
               
-       $('#set-page').click(function(e){
+       $('#set-page').on( 'click', function(e) {
           $('#label-error').html('');
           var string = $('textarea[name="consent-label"]').val();
           var id = $('input[name="page-id"]').val();
@@ -187,7 +185,7 @@
 		  return false;
 	   });
 
-       $('#set-page-icon').click(function(e){
+       $('#set-page-icon').on( 'click', function(e) {
           var string = $('textarea[name="consent-label"]').val();
           var id = $('input[name="page-id"]').val();
           var nonce = $('input[name="verification_nonce"]').val();
@@ -273,8 +271,8 @@
 
        $('#form-template').on('change', function () {
           var selectVal = $("#form-template option:selected").val();
-	      if ( selectVal == 'transparent' ) { $("#form-borders").removeClass('unseen'); }
-          else { $("#form-borders").addClass('unseen'); }
+	      // if ( selectVal == 'transparent' ) { $("#form-borders").removeClass('unseen'); }
+          // else { $("#form-borders").addClass('unseen'); }
 	      if ( selectVal == 'customized' ) { $("#template-notice").text(ajax_sform_settings_options_object.notes); }
           else { $("#template-notice").html('&nbsp;'); }
        });          
@@ -500,7 +498,7 @@
          }
        });
        
-	   $('#save-settings').click(function(e){
+	   $('#save-settings').on( 'click', function(e) {
 	      $('.message').removeClass('error success unchanged');
 	      $('.message').addClass('seen');
           $('.message').html(ajax_sform_settings_options_object.loading);
@@ -544,7 +542,7 @@
 	      $('.message').removeClass('seen error success unchanged');
        });
 
-       $('#save-attributes').click(function(e){
+       $('#save-attributes').on( 'click', function(e) {
 	      $('.message').removeClass('error success unchanged');
 	      $('.message').addClass('seen');
           $('.message').text(ajax_sform_settings_options_object.saving);
@@ -622,7 +620,7 @@
 	     }
        });       
        
-	   $('#form').change(function(){
+	   $('#form').on('change', function() {
          var id = $(this).val();
          var url = $(location).attr('href');
          var urlParams = new URLSearchParams(url);
@@ -775,7 +773,7 @@
          } 
        });
  
-       $('#deletion-confirm').click(function(e){
+       $('#deletion-confirm').on( 'click', function(e) {
          var formData = $('form#deletion').serialize();
 		 $.ajax({
             type: 'POST',
@@ -823,12 +821,17 @@
 	          if ( $("#starting").val() != '' && $("#starting").val() != 'next' ) { 
 		         $('.tronetime').removeClass('unseen'); 
 		      }
+	          if ( $("#starting").val() == 'next' ) { 
+		         $('.trsettings').removeClass('unseen'); 
+		      }
 		   } 
          } 
          else { 
            $('.trmoving').addClass('unseen'); 
            $('.trmoveto').addClass('unseen'); 
-           $('.tronetime').addClass('unseen'); 
+           $('.tronetime').addClass('unseen');
+           $('.trsettings').addClass('unseen');
+           $( "#settings" ).prop( "checked", false ); 
          } 
        });
 
@@ -839,6 +842,8 @@
 	  	  $( "#onetime" ).prop( "checked", true );
 	  	  $('.description.onetime').addClass('invisible');
 		  $('.tronetime').addClass('unseen'); 
+          $('.trsettings').addClass('unseen');
+          $( "#settings" ).prop( "checked", false );		  
           if ( selectVal == '' ) {
              $('.trmoveto').addClass('unseen'); 
              $('#starting').val('');
@@ -855,25 +860,46 @@
           if ( selectVal == 'next' || selectVal == '' ) {
 	          $('.tronetime').addClass('unseen'); 
 	          $( "#onetime" ).prop( "checked", false ); 
-	          $('.description.onetime').removeClass('invisible'); 
+	          $('.description.onetime').removeClass('invisible');
+              if ( selectVal == 'next' ) {
+		        $('.trsettings').removeClass('unseen'); 
+	          }
+	          else {
+		        $('.trsettings').addClass('unseen');
+		        $( "#settings" ).prop( "checked", false ); 
+	          }
 	      } 
           else { 
 	          $('.tronetime').removeClass('unseen'); 
 	          $( "#onetime" ).prop( "checked", true );
 	          $('.description.onetime').addClass('invisible');
+		      $('.trsettings').addClass('unseen');
+		      $( "#settings" ).prop( "checked", false ); 
          }
        });          
 
        $("#onetime").on("click", function() {
          if($(this).prop('checked') == true) { 
 	       $('.description.onetime').addClass('invisible');
+	       $('.trsettings').addClass('unseen');
+	       $( "#settings" ).prop( "checked", false );
          } 
          else { 
-           $('.description.onetime').removeClass('invisible'); 
+           $('.description.onetime').removeClass('invisible');
+           $('.trsettings').removeClass('unseen'); 
          } 
        });
-
-        $('#save-card').click(function(e){
+       
+       $("#settings").on("click", function() {
+         if($(this).prop('checked') == true) { 
+	       $('.description.settings').addClass('invisible');
+         } 
+         else { 
+           $('.description.settings').removeClass('invisible'); 
+         } 
+       });
+       
+        $('#save-card').on( 'click', function(e) {
 	      $('.message').removeClass('error success unchanged');
 	      $('.message').addClass('seen');
           $('.message').text(ajax_sform_settings_options_object.saving);
@@ -962,8 +988,8 @@
              document.getElementById("new-release").innerHTML = currentText;
            }  
 	     });
-       }       
-	   
+       }
+                     
    	 });
    	    	 
 })( jQuery );

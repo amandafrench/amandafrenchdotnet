@@ -6,6 +6,7 @@
 
 use ShortPixel\AI\ActiveIntegrations;
 use \ShortPixel\AI\TagRule;
+use ShortPixel\AI\Options;
 
 class ShortPixelRegexParser {
     protected $ctrl;
@@ -47,8 +48,7 @@ class ShortPixelRegexParser {
     }
 
     public function parse($content) {
-        $this->logger->log("******** REGEX PARSER BB ********* "
-            . (SHORTPIXEL_AI_DEBUG & ShortPixelAILogger::DEBUG_INCLUDE_CONTENT ? "\n\nCONTENT:" . strlen($content) . "bytes type:" . gettype($content) . "\n" . $content : ''));
+        $this->logger->log("******** REGEX PARSER BB ********* ");
 
         //add the preconnect header for faster loading of the images
         $apiUrl = parse_url($this->ctrl->settings->behaviour->api_url);
@@ -58,7 +58,7 @@ class ShortPixelRegexParser {
         // -----------------------------------------------------------------------
 
         $this->CDATAs = array();
-        $content = $this->extract_blocks($content, '__sp_cdata', '<![CDATA[', ']]>', $this->CDATAs, true);
+        $content = $this->extract_blocks($content, '__sp_cdata', '<![CDATA[', ']]>', $this->CDATAs, true, '<![CDATA[');
 
         //<noscript> blocks will have URLs replaced but eagerly
         $this->noscripts = array();
@@ -105,6 +105,9 @@ class ShortPixelRegexParser {
             $content
         ); */
 
+        //In some cases the regex fails with this limit reached (default is 1000000) so make it larger (HS#75940)
+        ini_set('pcre.backtrack_limit', 2000000);
+
         foreach (\ShortPixel\AI\TagRules::_()->items() as $tagRule) {
             SHORTPIXEL_AI_DEBUG && $this->logger->log("******** TAG RULE IS : ", $tagRule);
             if($tagRule->quickMatch && !preg_match($tagRule->quickMatch, $content)) continue;
@@ -128,7 +131,9 @@ class ShortPixelRegexParser {
                 $content = $contentReplaced;
             } else {
                 //this can happen if there are HUGE tags attributes like for example a <form with data-product_variations having a large number of variations (HS# 59186)
-                SHORTPIXEL_AI_DEBUG && $this->logger->log("******** REGEX PARSER FAILED using regex: $regex, TAG RULE: ", $tagRule);
+                SHORTPIXEL_AI_DEBUG && $this->logger->log("******** REGEX PARSER FAILED using regex: $regex, PREG ERROR:"
+                    . preg_last_error() . " bkt.limit:" . ini_get('pcre.backtrack_limit') . " rec.limit:" . ini_get('pcre.recursion_limit')
+                    . " TAG RULE: ", $tagRule);
             }
         }
 
@@ -321,8 +326,10 @@ class ShortPixelRegexParser {
         for ($i = 0; $i < count($this->styles); $i++) {
             $style = $this->styles[$i];
             //$this->logger->log("STYLE $i: $style");
-            //replace all the background-image's
+            //replace all the background-images
             $style = $this->cssParser->replace_inline_style_backgrounds($style);
+			//replace inline fonts
+	        $style = $this->cssParser->replace_inline_style_fonts($style);
 
             SHORTPIXEL_AI_DEBUG && $this->logger->log("STYLE $i REPLACED:  Content len: " . strlen($content));
             (SHORTPIXEL_AI_DEBUG & ShortPixelAILogger::DEBUG_AREA_CSS)
@@ -432,7 +439,7 @@ class ShortPixelRegexParser {
 	    for ( $i = 0; $i < count( $this->CDATAs ); $i++ ) {
 		    $content = str_replace( "<![CDATA[\n__sp_cdata_plAc3h0ldR_$i\n]]>", $this->CDATAs[ $i ], $content );
 	    }
-      
+
 	    // $content = str_replace('{{SPAI-AFFECTED-TAGS}}', implode(',', array_keys($this->ctrl->affectedTags)), $content);
 
 	    if($this->ctrl->settings->behaviour->nojquery <= 0) $this->ctrl->affectedTags->remove( 'img' );
@@ -508,9 +515,10 @@ class ShortPixelRegexParser {
      * @param $endMarker eg ]]> or </noscript>
      * @param $store - by ref. the array in which the extracted blocks will be put
      * @param bool $newLine if true it adds a new line after/before the start/end markers, needed for CDATA
+     * @param bool $endSafeguard - a safeguard if the $endMarker is missing, as for example another [CDATA[ for a [CDATA[ block.
      * @return string - the changed $content
      */
-	public function extract_blocks( $content, $id, $startMarker, $endMarker, &$store, $newLine = false ) {
+	public function extract_blocks( $content, $id, $startMarker, $endMarker, &$store, $newLine = false, $endSafeguard = false ) {
         $matches = array();
         $startMarkerRepl = $startMarker;
         if(substr($startMarker, -1) == '.') {
@@ -519,6 +527,7 @@ class ShortPixelRegexParser {
         }
         $startMarkerLen = strlen($startMarker);
         $endMarkerLen = strlen($endMarker);
+        $endSafeguardLen = $endSafeguard ? strlen($endSafeguard) : 0;
         for($idx = 0, $match = false, $len = strlen($content); $idx < $len - $endMarkerLen + 1; $idx++) {
             if($match) {
                 if(substr( $content, $idx, $endMarkerLen) == $endMarker) {
@@ -527,6 +536,11 @@ class ShortPixelRegexParser {
                     $idx += $endMarkerLen - 1;
                     $match = false;
                 }
+                elseif($endSafeguard && substr( $content, $idx, $endSafeguardLen) == $endSafeguard) {
+                    $this->logger->log(" OOPS, $endSafeguard ENCOUNTERED, dropping current block.");
+                    $match = false;
+                    $idx--;
+                }
             } else {
                 if(substr($content, $idx, $startMarkerLen) == $startMarker) {
                     $match = $idx;
@@ -534,7 +548,7 @@ class ShortPixelRegexParser {
                 }
             }
         }
-        $this->logger->log(" MATCHED $startMarker BLOCKS: " . json_encode($matches));
+        SHORTPIXEL_AI_DEBUG && $this->logger->log(" MATCHED $startMarker BLOCKS: " . json_encode($matches));
         $replacedContent = '';
         $nl = ($newLine ? "\n" : '');
         for($idx = 0; $idx < count($matches); $idx++) {
@@ -837,14 +851,21 @@ class ShortPixelRegexParser {
         }
 
         $spaiMeta = ''; $spaiMarker = ' data-spai=' . $qm . '1' . $qm; $dataLityTarget = '';
+
         $url = apply_filters('shortpixel/ai/originalUrl', $url); //# 37750
+
+        //remove loading="lazy" if present (either we do our own JS lazy loading or the $eager flag is set).
+        $text = preg_replace('/\s\bloading=["\']?lazy["\']?/s', '', $text);
+
         if($eager) {
             $extra_by_ext = ($ext == 'css' || $ext == 'js' ? '+v_' . $this->ctrl->cssCacheVer : '');
-            $extApiUrl = $this->ctrl->get_api_url(false, false, $this->ctrl->get_extension( $url ), $this->tagRule->getCustomCompression());
-            $inlinePlaceholder = $extApiUrl . $extra_by_ext . '/' . ($this->isTemplate && strpos($url, '{{:') === 0 ? $url : ShortPixelUrlTools::absoluteUrl($url));
+            $ext_api_url = $this->ctrl->get_api_url(false, false, $this->ctrl->get_extension( $url ), $this->tagRule->getCustomCompression());
+            $ext_api_url = strlen($ext_api_url) ? $ext_api_url . $extra_by_ext . '/' : '';
+            $inlinePlaceholder = $ext_api_url . ($this->isTemplate && strpos($url, '{{:') === 0 ? $url : ShortPixelUrlTools::absoluteUrl($url));
             $spaiMarker = ' data-spai-egr=' . $qm . '1' . $qm;
         } else {
             //lazy
+            //handle the data-lity TODO add this as a tag rule instead...
             if ( $tag == 'img' && $attr == 'src' && !!$this->ctrl->settings->areas->lity && preg_match('/\bdata-lity\b/', $text) ) {
                 $dataLityTarget = ' data-lity-target="' . $this->ctrl->get_api_url(false, false, $this->ctrl->get_extension( $url )) . '/' . ShortPixelUrlTools::absoluteUrl($url) . '"';
                 SHORTPIXEL_AI_DEBUG && $this->logger->log("LITY TARGET " . $dataLityTarget);

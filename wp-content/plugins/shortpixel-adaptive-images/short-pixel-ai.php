@@ -3,7 +3,7 @@
 	 * Plugin Name: ShortPixel Adaptive Images
 	 * Plugin URI: https://shortpixel.com/
 	 * Description: Display properly sized, smart cropped and optimized images on your website. Images are processed on the fly and served from our CDN.
-	 * Version: 3.2.1
+	 * Version: 3.5.3
 	 * Author: ShortPixel
 	 * GitHub Plugin URI: https://github.com/short-pixel-optimizer/shortpixel-adaptive-images
 	 * Author URI: https://shortpixel.com
@@ -15,7 +15,7 @@
     //ini_set('display_errors', 1); ini_set('display_startup_errors', 1); error_reporting(E_ALL);
 
 	if ( !class_exists( 'ShortPixelAI' ) ) {
-		define( 'SHORTPIXEL_AI_VERSION', '3.2.1' );
+		define( 'SHORTPIXEL_AI_VERSION', '3.5.3' );
 		define( 'SPAI_SNIP_VERSION', '3.0.3' );
 		define( 'SHORTPIXEL_AI_VANILLAJS_VER', '1.0' );
 		define( 'SHORTPIXEL_AI_PLUGIN_FILE', __FILE__ );
@@ -91,8 +91,7 @@
 		}
 
 		if ( !defined( 'SHORTPIXEL_AI_DEBUG' ) ) {
-			define( 'SHORTPIXEL_AI_DEBUG', isset( $_GET[ 'SHORTPIXEL_AI_DEBUG' ] ) ? $_GET[ 'SHORTPIXEL_AI_DEBUG' ]
-                : false);
+			define( 'SHORTPIXEL_AI_DEBUG', isset( $_GET['SHORTPIXEL_AI_DEBUG'] ) ? $_GET['SHORTPIXEL_AI_DEBUG'] : false );
 			//    : ShortPixelAILogger::DEBUG_INCLUDE_CONTENT | ShortPixelAILogger::DEBUG_AREA_HTML | ShortPixelAILogger::DEBUG_AREA_JSON | ShortPixelAILogger::DEBUG_AREA_CACHE | ShortPixelAILogger::DEBUG_AREA_CSS | ShortPixelAILogger::DEBUG_AREA_PHPERR);
 		}
 

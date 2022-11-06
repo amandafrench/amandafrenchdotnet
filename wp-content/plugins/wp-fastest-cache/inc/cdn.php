@@ -161,7 +161,13 @@
 			}
 
 
-			$hostname = preg_replace("/^(https?\:\/\/)?(www\d*\.)?/", "", $_SERVER["HTTP_HOST"]);
+			if(substr_count($_SERVER["HTTP_HOST"], ".") == 1){
+				// to exclude if the url is like https://www1.co
+				$hostname = preg_replace("/^(https?\:\/\/)/", "", $_SERVER["HTTP_HOST"]);
+			}else{
+				$hostname = preg_replace("/^(https?\:\/\/)?(www\d*\.)?/", "", $_SERVER["HTTP_HOST"]);
+			}
+
 
 			if(function_exists("idn_to_utf8")){
 				$hostname = idn_to_utf8($hostname);
@@ -378,6 +384,10 @@
 							$res = array("success" => true);
 						}
 
+						if(($response_code == 400) && (preg_match("/speedsize\.com/i", $_GET["url"]))){
+							$res = array("success" => true);
+						}
+
 						if(($response_code == 401) && (preg_match("/res\.cloudinary\.com/i", $_GET["url"]))){
 							$res = array("success" => true);
 						}
@@ -530,8 +540,6 @@
 					$path = WPFC_MAIN_PATH."templates/cdn/maxcdn.php";
 				}else if($_POST["id"] == "other"){
 					$path = WPFC_MAIN_PATH."templates/cdn/other.php";
-				}else if($_POST["id"] == "photon"){
-					$path = WPFC_MAIN_PATH."templates/cdn/photon.php";
 				}else if($_POST["id"] == "cloudflare"){
 					$path = WPFC_MAIN_PATH."templates/cdn/cloudflare.php";
 				}else{

@@ -39,24 +39,25 @@
 		}
 
 		public function parse( $script ) {
-			$minifier = new Minify\JS( $script );
 
 			if ( preg_match( '/(\<script[^>]*\>)(.*)(<\/script>)/sU', $script, $matches ) ) {
 				if ( !empty( $matches[ 2 ] ) ) {
                     //TODO ditch minifier and just remove comments
+                    $minifier = new Minify\JS( $matches[ 2 ] );
 					$minified_js = $minifier->minify();
 
 					$replacedUrls = $this->replaceUrls( $minified_js );
 
 					$this->logger->log( 'JS Parser [ After minify and replace (script with tag) ]: ' . $replacedUrls );
 
-					return $replacedUrls;
+					return $matches[1] . $replacedUrls . '</script>';
 				}
 			}
 			// if just JS content has been provided
 			else {
                 $this->logger->log( 'JS Parser [ Before minify (script content) ] ' );
                 //TODO ditch minifier and just remove comments
+                $minifier = new Minify\JS( $script );
 				$minified_js = $minifier->minify();
 
                 $this->logger->log( 'JS Parser [ Before replace (script content) ]: ' );

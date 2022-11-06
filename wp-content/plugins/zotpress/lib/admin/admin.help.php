@@ -410,6 +410,11 @@
                             </div>
                             <div class="example"><p><code>[zotpressLib userid="00000" type="searchbar"]</code></p></div>
                         </div>
+                        <div class="zp-Zotero-API-Attribute" data-keywords="browse,bar,dropdown,select,drop down,browse bar, navigation,menu,nav">
+                            <h4>Display > <strong>browsebar</strong></h4>
+                            <div class="description"><p>Show or hide the browse bar. Only for the dropdown version of the library. <strong>Options: hide, show [default].</strong></p></div>
+                            <div class="example"><p><code>[zotpressLib userid="00000" browsebar="hide"]</code></p></div>
+                        </div>
                         <div class="zp-Zotero-API-Attribute" data-keywords="sortby,sort by,order,order by,category">
                             <h4>Display > <strong>sortby</strong></h4>
                             <div class="description"><p>Sort multiple citations using meta data as attributes. <strong>Options: title, author, date, default (latest added) [default].</strong></p></div>

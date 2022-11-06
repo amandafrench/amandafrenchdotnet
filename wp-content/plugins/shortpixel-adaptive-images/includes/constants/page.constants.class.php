@@ -78,13 +78,13 @@
 			    $fsuUrl .= '/af/LVENHYZ28044';
             }
 
-			$not_associated_message = '<p>' . __( 'Get 1000 more free credits and 100 free monthly credits with a ShortPixel account', 'shortpixel-adaptive-images' ) . '</p>
+			$not_associated_message = '<p>' . __( 'Get 5Gb more free traffic and 500Mb free monthly traffic with a ShortPixel account', 'shortpixel-adaptive-images' ) . '</p>
 			<a href="'. $fsuUrl . '" class="bordered_link" target="_blank">' . __( 'Create an account', 'shortpixel-adaptive-images' ) . '</a>
-			<a href="' . apply_filters('spai_affiliate_link','https://shortpixel.com/loginai//') . '" class="bordered_link" target="_blank">' . __( 'I have an account, associate this domain', 'shortpixel-adaptive-images' ) . '</a>
+			<a href="' . apply_filters('spai_affiliate_link','https://shortpixel.com/login/_/associated-domains') . '" class="bordered_link" target="_blank">' . __( 'I have an account, associate this domain', 'shortpixel-adaptive-images' ) . '</a>
 			<br>';
 
 			$associated_message = '<p>' . sprintf( __( 'Please enter the API key below to display detailed stats in the plugin settings. You can also skip this and check detailed credits info in your account on the site. <a href="%s" target="_blank"><strong>Login</strong></a>',
-					'shortpixel-adaptive-images' ), apply_filters('spai_affiliate_link','https://shortpixel.com/loginai//') ) . '</p>' .
+					'shortpixel-adaptive-images' ), apply_filters('spai_affiliate_link','https://shortpixel.com/login/_/dashboard') ) . '</p>' .
 			                      '<div class="action-wrap"><label>' . __( 'API key:',
 					'shortpixel-adaptive-images' ) . ' <input type="text" name="api_key" size="30" value="{{API KEY}}"/></label><button class="blue_link" data-action="save key">' . __( 'Save', 'shortpixel-adaptive-images' ) . '</button></div>';
 
@@ -111,7 +111,7 @@
 					'<p>' . sprintf( __( 'Clear all caches and <a href="%s" target="_blank">browse your website</a> to verify that all is looking good.
 			Make sure you also verify pages that have sliders, galleries or otherwise complex display effects.',
 						'shortpixel-adaptive-images' ), site_url() ) . '
-			<a href="https://help.shortpixel.com/article/240-is-shortpixel-adaptive-images-working-well-on-my-website" target="_blank">' . __( 'How to check?', 'shortpixel-adaptive-images' ) . '</a>
+			<a href="https://shortpixel.com/knowledge-base/article/240-is-shortpixel-adaptive-images-working-well-on-my-website" target="_blank">' . __( 'How to check?', 'shortpixel-adaptive-images' ) . '</a>
 			</p>
 			<br>
 			<button class="dark_blue_link next_icon">' . __( 'Next', 'shortpixel-adaptive-images' ) . '</button>

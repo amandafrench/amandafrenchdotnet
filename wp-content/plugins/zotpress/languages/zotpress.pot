@@ -634,6 +634,10 @@ msgstr ""
 msgid "Set Image"
 msgstr ""
 
+#: zotpress.php:361
+msgid "Remove Image"
+msgstr ""
+
 #: lib/admin/admin.options.php:27 lib/admin/admin.options.php:56
 msgid "Set Reference Widget"
 msgstr ""
