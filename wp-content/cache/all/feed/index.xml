@@ -1,0 +1,629 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Amanda French dot net</title>
+	<atom:link href="https://amandafrench.net/feed/" rel="self" type="application/rss+xml" />
+	<link>https://amandafrench.net</link>
+	<description>Community, scholarly communication, digital humanities, open knowledge</description>
+	<lastBuildDate>Mon, 22 Nov 2021 19:53:31 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.9</generator>
+
+<image>
+	<url>https://amandafrench.net/wp-content/uploads/2019/09/cropped-favicon3-32x32.png</url>
+	<title>Amanda French dot net</title>
+	<link>https://amandafrench.net</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>What Greta Gerwig&#8217;s movie adaptation of Little Women gets right about the book</title>
+		<link>https://amandafrench.net/2020/01/23/what-greta-gerwigs-movie-adaptation-of-little-women-gets-right-about-the-book/</link>
+		
+		<dc:creator><![CDATA[Amanda French]]></dc:creator>
+		<pubDate>Thu, 23 Jan 2020 17:09:23 +0000</pubDate>
+				<category><![CDATA[General]]></category>
+		<guid isPermaLink="false">http://amandafrench.net/?p=1892</guid>
+
+					<description><![CDATA[I recently saw Greta Gerwig&#8217;s new version of Little Women in the theater and really enjoyed it. (Some spoilers ahead: yes, you&#8217;ve had 150 years to read the book, but not as long to see the movie, which does differ from the book in a few ways, good ways, I&#8217;d argue.) Seeing it reminded me<a class="more-link" href="https://amandafrench.net/2020/01/23/what-greta-gerwigs-movie-adaptation-of-little-women-gets-right-about-the-book/">Read more</a>]]></description>
+										<content:encoded><![CDATA[
+<p>I recently saw <a href="https://www.imdb.com/title/tt3281548/">Greta Gerwig&#8217;s new version of <em>Little Women</em></a> in the theater and really enjoyed it. (Some spoilers ahead: yes, you&#8217;ve had 150 years to read the book, but not as long to see the movie, which does differ from the book in a few ways, good ways, I&#8217;d argue.) Seeing it reminded me of a paper I wrote on the composition and publication history of <em>Little Women</em> more than twenty years ago for Steve Railton&#8217;s graduate seminar on popular 19th- and 20th-century American novels at UVA that I revised to give as a conference paper at the annual meeting of the Popular Culture Association in San Diego. I searched for the file and found it in my 1999 archives in some crazy early version of Word, which my current version of Word on my Mac wouldn&#8217;t open (back then, I think Mac and PC files were still incompatible!), so I hauled out my mother&#8217;s HP notebook and managed to tweak the Word settings on that so that I could open it. I proofread it and posted a PDF in the Humanities Commons CORE repository at <a href="https://hcommons.org/deposits/item/hc:28389/" class="autohyperlink">hcommons.org/deposits/item/hc:28389/</a> as well as uploading it here. </p>
+
+
+<a href="https://amandafrench.net/wp-content/uploads/2020/01/Little_Women_Rigmarole_1999.pdf" class="pdfemb-viewer" style="width: 600px; height: 850px; " data-width="600" data-height="850"  data-toolbar="both" data-toolbar-fixed="on">Little_Women_Rigmarole_1999<br/></a>
+<p class="wp-block-pdfemb-pdf-embedder-viewer"></p>
+
+
+
+<p>For those of you who were not in academia in 1999, please note that at that time it was not at all common to create slides for one&#8217;s talks: we wrote out our talks and then stood at the front of the room and read aloud from the paper. I still find that mode useful on some occasions, and when I adopt it, I do at least try to write with the rhythms of speech and to speak with flair. No monotones! Ugh. I had a great time at the conference, which was huge: I went to a talk on Nancy Drew, I met a South African academic and played backgammon with him in the hotel bar as he told me about protesting to end apartheid, I ate oysters and banished all thought of my credit card bill. The panel I was assigned to had plenty of people in the audience, and my paper was well-received.  </p>
+
+
+
+<p>The paper holds up, I think, perhaps less as an argument than as a piece of research. I for one tend to think of novels, especially highly successful novels, as having been painstakingly planned and crafted and revised and re-revised before publication, and as being the best possible expression of the author&#8217;s most personal beliefs and worldview, but such was decidedly not the case for <em>Little Women</em>. Alcott wrote it quickly, just to earn some money by cranking out a fairly basic and typical morality tale for girls, society then as now being ravenous for improving and inspirational stories that would help the youngsters shape up and fly right. Those scenes in the movie (and the book) of Jo in the publisher&#8217;s office flogging him some throwaway &#8220;content&#8221; for a few bucks? <em>Little Women</em> was just such a piece of content at first, but in the moral mode instead of in the horror mode. </p>
+
+
+
+<p>Most importantly, it was published in two parts: what we now think of as the book <em>Little Women</em> actually came out as two separate books published six months apart in October of 1868 and April of 1869. And even the first part was written in two parts: originally, the book ended exactly one year after it began, at Christmas, with Mr. March having returned and the girls finally getting some Christmas presents as a reward for their &#8220;pilgrim&#8217;s progress&#8221; in overcoming their various character flaws. It was only at the behest of her publisher that Alcott appended an extra chapter to the first book in which Meg and John Brooke get engaged, and she wrote that chapter without any effort to blend it in with what she&#8217;d written so far &#8212; she didn&#8217;t even have a copy of her own manuscript to consult. In the paper I do some close reading of the novel to highlight how suddenly the addition of that chapter to Part One shoves the story out of its moral improvement plot into a romantic marriage plot. Which, of course, Alcott then rebelled against in a number of ways in Part Two. </p>
+
+
+
+<p>Gerwig&#8217;s adaptation of the novel does a couple of things that are unlike any previous film version of <em>Little Women</em>, and both show that Gerwig is highly aware of the contradictions in the book that arise from its having been written and published piecemeal. First, brilliantly, she starts with the second half of the book. That&#8217;s the part that everyone loves! That&#8217;s the part where Jo really comes into her own as a writer, and that&#8217;s the part where she flat-out refuses to marry Laurie. Can you imagine if <em>Little Women</em> had ended with its strong hints in Chapter 23 that Jo <em>will</em> marry Laurie? They&#8217;re there, make no mistake. Because it&#8217;s told in flashback, the first part is made important only as grounding for the girls&#8217; adulthood. Secondly, Gerwig introduces a lot of &#8220;meta&#8221; commentary on the writing of <em>Little Women</em>, even going so far as to show an image of a book with the title <em>Little Women</em> on it with the author&#8217;s name shown as &#8220;Jo March.&#8221; I thought that went a little too far, actually, but it made its point: Jo is a figure for Louisa May Alcott. That&#8217;s clearly true in the book as well, even though to a lesser extent. Gerwig also suggests that, hey, Jo didn&#8217;t even need to marry Professor Bhaer: that was an authorial decision that could well have been driven by exactly the kind of influence that the real Thomas Niles exerted on Alcott to add a chapter &#8220;in which allusions might be made to something in the future,&#8221; such as whom the girls will marry. </p>
+
+
+
+<p>In any case, I beg your indulgence for posting here one of my grad student papers. Just thought it might be interesting for anyone who enjoyed Gerwig&#8217;s film as much as I did. Cheers!</p>
+
+
+
+<p></p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>A Visit to the Rayburn Building</title>
+		<link>https://amandafrench.net/2017/03/16/a-visit-to-the-rayburn-building/</link>
+		
+		<dc:creator><![CDATA[Amanda French]]></dc:creator>
+		<pubDate>Thu, 16 Mar 2017 21:18:03 +0000</pubDate>
+				<category><![CDATA[General]]></category>
+		<guid isPermaLink="false">http://amandafrench.net/?p=1515</guid>
+
+					<description><![CDATA[Two weeks ago I went to DC to have various meetings related to my new position at George Washington University as Director of the Resilient Networks project (about which more later). In early February, knowing I would be in DC for that purpose in that first week of March, I emailed my House representative, Congressman<a class="more-link" href="https://amandafrench.net/2017/03/16/a-visit-to-the-rayburn-building/">Read more</a>]]></description>
+										<content:encoded><![CDATA[<p><figure id="attachment_1524" aria-describedby="caption-attachment-1524" style="width: 380px" class="wp-caption alignleft"><a href="http://montgomerymuseum.omeka.net/items/show/39"><img class="wp-image-1524 size-full" src="https://amandafrench.net/wp-content/uploads/2017/03/family_musicians_1940s_small.jpg" alt="" width="380" height="508" /></a><figcaption id="caption-attachment-1524" class="wp-caption-text">The Walter Sidney Miller Family Musicians. Digitized with NEH funds.</figcaption></figure></p>
+<p>Two weeks ago I went to DC to have various meetings related to my new position at George Washington University as Director of the <a href="https://mellon.org/grants/grants-database/grants/the-george-washington-university/11600667/">Resilient Networks project</a> (about which more later). In early February, knowing I would be in DC for that purpose in that first week of March, I emailed my House representative, Congressman Morgan Griffith, for an appointment to express to him my support of the NEH. He makes it quite easy, which I appreciated – he had a <a href="https://morgangriffith.house.gov/contact/meetingrequest.htm">form on his website for requesting an appointment</a>, and his staff responded within a few days to set up a meeting for me in DC with the Congressman’s Legislative Correspondent, Elliott Silverman. On the advice of Virginia Tech’s Professor Tom Ewing, before I made the appointment I called Virginia Tech’s Office of Government Relations to let them know about my planned visit; they were having a very busy week that week, what with the travel ban, but they too responded quickly and told me that as long as I was going as a private citizen and not as an official representative of Virginia Tech, they didn’t need to be involved.</p>
+<p>There are things I would trade the NEH for. I personally would give up the NEH (and maybe even the NEA, and the IMLS, and the Wilson Center, and the Corporation for Public Broadcasting) for universal health care, for entrenched federal protection of civil liberties for LGBTQ citizens, for policies that welcome refugees and immigrants after an appropriate amount of vetting, for anything that keeps Black people from being killed by the police, even for an infrastructure bill that created millions of stable, good-paying jobs to build and repair things (as long as the proposed infrastructure to be built is not something as useless and offensive as That Wall). But I decided to advocate for the NEH not because it’s the most important issue facing us in these weird days, but because it’s the one I know the most about. And that conceit of “trading” one federal program for another is just a fantasy: no one is offering to make any such trade, and if anyone were to offer, I wouldn’t believe them—I’d be certain that I’d give up the NEH only to find that universal healthcare never materialized. Similarly, I think that those who propose to eliminate the NEH don’t do so in order to free up the funds for other purposes: it’s primarily a matter of theory, or principle (a kinder word than “ideology”). Those principles hold that the federal government shouldn’t fund the arts and humanities and that the federal government should be smaller.</p>
+<p>I don’t know whether strongly held principles can be dislodged by real-life cases: I suspect not, or rarely, or only over a great deal of time. Suffice it to say that my principles hold that the federal government should definitely devote a little money to supporting the arts and humanities and libraries and museums in addition to all the other things we ask it to support. It makes us seem to be a better nation globally, and I think it actually makes us a better nation. I’m also all for a more streamlined federal government, but if you’re going to ensmallen (a perfectly cromulent word) the US government in any effective way, you should probably start with the biggest parts of it and not the smallest ones. When you’re cleaning out the garage, you should start by getting rid of the broken car and the broken dishwasher and the broken bicycle and the broken leaf blower rather than getting rid of four toggle bolts.</p>
+<p>In any case. On Wednesday, March 1st, I left an hour-long 1pm call with Toniesha Taylor at Prairie View A&amp;M (one of the partners on the Resilient Networks project) a little early to run and grab a cab across town from GWU’s Gelman Library over to the Rayburn Building.</p>
+<p style="text-align: center;"><iframe style="border: 0;" src="https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d24842.821637970686!2d-77.04566864653876!3d38.89304902010685!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e6!4m5!1s0x89b7b7b1b022e2c9%3A0xf0d1febd782fab15!2sGelman+Library+-+GW+Libraries%2C+H+Street+Northwest%2C+Washington%2C+DC!3m2!1d38.899246999999995!2d-77.0484409!4m5!1s0x89b7b780a1ced5d3%3A0x29b15a125c8f6e70!2sRayburn+House+Office+Building%2C+Washington%2C+DC+20515!3m2!1d38.8871071!2d-77.01047489999999!5e0!3m2!1sen!2sus!4v1489695929576" width="600" height="450" frameborder="0" allowfullscreen="allowfullscreen"></iframe></p>
+<p>Even though I had been careful to book the meeting at 2:15pm instead of 2pm, I was still running a little late (AS USUAL), so I sent an email to that effect with my phone from the cab. It’s dreadful etiquette to be late, I know, but I wasn’t really THAT late, and I relied on the kindness and humanity of the Congressman’s office to be understanding. Also, I figured if anything, I was only hurting myself (and possibly the NEH), since I knew I’d only have about 15 minutes to make my case. The cab ran into complete gridlock in front of the building itself: seems like a lot of people were headed to the Rayburn Building. At about 2:14pm I was out of the cab and in front of the building, and I was grateful that the line through the metal detector wasn’t very long at all and was moving briskly.</p>
+<p>I followed the signs to room 2002, which didn’t look at all like the correct room. About eight or ten young staffers were sitting at desks in a kind of bullpen, and I caught the eye of one who was free who was eating something and had to finish chewing and swallowing before she apologized for keeping me waiting (which of course I didn’t mind at all, though I was still feeling anxious and rushed because I was late). I explained I was looking for Congressman Griffith’s Office, and they looked blankly at each other, at which point I rechecked my phone and realized that I was looking for room 2202 instead and was at that moment intruding upon the time (and lunch) of folks in the Liaison Office for the Navy. They helpfully pointed me in the right direction, so I finally bumbled my bumbling way up to the correct room via a beautiful marble-treaded stairway and made my presence known.</p>
+<p>This looked more like a congressman’s office, with a pair of reception desks in a kind of foyer, manned by a couple of young men in suits. (So many of the people I met in the Rayburn building seemed so young: mid-twenties or so. I remember that phenomenon from living in DC before. Those who govern are often in their mid-sixties at least, but their staffs are always barely out of college, seems like. The people in their thirties and forties and fifties don’t even seem to work in government.) They were chill about my tardiness, bless them, and I waited for just a couple of minutes before Mr. Silverman (also young) came out to meet me. We shook hands and exchanged business cards, and then he took me into a big, very Congressional-looking office, with that typical DC décor of silk curtains and carpet and bookcases and Colonial furniture. There was a bag of Fritos on the Colonial couch, which he apologized for.</p>
+<p>And then I went into my spiel, which is encapsulated in this one-page document, which I printed out and gave to Mr. Silverman:</p>
+<p><a href="https://amandafrench.net/wp-content/uploads/2017/03/NEH_Contributions_VA_9th_Dist.pdf" class="pdfemb-viewer" style="width: 600px; height: 850px; " data-width="600" data-height="850"  data-toolbar="both" data-toolbar-fixed="on">NEH_Contributions_VA_9th_Dist<br/></a>The first thing I mentioned was that the NEH has given Virginia’s Ninth District nearly two million dollars in direct funding in the last twenty years. Mr. Silverman looked visibly surprised at that, which I took to be a good sign. Not all of it has gone to large research universities like Virginia Tech, either, and much of it has gone to projects that, I dare swear, even conservatives would approve of. Congressman Griffith has most recently been working hard to retain a provision in the Affordable Care Act (which otherwise he is keen to repeal) that benefits coal miners, making it unnecessary for them to submit extensive and burdensome documentation in support of claims related to black lung, which certainly seems like a provision I can get behind. Knowing of Congressman Griffith’s support for coal miners, I made sure to mention the most recently funded NEH project in the district, which is a project at Radford University to preserve historic images in their collection of coal miners and their culture.</p>
+<p><figure id="attachment_1520" aria-describedby="caption-attachment-1520" style="width: 339px" class="wp-caption alignright"><a href="http://montgomerymuseum.omeka.net/items/show/53"><img class="wp-image-1520" src="https://amandafrench.net/wp-content/uploads/2017/03/VA_TN_RR_Stock_Certificate_1852_small-600x389.jpg" alt="VA_TN_RR_Stock_Certificate_1852_small" width="339" height="220" srcset="https://amandafrench.net/wp-content/uploads/2017/03/VA_TN_RR_Stock_Certificate_1852_small-600x389.jpg 600w, https://amandafrench.net/wp-content/uploads/2017/03/VA_TN_RR_Stock_Certificate_1852_small-768x498.jpg 768w, https://amandafrench.net/wp-content/uploads/2017/03/VA_TN_RR_Stock_Certificate_1852_small.jpg 1000w" sizes="(max-width: 339px) 100vw, 339px" /></a><figcaption id="caption-attachment-1520" class="wp-caption-text">19th-century Stock Certificate for the Virginia &amp; Tennessee Rail Road Company. Digitized with NEH funds.</figcaption></figure></p>
+<p>I’m afraid, but also rather glad, that very early on in my fifteen-minute meeting at the Rayburn Building I stopped advocating for the NEH and instead started talking about the three high-resolution color images I had printed out and attached to the one-pager. All three were historic images brought in to the Christiansburg Public Library last year for digitization as part of the Montgomery County Memory project initiated by Samantha Parish and funded by the NEH as part of its Common Heritage program. I mean, a survey map of the region from 1795! How cool is that! I would never have expected someone to bring in something like that. Another of the three was the 1930s or 1940s photograph of a family of musicians that heads this post, and the third was a nineteenth-century stock certificate for the Virginia Tennessee Rail Road Company.</p>
+<p><figure id="attachment_1525" aria-describedby="caption-attachment-1525" style="width: 401px" class="wp-caption alignleft"><a href="http://montgomerymuseum.omeka.net/items/show/3"><img class="wp-image-1525 size-medium" src="https://amandafrench.net/wp-content/uploads/2017/03/land_survey_1795_small-401x600.jpg" alt="" width="401" height="600" srcset="https://amandafrench.net/wp-content/uploads/2017/03/land_survey_1795_small-401x600.jpg 401w, https://amandafrench.net/wp-content/uploads/2017/03/land_survey_1795_small-768x1148.jpg 768w, https://amandafrench.net/wp-content/uploads/2017/03/land_survey_1795_small-685x1024.jpg 685w, https://amandafrench.net/wp-content/uploads/2017/03/land_survey_1795_small.jpg 900w" sizes="(max-width: 401px) 100vw, 401px" /></a><figcaption id="caption-attachment-1525" class="wp-caption-text">1795 Land Survey of Poor Mountain, Elliston, VA. Digitized with NEH funds.</figcaption></figure></p>
+<p>Another encouraging sign from Mr. Silverman was that he took special note of that survey map; he mentioned that it might well be from the very area where Congressman Griffith grew up. He also closed our meeting by mentioning that he himself had studied the humanities: his <a href="https://www.linkedin.com/in/elliott-silverman-1a274159/">LinkedIn profile</a> reveals that he minored in U.S. History at Southern Methodist University.</p>
+<p>None of those small signs of encouragement necessarily mean that Congressman Griffith will refuse to zero out the budget of the NEH, NEA, IMLS and similar agencies, of course. But his office was more than willing to hear me out on the subject, which I appreciated. I’ve also heard from a few colleagues who participated in Humanities Advocacy Day earlier this week that there may well be broad bipartisan support for retaining these agencies, and I take comfort from the knowledge that only a few months ago Dr. Carla Hayden was confirmed as Librarian of Congress with bipartisan support.</p>
+<p>Many individuals and organizations have been writing advocacy guides and statements of support this week. Here’s a select list:</p>
+<p>• &#8220;<a href="https://medium.com/@jasonrhody/to-protect-the-arts-and-humanities-go-local-3577df55e422#.2e9hvfjgs">To Protect the Arts and Humanities, Go Loca</a>l,&#8221; by Jason Rhody<br />
+• &#8220;<a href="https://www.lotfortynine.org/2017/03/federal-cuts-are-about-you-and-me/">Federal Cuts are About You and Me</a>,&#8221; by Sheila Brennan<br />
+• &#8220;<a href="https://www.diglib.org/archives/13694/">Statement on US Administration Proposal</a>,&#8221; by Digital Library Federation Leadership<br />
+• Anything by the <a href="http://www.nhalliance.org/">National Humanities Alliance</a></p>
+<p>In such a climate of turmoil for the humanities, it seems arrogant to suppose that anyone will care that I have a new position, but, yes, I have a new position, which is why I was in DC to begin with. I am directing the <a href="https://mellon.org/grants/grants-database/grants/the-george-washington-university/11600667/">Resilient Networks project</a>, a Mellon-funded project to create a support network for the digital humanities with four institutional partners: George Washington University (where I’m now an employee in the Libraries), Davidson College, Rice University, and Prairie View A&amp;M. The project is funded by the Mellon Foundation, so my new position is in no danger of disappearing, unlike some others I might name. I’ll add here that my reasons for leaving Virginia Tech were primarily personal (mainly geographical): I have nothing but respect for the direction Dean Tyler Walters is taking the library, and I’m sorry to leave some of the projects I had percolating there, not least my support role on <a href="https://liberalarts.vt.edu/departments-and-schools/department-of-history/faculty/edward-gitre.html">Dr. Ed Gitre’s</a> “American Soldier” project to create an online full-text database where students and members of the public can read and transcribe tens of thousands of descriptions by WWII soldiers of their military and wartime experiences – a project for which we collaborated on a proposal to the NEH’s Humanities Collections and Reference Resources program. I think it was a marvelous proposal, fully deserving of funding. I hope the country agrees with me.</p>
+<h2 style="text-align: center;"><a href="https://www.neh.gov/">The National Endowment for the Humanities. A good thing. </a></h2>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>THATCamp, me, and Virginia Tech Libraries</title>
+		<link>https://amandafrench.net/2015/04/13/thatcamp-me-and-virginia-tech-libraries/</link>
+					<comments>https://amandafrench.net/2015/04/13/thatcamp-me-and-virginia-tech-libraries/#comments</comments>
+		
+		<dc:creator><![CDATA[Amanda French]]></dc:creator>
+		<pubDate>Mon, 13 Apr 2015 18:02:40 +0000</pubDate>
+				<category><![CDATA[Career]]></category>
+		<category><![CDATA[General]]></category>
+		<category><![CDATA[Unconferences]]></category>
+		<guid isPermaLink="false">http://amandafrench.net/?p=1421</guid>
+
+					<description><![CDATA[This is a &#8220;book.&#8221; That is, an audio cassette. This other &#8220;book&#8221; is a screen and a microchip. This other &#8220;book,&#8221; the sky. &#8211;Albert Goldbarth, &#8220;Library,&#8221; Saving Lives, Ohio State University Press. Originally published in The Iowa Review 29.1 (Spring 1999). Reproduced by Poetry Daily by permission. &#160; Going to the second-ever THATCamp at the<a class="more-link" href="https://amandafrench.net/2015/04/13/thatcamp-me-and-virginia-tech-libraries/">Read more</a>]]></description>
+										<content:encoded><![CDATA[<blockquote style="margin-left:4em; font-size:8pt;"><p>
+<br />
+This is a &#8220;book.&#8221; That is, an audio cassette. This other &#8220;book&#8221; is a screen<br />
+<span style="margin-left:4em;">and a microchip. This other &#8220;book,&#8221; the sky.</span></p>
+<p>&#8211;Albert Goldbarth, <a href="http://poems.com/special_features/library.htm">&#8220;Library,&#8221;</a> <em>Saving Lives</em>, Ohio State University Press. Originally published in <em>The Iowa Review</em> 29.1 (Spring 1999). Reproduced by <em>Poetry Daily</em> by permission.
+</p></blockquote>
+<p>&nbsp;</p>
+<p>Going to the second-ever <a href="http://chnm2009.thatcamp.org">THATCamp</a> at the Roy Rosenzweig Center for History and New Media back in 2009 was definitely one of the best career decisions I&#8217;ve ever made. It was exciting, and interesting, and informal, and generally one of the most fun, productive, and collegial academic experiences I had ever had. I was therefore thrilled when <a href="http://dancohen.org">Dan Cohen</a> and <a href="http://foundhistory.org">Tom Scheinfeldt</a> asked me to come to RRCHNM to serve as THATCamp Coordinator on a <a href="http://mellon.org/grants/grants-database/grants/george-mason-university/11000701/">two-year grant</a> from the Scholarly Communications program of the Mellon Foundation. Building on the work that <a href="http://clioweb.org">Jeremy Boggs</a>, <a href="http://davelester.org">Dave Lester</a>, and <a href="https://sloan.org/about/staff/joshua-m-greenberg">Josh Greenberg</a> had done in creating THATCamp was easy, not least because other visionaries like <a href="http://beta.fromthepage.com/">Ben Brumfield</a> and <a href="http://thickbook.com">Julie Meloni</a> and <a href="http://erinbell.org">Erin Bell</a> and <a href="https://orcid.org/0000-0003-1433-5453">Daniel Chamberlain</a> and <a href="http://anthropology.msu.edu/blog/people/ethan-watrall/">Ethan Watrall</a> and <a href="http://oep.hypotheses.org/author/dacos">Marin Dacos</a> had begun to organize THATCamps of their own in <a href="https://web.archive.org/web/20111102205943/http://www.thatcampaustin.org/">Austin</a>, the <a href="http://pnw2009.thatcamp.org">Pacific Northwest</a>, <a href="http://columbus2010.thatcamp.org">Columbus</a>, <a href="http://socal2010.thatcamp.org">Southern California</a>, and <a href="https://tcp.hypotheses.org/category/thatcamp-paris-2010">Paris</a> before I ever entered the picture officially. Seemingly without any effort on my part besides the obvious (cough website), THATCamp <a href="http://thatcamp.org/camps">spread and spread and spread</a>, and more and more people told me that it was fun, productive, collegial, and, above all, useful. </p>
+<p>It&#8217;s been just over a year since I left RRCHNM upon the expiration of the <a href="http://mellon.org/grants/grants-database/grants/george-mason-university/11200697/">second two-year Mellon THATCamp grant</a>, a grant whose primary purpose was to make sure that THATCamp could sustain itself through volunteer efforts. I joked fairly often from 2012-2014 that my job was to eliminate my job, and I&#8217;m actually quite proud of the work I did in that period to make THATCamp mostly self-sustaining (although I must admit that a fair amount of work has fallen on Patrick Murray-John in the last year as RRCHNM appointee and as Chair of the <a href="http://thatcamp.org/about/council/">THATCamp Council</a> in the last year: you rock, Patrick!). I always believed that THATCamp should be a community-run project: the last thing I wanted was to milk the funding agencies for unnecessary money just to keep myself employed. But, of course, personally, I was getting very tired of bouncing from term-limited job to term-limited job. It would be nice to say that I&#8217;ve spent the last year writing a book or developing software, but in fact I&#8217;ve spent the last year doing freelance grant-writing (notably for the Modern Language Association&#8217;s new alt-ac <a href="https://connect.mla.hcommons.org/">Connected Academics</a> initiative), running the second instance of Northwestern&#8217;s Arthur Vining Davis <a href="http://sites.northwestern.edu/dh/">Digital Humanities Summer Faculty Workshop</a>, participating in a couple of <a href="http://booksprints.net">book sprints</a>, working a little bit on my <a href="http://steepletoplibrary.org">online catalog of Edna St. Vincent Millay&#8217;s personal library</a>, and, of course, job-hunting. </p>
+<p>I&#8217;m therefore very pleased to announce that after a long search (46 rows in my job-hunting spreadsheet, 39 cover letters written, 14 or more phone or online interviews, and 4 on-site interviews), I&#8217;ve found a position I&#8217;m really excited about. I will be joining the <a href="http://www.lib.vt.edu/">Virginia Tech Libraries</a> as Director of Research and Informatics beginning Wednesday, April 22nd. The Virginia Tech Libraries are clearly heading in a great direction under the leadership of <a href="https://search.vt.edu/search/person.html?person=1618190">Dr. Tyler Walters</a>, who is also the founding director of the new and interesting <a href="http://www.arl.org/focus-areas/shared-access-research-ecosystem-share#.VSv4hWa_Cyc">SHARE</a> project, and I can&#8217;t wait to work with him and with Associate Dean of Research and Informatics <a href="https://search.vt.edu/search/person.html?person=1673956">Julie Speer Griffin</a> (to whom I&#8217;ll be reporting). The announcement was made at Virginia Tech last Friday, on the first day of <a href="http://virginia2015.thatcamp.org">THATCamp Virginia 2015</a>, where I got to meet and re-meet many of Virginia Tech Libraries&#8217; terrific team of librarians and archivists as well as many smart and friendly Virginia Tech faculty and grad students from English, History, and Computer Science. A more perfect welcome for me is impossible to imagine (obligatory &#8220;closing of the circle&#8221; reference, gratuitous <a href="https://www.youtube.com/watch?v=utQz_4jQaZE">link to corny Joni Mitchell song</a>). </p>
+<p>Virginia Tech is the place where <a href="http://etd.vt.edu/">Electronic Theses and Dissertations got their first strong start</a>; it&#8217;s the place where the universally-used <a href="https://uflib.illiad.oclc.org/illiad/FUG/illiad.dll?Action=10&amp;Form=1">ILLIAD system for Interlibrary Loan was invented</a>; and it&#8217;s the place where I plan to spend my own foreseeable and unforeseeable future, helping to develop and implement all kinds of libraryish and libraryesque technologies and initiatives. Libraries are my happy places, and this library in particular, I&#8217;m certain, is going to be a particularly happy place for me to spend a good long time. I&#8217;ll do my very best to fulfill the tremendous early promise of this promising beginning. </p>
+<p>Special thanks to <a href="http://www.trevorowens.org/">Trevor Owens</a>, who suggested I apply, and to Dan Cohen, from whom I&#8217;ve <a href="http://www.dancohen.org/2013/03/05/the-digital-public-library-of-america-me-and-you/">borrowed a title</a>. </p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://amandafrench.net/2015/04/13/thatcamp-me-and-virginia-tech-libraries/feed/</wfw:commentRss>
+			<slash:comments>6</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>On some books in Edna St. Vincent Millay&#8217;s library</title>
+		<link>https://amandafrench.net/2014/09/25/on-some-books-in-edna-st-vincent-millays-library/</link>
+		
+		<dc:creator><![CDATA[Amanda French]]></dc:creator>
+		<pubDate>Thu, 25 Sep 2014 22:37:35 +0000</pubDate>
+				<category><![CDATA[Literature]]></category>
+		<guid isPermaLink="false">http://amandafrench.net/?p=1346</guid>
+
+					<description><![CDATA[When my mother and I first entered the library at Steepletop in 2010, the first book I saw was Ulysses, lying flat and nonchalant upon a table as though it had a perfect right to be there. “!!!!” I thought, though “thought” is not the right word for that moment of éclat. It would be<a class="more-link" href="https://amandafrench.net/2014/09/25/on-some-books-in-edna-st-vincent-millays-library/">Read more</a>]]></description>
+										<content:encoded><![CDATA[<p><a href="http://2.bp.blogspot.com/-M9ME89M23rY/UmSQGnN2KcI/AAAAAAAADJI/PWtGUY2zXNg/s640/bdw_Steepletop_Edna_St_Vincent_Millay_Library.jpg"><img class="alignleft" style="margin: 10px;" src="https://2.bp.blogspot.com/-M9ME89M23rY/UmSQGnN2KcI/AAAAAAAADJI/PWtGUY2zXNg/s640/bdw_Steepletop_Edna_St_Vincent_Millay_Library.jpg" alt="" width="500" height="333" /></a></p>
+<p>When my mother and I first entered the <a href="https://steepletoplibrary.org">library at Steepletop</a> in 2010, the first book I saw was <em>Ulysses</em>, lying flat and nonchalant upon a table as though it had a perfect right to be there. “!!!!” I thought, though “thought” is not the right word for that moment of éclat. It would be difficult to think of two writers more different than Joyce and Millay, though of course they were near contemporaries; the only thing more astonishing than seeing <em>Ulysses</em> in Millay’s library might be seeing <em>A Few Figs From Thistles</em> in Joyce’s.</p>
+<p>The rest of the Steepletop library created almost as great an impact on me, though mostly for its volume of volumes. It’s rare for a writer’s personal library to remain posthumously intact, and even rarer for the books to remain in the very place where the writer read them. Looking at them, I had a thought that did manifest in actual words: “This should be a database.” I therefore wrote to Peter Bergman, then executive director of the Millay Society (which operates Steepletop as a historic house museum), and he put me in touch with <a href="http://www.linkedin.com/pub/maureen-o-connor/14/b97/394">retired librarian Maureen O’Connor</a>, who with other volunteers had begun to catalog the books at Steepletop. Maureen provided me with the <a href="http://www.steepletoplibrary.org/items/show/1299">initial 1950 inventory</a> of books given to her by Millay’s one-time literary executor Elizabeth Barnett and, later, the set of <a href="http://www.steepletoplibrary.org/items/show/1300">index cards</a> from the more recent (daunting) effort to catalog the library. I spoke briefly about the project, and about some initial conclusions I had drawn from my work entering the data and building the online catalog, on <a href="https://amandafrench.net/2013/03/28/things-my-computer-poems/">a panel at the Modern Language Association</a> in January of 2014. After several years of on-again off-again work, we do now have a provisional online catalog that lists over 1200 works available at <a href="http://steepletoplibrary.org">steepletoplibrary.org</a>.</p>
+<p>Much remains to be done, however. The initial typed inventory of 1950 appears to lack some pages, and in any case it lists only authors and titles, lacking all edition information. Since Steepletop first opened to the public in 2010, volunteers have quite rightly focused on other efforts than the catalog, and so the card index is also incomplete. But more urgent even than ensuring that the books properly cataloged and described is ensuring that they are preserved: Steepletop lacks climate control. The Millay Society has therefore launched a fundraising campaign to <a href="http://www.indiegogo.com/projects/save-edna-st-vincent-millay-s-library">save Millay’s library at Steepletop</a> by raising money to install an HVAC system to keep the books in good condition.</p>
+<p>In support of these efforts, I have undertaken to write a few brief squibs about some of the books in the library at Steepletop while the fundraising campaign continues, using the “Exhibits” feature of Omeka (which is the platform for the catalog) to feature some interesting works. I&#8217;ve started with a few books by prominent modernists, including that very <em>Ulysses</em> that first grabbed me. Pardon the emphasis:</p>
+<h3 style="text-align: center;"><a href="http://www.steepletoplibrary.org/exhibits/show/modernist-books">See the exhibit on Modernist Books at Steepletop Library</a></h3>
+<p>There are probably swathes of information about Millay’s relationship to these and others of her books in various archives, in the attics at Steepletop, or in the margins of the copies themselves, but I haven’t yet been able to explore these beswagged chambers of potential knowledge; these hasty efforts are provisional drafts that I hope to revise in the future. But in any case, to me the significance of a library like this isn’t only what the books say or imply about Millay and her works, but also what the books reveal about their historical moment: they are <a href="http://www.poets.org/poetsorg/poem/memory-w-b-yeats">“a way of happening, a mouth”</a>, things that have survived that are worthy in themselves of consideration. I’m enjoying researching them, and whether you enjoy what I write or not, I hope you’ll consider passing the word along to others about them.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Omeka links for the University of Colorado</title>
+		<link>https://amandafrench.net/2014/07/24/omeka-links-for-the-university-of-colorado/</link>
+		
+		<dc:creator><![CDATA[Amanda French]]></dc:creator>
+		<pubDate>Thu, 24 Jul 2014 15:09:42 +0000</pubDate>
+				<category><![CDATA[General]]></category>
+		<guid isPermaLink="false">http://amandafrench.net/?p=1336</guid>
+
+					<description><![CDATA[Introduction omeka.net omeka.org Roy Rosenzweig Center for History and New Media Dublin Core User Guide &#8212; Creating Metadata “1920 Snow Drifts in Loveland, Colorado,” The Ora Bontrager Postcard Collection, accessed July 24, 2014, bontragercollection.omeka.net/items/show/5. The Archive of the Waldorf-Astoria City of Boston Archives Steepletop Library &#160; For Archives, Libraries, and Museums Digital Public Library of<a class="more-link" href="https://amandafrench.net/2014/07/24/omeka-links-for-the-university-of-colorado/">Read more</a>]]></description>
+										<content:encoded><![CDATA[<h1>Introduction</h1>
+<ul>
+<li><a title="omeka.net" href="http://omeka.net">omeka.net</a></li>
+<li><a title="omeka.org" href="http://omeka.org">omeka.org</a></li>
+<li><a title="RRCHNM" href="http://chnm.gmu.edu">Roy Rosenzweig Center for History and New Media</a></li>
+<li><a href="https://dublincore.org/resources/userguide/creating_metadata/">Dublin Core User Guide &#8212; Creating Metadata</a></li>
+<li>“1920 Snow Drifts in Loveland, Colorado,” <em>The Ora Bontrager Postcard Collection</em>, accessed July 24, 2014, <a href="http://bontragercollection.omeka.net/items/show/5">bontragercollection.omeka.net/items/show/5</a>.</li>
+<li><a href="http://www.waldorfnewyorkcity.com/archive/">The Archive of the Waldorf-Astoria</a></li>
+<li><a href="http://cityofbostonarchives.omeka.net/">City of Boston Archives</a></li>
+<li><a href="http://steepletoplibrary.org">Steepletop Library</a></li>
+</ul>
+<p>&nbsp;</p>
+<h1>For Archives, Libraries, and Museums</h1>
+<ul>
+<li><a href="http://dp.la/exhibitions">Digital Public Library of America Exhibitions</a></li>
+<li><a href="http://exhibitions.europeana.eu/">Europeana Exhibitions</a></li>
+<li><a href="http://dpuspecialcollections.omeka.net/items">DePaul University Libraries Special Collections</a></li>
+<li><a href="http://omeka.org/add-ons/plugins/library-of-congress-suggest/">LC Suggest</a></li>
+<li><a href="http://omeka.org/add-ons/plugins/library-of-congress-subject-headings/">Library of Congress Subject Headings</a></li>
+<li><a href="http://omeka.org/add-ons/plugins/ead-importer/">EAD Importer</a></li>
+<li><a href="http://omeka.org/add-ons/plugins/fedoraconnector/">FedoraConnector</a></li>
+<li><a href="http://omeka.org/add-ons/plugins/oai-pmh-harvester/">OAI-PMH Harvester</a></li>
+<li><a href="http://omeka.org/add-ons/plugins/catalog-search/">Catalog Search</a></li>
+<li><a href="http://omeka.org/add-ons/plugins/scripto/">Scripto</a></li>
+<li><a href="https://omeka.org/classic/plugins/BatchUpload/">Batch Importing</a></li>
+</ul>
+<p>&nbsp;</p>
+<h1>In the Classroom</h1>
+<ul>
+<li><a href="http://omeka.org/codex/Teach_with_Omeka">Teach with Omeka</a></li>
+<li><a href="https://web.archive.org/web/20160710054957/http://aphdigital.org/classes/G572033F09/">Creating Digital History</a>, Amanda French and Peter Wosh, New York University, fall 2009</li>
+<li><a href="https://web.archive.org/web/20130225025337/http://gvh.aphdigital.org/">Greenwich Village History</a>, Cathy Hajo, New York University, 2010-present</li>
+<li><a href="https://web.archive.org/web/20190122162306/http://6floors.org:80/teaching/HIST390/spring2014/">HIST 390: The Digital Past</a>, Sharon Leon, George Mason University, spring 2014</li>
+<li><a href="http://periesproject.english.upenn.edu/PeriesProject/">The Peries Project</a>, Devin Griffiths, University of Pennsylvania, spring 2012</li>
+<li><a href="https://course-exhibits.library.jhu.edu/2012/Spring/gdean4/AS38935901/">The Literary Archive</a>, Gabrielle Dean, Johns Hopkins University, spring 2012 (Omeka exhibit at <a href="https://course-exhibits.library.jhu.edu/2012/Spring/gdean4/AS38935901/exhibits/show/poe--lanier--whitman">course-exhibits.library.jhu.edu/2012/Spring/gdean4/AS38935901/exhibits/show/poe&#8211;lanier&#8211;whitman</a> )</li>
+<li><a href="https://web.archive.org/web/20190607034422/https://blogs.ischool.utexas.edu/f2012dh/grading/omeka-project/">Introduction to Digital Humanities</a>, Tanya Clement, University, fall 2012 of Texas</li>
+</ul>
+<p>&nbsp;</p>
+<h1>Advanced</h1>
+<ul>
+<li><a href="http://omeka.org/codex/Documentation">General Omeka documentation</a></li>
+<li><a href="http://omeka.readthedocs.org/en/latest/">Omeka developer documentation</a></li>
+<li><a href="https://groups.google.com/forum/#!forum/omeka-dev">Omeka developer email list</a></li>
+<li><a href="https://github.com/omeka">Omeka GitHub repository</a></li>
+<li><a href="https://github.com/omeka">Omeka Roadmap </a></li>
+</ul>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>The 7 Best Links to Digital Poetry Projects from MLA</title>
+		<link>https://amandafrench.net/2014/01/14/the-7-best-links-to-digital-poetry-projects-from-mla/</link>
+		
+		<dc:creator><![CDATA[Amanda French]]></dc:creator>
+		<pubDate>Tue, 14 Jan 2014 22:04:53 +0000</pubDate>
+				<category><![CDATA[General]]></category>
+		<category><![CDATA[Poetry]]></category>
+		<category><![CDATA[Technology]]></category>
+		<guid isPermaLink="false">http://amandafrench.net/?p=1272</guid>
+
+					<description><![CDATA[Wrapup of the 2014 Modern Language Association conference in Chicago, January 2014, with an emphasis on the digital panels. ]]></description>
+										<content:encoded><![CDATA[<p>Before I give you the listicle, I&#8217;m going to make you skim through some summary. I&#8217;m mean like that. (Back off, man. I&#8217;m an academic.) </p>
+<p>I go to the Modern Language Association annual convention these days for the digital panels &#8212; and to hobnob with the smart people on them, of course, many of whom I know already, but many of whom I don&#8217;t know, even &#8220;just&#8221; online. If I had to name just one thing I got from MLA this year, it&#8217;s that <strong>digital humanities is no longer the next big thing &#8212; it&#8217;s beginning to be just an ordinary thing</strong>. In other words, I felt that there was a lot less defensiveness about digital methods in the study of literature this year. </p>
+<p>Granted, most of the papers dealing with digital methods are still located on panels themed around digital methods, as I think you can tell by <a href="http://www.samplereality.com/2013/09/19/digital-humanities-at-mla-2014/">Mark Sample&#8217;s helpful annual listing</a>, but there was some promising intermingling between digital and traditional methods papers on panels such as &#8220;<a href="http://www.mla.org/program_details?prog_id=207&#038;year=2014">Diversifying the Victorian Verse Archives</a>.&#8221; (Note: I was on my way to that panel when a minor emergency came up that took an hour or so to resolve; I was very sorry indeed to have to miss it.) All three of those papers basically teach us a bit more about Victorian songs and their relation to Victorian poetry than we used to know, but only two of them explicitly mention the creation or sophisticated use of digital archives as a major component of the research. And Brian Croxall and I both had the same idea in forming our panels: to concentrate on the results rather than the methods. Both his <a href="http://ach.org/">Association for Computers and the Humanities</a> panel &#8220;<a href="http://www.mla.org/program_details?prog_id=402&#038;year=2014">Beyond the Digital: Pattern Recognition and Interpretation</a>&#8221; and the panel I put together titled &#8220;<a href="http://www.mla.org/program_details?prog_id=130&#038;year=2014">Things My Computer Taught Me About Poems</a>&#8221; tried (with fair success) to do less description of and argument for digital approaches while giving more concrete examples of the new insights into language and literature these approaches have given. </p>
+<p>But I have to admit that the single best paper I heard that took what we might call this &#8220;more interpretation, less demonstration&#8221; approach was Mark Algee-Hewitt&#8217;s, of the <a href="http://litlab.stanford.edu/">Stanford Literary Lab</a>. In a panel titled &#8220;<a href="http://www.mla.org/program_details?prog_id=377&#038;year=2014">Making Sense of Big Data</a>,&#8221; Algee-Hewitt seemed all insight, though granted what he had insight into was a particular well-known literary theory of Mikhail Bakhtin&#8217;s rather than a literary text or corpus. In <em><a href="http://www.worldcat.org/title/dialogic-imagination-four-essays/oclc/6378837">The Dialogic Imagination</a></em> Bakhtin famously argues that novels get their energy from &#8220;<a href="http://en.wikipedia.org/wiki/Heteroglossia">heteroglossia</a>,&#8221; or what we might call &#8220;polyvocality.&#8221; Novels have so many voices, so many registers of diction: all the characters and their dialogue, the narrator in various moods and modes. Lyric poems, by supposed contrast, generally have one voice: that of the poet. Algee-Hewitt recounted an absorbing tale of getting results from his analysis of the comprehensive <a href="https://www.gale.com/primary-sources/eighteenth-century-collections-online">Eighteenth-Century Collections Online</a> database (ECCO) that first supported and then challenged Bakhtin&#8217;s theory: ultimately, at least if you consider these texts at the semantic level of individual words (what individual words mean, that is), Bakhtin seems to be wrong &#8212; poems are actually far more polyvocal, less &#8220;self-similar&#8221; in Algee-Hewitt&#8217;s term, than novels and non-fiction. Theorists versus data analysts! I love it. Can&#8217;t wait to hear more. I&#8217;m sure the debate over that particular issue of the heteroglossia of novels and poetry, if it branches out, will indeed circle back to method &#8212; one questioner raised the issue of whether semantic word analysis really matches Bakhtin&#8217;s idea of &#8220;heteroglossia&#8221; &#8212; but at least it won&#8217;t be an argument about whether such data analysis is legitimate: only how to do it as well as possible. As a side note from that paper, I was impressed by the very fact that the Stanford Literary Lab has developed a simple and effective algorithm to tell novels apart from nonfiction apart from poetry and poetic drama from the full-text data: I think Algee-Hewitt said it had about a 95% accuracy rate. I can see that being very useful for someone else&#8217;s project. Clearly I need to keep a closer eye on that Stanford Literary Lab. </p>
+<p>Here&#8217;s the listicle for you, then &#8212; The 7 Best Links to Digital Poetry Projects from MLA: </p>
+<ol>
+<li><a href="https://prosody.princeton.edu/">Princeton Prosody Archive</a>, Meredith Martin et al. (database not live yet)</li>
+<li><a href="http://steepletoplibrary.org">Steepletop Library &#8211; The Books of Edna St. Vincent Millay</a>, Amanda French (me!)</li>
+<li><a href="https://nms.kcl.ac.uk:8443/poemvis/about.html" rel="nofollow">Poem Viewer</a>, Julie Lein and Katharine Coles et al.</li>
+<li><a href="https://web.archive.org/web/20210506084525/http://www.songsofthevictorians.com/">Songs of the Victorians</a>, Joanna Swafford</li>
+<li><a href="http://litlab.stanford.edu/?page_id=13">Stanford Literary Lab Projects</a>, Mark Algee-Hewitt et al.</li>
+<li><a href="http://emop.tamu.edu/">eMOP: The Early Modern OCR Project</a>, Laura Mandell et al.</li>
+<li><a href="http://iloveepoetry.com/">I <img src="https://s.w.org/images/core/emoji/13.1.0/72x72/2665.png" alt="♥" class="wp-smiley" style="height: 1em; max-height: 1em;" /> E-Poetry</a>, Short-Form Scholarship on Born-Digital Poetry and Poetics, Léonardo Flores et al.</li>
+</ol>
+<p>There&#8217;s a lot more that happened at MLA that I didn&#8217;t see that I could have posted, I&#8217;m sure, and there&#8217;s a lot more that I saw and liked that I can&#8217;t easily link to, but that&#8217;ll do for now. (I&#8217;ve always wanted to dip a toe in the listicle biz.) And if you&#8217;re interested, here are a couple of Storify stories from the two panels I presented on &#8212; they often have helpful summaries and reactions and commentary from the twittering audience: </p>
+<ul>
+<li><a href="https://web.archive.org/web/20180221055516/https://storify.com/amandafrench/things-my-computer-taught-me-about-poems-mla-2014">Storify: Things My Computer Taught Me About Poems</a></li>
+<li><a href="https://web.archive.org/web/20180517235150/https://storify.com/EstherRawson/alt-ac-work-and-gender-it-s-not-plan-b-s757-mla14">Storify: Alt-Ac and Gender: It&#8217;s Not Plan B</a> (created by Esther Rawson)</li>
+</ul>
+<p>Amanda out. </p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Introduction to Omeka &#8211; Lesson Plan</title>
+		<link>https://amandafrench.net/2013/11/12/introduction-to-omeka-lesson-plan/</link>
+					<comments>https://amandafrench.net/2013/11/12/introduction-to-omeka-lesson-plan/#comments</comments>
+		
+		<dc:creator><![CDATA[Amanda French]]></dc:creator>
+		<pubDate>Tue, 12 Nov 2013 23:34:38 +0000</pubDate>
+				<category><![CDATA[General]]></category>
+		<category><![CDATA[Teaching]]></category>
+		<category><![CDATA[Technology]]></category>
+		<guid isPermaLink="false">http://amandafrench.net/?p=1230</guid>
+
+					<description><![CDATA[I&#8217;ve taught &#8220;Introduction to Omeka&#8221; many times at various THATCamps, but I&#8217;ve never done more than work from an outline. Today, however, I wrote it all down, and I am posting it for your edification here. The text is below, and here is a PDF:&#160;Introduction_to_Omeka_Lesson_Plan.&#160;I&#8217;ve marked the PDF with a CC-BY license, and all the<a class="more-link" href="https://amandafrench.net/2013/11/12/introduction-to-omeka-lesson-plan/">Read more</a>]]></description>
+										<content:encoded><![CDATA[<p>I&#8217;ve taught &#8220;Introduction to Omeka&#8221; many times at various <a href="http://thatcamp.org/camps">THATCamps</a>, but I&#8217;ve never done more than work from an outline. Today, however, I wrote it all down, and I am posting it for your edification here. The text is below, and here is a PDF:&nbsp;<a href="https://amandafrench.net/wp-content/uploads/2013/11/Introduction_to_Omeka_Lesson_Plan1.pdf">Introduction_to_Omeka_Lesson_Plan</a>.&nbsp;I&#8217;ve marked the PDF with a CC-BY license, and all the content on this site is similarly marked, so feel free to share and adapt. You may also be interested in the lesson plan for the workshop <a href="https://docs.google.com/document/d/1eD38PERj3z2Zpsvz5a7A52G_oE491p2eti1618d62zw/edit?usp=sharing">Teaching with Omeka</a> that I co-taught with Jeff McClurken at THATCamp Pedagogy back in 2011.</p>
+<p>One reason I&#8217;ve never written this up before is that I&#8217;ve taught the workshop so many times (perhaps a dozen?) that I felt I knew it backward and forward with just a sketchy outline; I&#8217;ve rarely had the chance to teach anything so many times, and I must say that I&#8217;ve appreciated the chance to practice and improve. It has also taught me to be grateful for the &#8220;how to teach technology&#8221; training I had at the University of Virginia back when I was a &#8220;<a href="https://web.archive.org/web/20140716120934/http://cti.itc.virginia.edu/~ttspeng/General_Information/current_ttsp.html">Teaching with Technology Support Partner</a>&#8221; &#8212; the model they gave us, which I still remember and use, was this: <strong>Motivate, Define, Demonstrate, Practice</strong>. First, you have to convince people that they want to learn this software and explain how it&#8217;s different from other software, and show them exciting examples of things accomplished with the software. Then you should define particular terms that might be unfamiliar, then demonstrate key features or tasks, then have people practice using the software while you circulate and help them. It&#8217;s never as neat as that, of course &#8212; in particular, it&#8217;s usually best to help define a term by demonstrating its use in context &#8212; but I do try to follow that rough model when I&#8217;m teaching technology.</p>
+<p>In any case, here you go.</p>
+<hr />
+<h2>Introduction to Omeka: Lesson Plan</h2>
+<p dir="ltr">by Amanda French &#8211; <a href="https://amandafrench.net">amandafrench.net</a></p>
+<ol>
+<li dir="ltr">
+<p dir="ltr"><strong>Preparation</strong></p>
+<ol>
+<li dir="ltr">
+<p dir="ltr">Go to <a href="http://omeka.net">omeka.net</a> and click the big “Sign up!” button. Sign up for the free Basic plan. When you submit the form, you will be emailed an activation link and a username and password. If you don’t get the email, check your spam folder. Feel free to explore Omeka on your own while I take you through it.</p>
+</li>
+</ol>
+</li>
+<li dir="ltr">
+<p dir="ltr"><strong>Introduction &#8211; What is Omeka? (10 minutes)</strong></p>
+<ol>
+<li dir="ltr">
+<p dir="ltr">Omeka is a simple, free web publishing system built by and for scholars that is used by hundreds of archives, historical societies, libraries, museums, and individual researchers and teachers to create searchable online databases and scholarly online interpretations of their digital collections. If you have a digital collection of primary sources that you want to publish online in a scholarly way, you’ll want to consider Omeka.</p>
+</li>
+<li dir="ltr">
+<p dir="ltr">“Omeka” (pronounced oh-MEH-ka) is a Swahili word meaning &#8220;to display or lay out wares” &#8211; <a href="http://swahili_english.enacademic.com/11461/omeka">swahili_english.enacademic.com/11461/omeka</a></p>
+</li>
+<li dir="ltr">
+<p dir="ltr">The <a href="http://chnm.gmu.edu">Roy Rosenzweig Center for History and New Media</a> began building Omeka in 2006; they wanted to abstract the technologies they were using repeatedly to build historical websites, all of which required setting up a searchable database that was integrated with an online exhibit.</p>
+</li>
+<li dir="ltr">
+<p dir="ltr">One of the first sites to use a proto-version of what would become Omeka was the Hurricane Digital Memory Bank, an archive of personal stories and digital records related to the 2005 hurricanes Katrina and Rita: <a href="http://hurricanearchive.org/">hurricanearchive.org/</a>. Another was the April 16th Archive at <a href="http://april16archive.org/">april16archive.org/</a>, a commemoration of the 2007 Virginia Tech shooting tragedy. Omeka 1.0 was officially released for public use in June 2009.</p>
+</li>
+<li dir="ltr">
+<p dir="ltr">The free, open source, downloadable version of Omeka is available at <a href="http://omeka.org">omeka.org</a>. This version of Omeka is <strong>self-hosted</strong> software that can be installed on a web hosting server (not on your personal computer, at least not unless you’re willing to install a virtual server on your PC). Librarians or educational technologists at your institution may be happy to install and maintain Omeka for you on an organizational web hosting server; if you’d like to buy commercial web hosting for about $100 per year and teach yourself to use it, you can check out the Omeka team’s <a href="http://omeka.org/codex/Hosting_Suggestions">hosting suggestions</a>.</p>
+</li>
+<li dir="ltr">
+<p dir="ltr">Because some organizations and individuals couldn’t or didn’t want to run their own server or buy commercial server space, RRCHNM began developing a <strong>hosted</strong> version of Omeka that requires much less technical knowledge, infrastructure, and labor. The hosted version of Omeka, which was beta-launched in October 2010, is available at <a href="http://omeka.net">omeka.net</a>.</p>
+</li>
+<li dir="ltr">
+<p dir="ltr">When considering whether to use the self-hosted version of Omeka or the hosted version of Omeka, you will want to keep in mind the useful lesson from Spiderman: “With great power comes great responsibility.” Concomitantly, of course, “with less responsibility comes less power.” In other words, when you download Omeka from <a href="http://omeka.org">omeka.org</a>, you can customize it as much as you want and install it as many times as you like, but creating and supporting those Omeka sites may take a good bit of knowledge and time. When you use the hosted version of Omeka at <a href="http://omeka.net">omeka.net</a>, it’s much easier, but you will run up against certain limits of space and functionality. You might also think of self-hosting Omeka as like owning a house, whereas using the hosted version of Omeka is like renting an apartment. Moving from one to the other is perfectly feasible, but it’s about the same level of hassle as moving house (it depends on how much stuff you have, for one thing!). See <a href="http://bitly.com/compareomekas">bitly.com/compareomekas</a> for more on this issue.</p>
+</li>
+<li dir="ltr">
+<p dir="ltr">Omeka is a nonprofit project; its funding comes from federal funding agencies and from private foundations who support education: IMLS, Mellon, Sloan, and Kress. The fees for the premium plans at <a href="http://omeka.net" class="autohyperlink">omeka.net</a> are used to buy storage space for your files from Amazon Web Services.</p>
+</li>
+</ol>
+</li>
+<li dir="ltr">
+<p dir="ltr"><strong>Basic Omeka features and definitions (15 minutes)</strong></p>
+<ol>
+<li dir="ltr">
+<p dir="ltr">Here’s a typical Omeka site: the City of Boston archive &#8211; <a href="http://cityofbostonarchives.omeka.net/">cityofbostonarchives.omeka.net/</a> (linked to from the main City of Boston Archives at <a href="http://www.cityofboston.gov/archivesandrecords/">www.cityofboston.gov/archivesandrecords/</a>). I’ll define some key terms and features while taking you through this site.</p>
+</li>
+<li dir="ltr">
+<p dir="ltr"><strong>Items</strong> &#8211; An “item” is the basic unit of an Omeka site. It might be a photograph with a single attached image file, a three-page letter with three attached image files (one for each page), or a record with no attached files (such as a “person” record). Omeka can handle all the major digital file types for documents, images, audio, and video; audio and video files display as an embedded Quicktime player so that the user can listen or watch. Example: See this site’s 77 items at <a href="http://cityofbostonarchives.omeka.net/items">cityofbostonarchives.omeka.net/items</a></p>
+<ol>
+<li dir="ltr">
+<p dir="ltr"><strong>Metadata</strong> &#8211; Data about data; information about an item. Bibliographic metadata is the title, author, publisher, date and so on of a publication, for instance. Omeka encourages you to describe every item with lots of metadata, which is part of what makes it a scholarly system. <em><strong>Example</strong></em>: <a href="http://cityofbostonarchives.omeka.net/items/show/77">cityofbostonarchives.omeka.net/items/show/77</a></p>
+</li>
+<li dir="ltr">
+<p dir="ltr"><strong>Dublin Core</strong> &#8211; Dublin Core is a metadata standard used by libraries and archives for digital items that consists of 15 basic fields that can be used to describe any digital object, no matter what it is. Such basic fields include Creator, Subject, Description, Date, Rights, and so on. “Dublin” is Dublin Ohio, not Dublin Ireland; “core” is the same sense as “core curriculum” &#8212; the name comes from the 1995 meeting in Dublin, OH where librarians and computer scientists first formulated this shared standard set of essential information needed to describe digital objects. Omeka does also allow adding additional standard metadata fields and creating custom metadata fields, but this may make it more difficult to transfer your data to and from Omeka and other systems, since these systems need a shared vocabulary to “talk” to one another. But the fact that Omeka is built on Dublin Core means that your data is likelier to last longer, because it can be moved to other systems later. There are prompts built in to Omeka that will help you understand what information to put in every Dublin Core field, but you can also consult the <a href="https://dublincore.org/resources/userguide/creating_metadata/">Dublin Core User Guide section on Creating Metadata</a> (version 2).</p>
+</li>
+<li dir="ltr">
+<p dir="ltr"><strong>Advanced Search</strong> &#8211; Every Omeka site comes by default with a basic keyword search and an Advanced Search screen. Any information entered in an item’s Dublin Core metadata fields will be findable when a user searches for it, and the Advanced Search lets a user narrow by particular metadata fields. <em><strong>Example</strong></em>: Go to <a href="http://cityofbostonarchives.omeka.net/items/advanced-search">cityofbostonarchives.omeka.net/items/advanced-search</a> and search for Date → contains → 1942 to find items from the year 1942.</p>
+</li>
+<li dir="ltr">
+<p dir="ltr"><strong>Item Type</strong> &#8211; By default Omeka offers 12 types of items, including “Document,” “Still Image,” “Sound,” “Moving Image,” “Person,” and more. You can also define custom item types, perhaps something like “Coin” or “Poem” or “Quilt,” and you can define custom sets of metadata fields to go with those item types. For instance, if you define the item type “Poem,” you might define a metadata field such as “Rhyme Scheme” where you can enter that information (such as A’bA” abA’ abA” abA’ abA” abA’A” for a villanelle). Be aware, though, that creating custom item types and metadata fields may make it more difficult to exchange data between your Omeka archive and other existing systems. <em><strong>Example</strong></em>: Go to <a href="http://cityofbostonarchives.omeka.net/items/advanced-search">cityofbostonarchives.omeka.net/items/advanced-search</a> and Search by Type = Document to find 7 documents in the archive (as opposed to photos, for instance).</p>
+</li>
+<li dir="ltr">
+<p dir="ltr"><strong>Tags</strong> &#8211; Tags allow you to link items together with terms of your choosing. When any two items have the same tag, the tag automatically turns into a link. Omeka sites allow you to browse items by tag. <em><strong>Example</strong></em>: Go to <a href="http://cityofbostonarchives.omeka.net/items/browse/tag/Hyde+Park">cityofbostonarchives.omeka.net/items/browse/tag/</a> and click “Hyde Park” to see items tagged with that term.</p>
+</li>
+<li dir="ltr">
+<p dir="ltr"><strong>Featured Items</strong> &#8211; Omeka sites by default have a space on the home page for recently added items and for “featured” items that are particularly interesting. You can mark items as “featured” when you add them (or afterward). <em><strong>Example</strong></em>: Go to <a href="http://cityofbostonarchives.omeka.net">cityofbostonarchives.omeka.net</a> to see the featured item. (This site currently has only one featured item, so it never changes; sites with more than one featured item will load a new one randomly when the site is refreshed.)</p>
+</li>
+</ol>
+</li>
+<li dir="ltr">
+<p dir="ltr"><strong>Collections</strong> &#8211; Collections are ways of organizing items, rather like file folders on your computer, or like collections in archives such as “<a href="http://ead.lib.virginia.edu/vivaxtf/view?docId=uva-sc/viu02364.xml">Papers of William Faulkner, 1929-1965</a>” in the Special Collections of the University of Virginia. Collections provide a way to organize your items into separate, logically coherent groups. Items do not have to be in collections, but once an item is in a collection, it can’t be in any other collection. You can make as many links as you like between items in different collections, though, with tags and exhibits. <em><strong>Example</strong></em>: <a href="http://cityofbostonarchives.omeka.net/collections">cityofbostonarchives.omeka.net/collections</a></p>
+</li>
+<li dir="ltr">
+<p dir="ltr"><strong>Exhibits</strong> &#8211; Exhibits are where the scholarly rubber hits the Internet road, as it were. While a <a href="https://web.archive.org/web/20170626032937/http://omeka.org/about/imls-final-grant-report/development-and-use/">March 2010 survey of Omeka users</a> found that most Omeka sites surveyed consisted of just a searchable “collections catalog” of their items, the next highest use of Omeka was for its capacity to build and publish “narrative exhibits.” Once you have built an Omeka archive with enough items, you can then use exhibits to interpret those items for the online public. Think of exhibits in a museum: a large museum may own 100,000 items, but at any one time only perhaps 1,000 of them are on display, and a single exhibit may have only 25 or so items. These items have been carefully chosen and arranged by curators, who also often write interpretive text for panels mounted on the wall and for the exhibit’s official catalog. You can also think of Omeka exhibits as multimedia essays created using the items in your archive. Many websites about scholarly or quasi-scholarly topics often decontextualize the images and documents they display, and the reader who wants to know where a particular image came from may be out of luck. This never happens with Omeka exhibits, because any item displayed in the exhibit can be clicked on, and the reader will be taken to the item record with its full complement of Dublin Core metadata. <em><strong>Example</strong></em>: Go to <a href="http://cityofbostonarchives.omeka.net/exhibits">cityofbostonarchives.omeka.net/exhibits</a> and click on the exhibit about Jesse Harding Pomeroy, arrested in 1874, Massachusetts’s youngest killer (only 14 years old!). Go to the exhibit page at <a href="http://cityofbostonarchives.omeka.net/exhibits/show/pomeroy/pomeroy">cityofbostonarchives.omeka.net/exhibits/show/pomeroy/pomeroy</a> and click on any image, and you’ll be taken back to the item record for that file.</p>
+</li>
+</ol>
+</li>
+<li dir="ltr">
+<p dir="ltr"><strong>Selected Omeka sites (15 minutes)</strong></p>
+<ol>
+<li dir="ltr">
+<p dir="ltr">Steepletop Library: The Books of Edna St. Vincent Millay &#8211; <a href="http://steepletoplibrary.org">steepletoplibrary.org</a> (my site; I’m using Omeka as a book catalog)</p>
+</li>
+<li dir="ltr">
+<p dir="ltr">Montgomery County Memory &#8211; <a href="http://montgomerymuseum.omeka.net/">montgomerymuseum.omeka.net</a> (a site used to publish items brought in to the Montgomery County, VA public library and digitized as part of an NEH Common Heritage project)</p>
+</li>
+<li dir="ltr">
+<p dir="ltr">Harlem Congress on Racial Equality &#8211; <a href="http://harlemcore.com/omeka">harlemcore.com/omeka</a> (site built by a student in my Creating Digital History course in the NYU Archives and Public History MA program in 2009)</p>
+</li>
+<li dir="ltr">
+<p dir="ltr">Carnet géologiques de Phillippe Glangeaud &#8211; <a href="https://glangeaud.bu.uca.fr/">glangeaud.bu.uca.fr/</a> (uses Geolocation plugin)</p>
+</li>
+<li dir="ltr">
+<p dir="ltr">Inventing the Map: Frances Henshaw’s Book of Penmanship &#8211; <a href="https://henshaw.neatline.org/">henshaw.neatline.org/</a> (uses Neatline)</p>
+</li>
+<li dir="ltr">
+<p dir="ltr">Europeana &#8211; <a href="http://exhibitions.europeana.eu/">exhibitions.europeana.eu/</a></p>
+<ol>
+<li dir="ltr">
+<p dir="ltr">Art Nouveau &#8211; <a href="http://exhibitions.europeana.eu/exhibits/show/art-nouveau-en">exhibitions.europeana.eu/exhibits/show/art-nouveau-en</a></p>
+</li>
+</ol>
+</li>
+<li dir="ltr">
+<p dir="ltr">DPLA &#8211; <a href="http://dp.la/exhibitions">dp.la/exhibitions</a></p>
+<ol>
+<li dir="ltr">
+<p dir="ltr">Indomitable Spirits: Prohibition in the United States &#8211; <a href="http://dp.la/exhibitions/exhibits/show/spirits">dp.la/exhibitions/exhibits/show/spirits</a></p>
+</li>
+</ol>
+</li>
+<li dir="ltr">
+<p dir="ltr">Robert &amp; Monnoyer: French Botanical Artists of the 17th Century &#8211; <a href="https://web.archive.org/web/20150905155232/http://robertandmonnoyer.omeka.net/">robertandmonnoyer.omeka.net/</a> (hosted site, no exhibits, but pretty pictures)</p>
+</li>
+<li dir="ltr">
+<p dir="ltr">The Appalachian Dulcimer Archive &#8211; <a href="http://dulcimerarchive.omeka.net/">dulcimerarchive.omeka.net/</a> (hosted site, no exhibits, but a Simple Page of “Histories” that substitutes for the Exhibit; has audio files of dulcimer playing; uses Geolocation plugin so must be at least Silver plan)</p>
+</li>
+<li dir="ltr">
+<p dir="ltr">See <a href="http://info.omeka.net/showcase/">info.omeka.net/showcase/</a> for another selection of hosted Omeka sites</p>
+</li>
+<li dir="ltr">
+<p dir="ltr">See <a href="http://omeka.org/codex/View_Sites_Powered_by_Omeka">omeka.org/codex/View_Sites_Powered_by_Omeka</a>&nbsp;for another selection of self-hosted Omeka sites</p>
+</li>
+</ol>
+</li>
+<li dir="ltr">
+<p dir="ltr"><strong>Working with Omeka Demos &#8211; <a href="http://amandafrench.omeka.net">amandafrench.omeka.net</a> (10 minutes)</strong></p>
+<ol>
+<li dir="ltr">
+<p dir="ltr"><strong>Themes</strong> &#8211; Themes control the look and feel of your Omeka site: the color, the font, the layout. There are (currently) four themes included with the free basic plan for hosted Omeka sites; these themes can be configured to some extent with custom banner images and different colors and so on. There are more than a dozen themes for self-hosted Omeka sites at <a href="http://omeka.org/add-ons/themes/">omeka.org/add-ons/themes/</a>. You can also design your own theme for Omeka, as many of the larger and more advanced Omeka sites do. The NYU Archives and Public History program got a curricular grant of about $4000 to hire a designer for the Greenwich Village History site, which students in Creating Digital History contribute to, for instance. <em><strong>Demonstration</strong></em>: Change the theme and refresh <a href="http://amandafrench.omeka.net">amandafrench.omeka.net</a> to see the difference.</p>
+</li>
+<li dir="ltr">
+<p dir="ltr"><strong>Plugins</strong> &#8211; Like themes, plugins are separate “add-ons” to Omeka, but whereas themes change the look and feel of an Omeka site, plugins change the functionality of an Omeka site &#8212; they change what it can do. There are (currently) 10 plugins packaged with the free Basic plan on <a href="http://Omeka.net" class="autohyperlink">Omeka.net</a>, but there are more than 50 very cool plugins for the self-hosted version of Omeka listed at <a href="https://omeka.org/classic/plugins/">omeka.org/classic/plugins/</a> that do everything from enabling anyone on the web to contribute items to your archive (with the <a href="http://omeka.org/add-ons/plugins/contribution/">Contribution</a> plugin) to tweeting out an announcement whenever a new item is added (with the <a href="http://omeka.org/add-ons/plugins/tweetster-for-omeka/">Tweetster for Omeka</a> plugin). Some of these plugins are developed by the Omeka team at RRCHNM, but a lot of them are developed by people who are customizing Omeka for their own purposes and contributing their code to the larger community. <em><strong>Demonstration</strong></em>: Activate / deactivate the Documents Viewer plugin and go to <a href="http://amandafrench.omeka.net/items/show/18">amandafrench.omeka.net/items/show/18</a> and refresh to see the difference.</p>
+</li>
+<li dir="ltr">
+<p dir="ltr"><strong>Users</strong> &#8211; You can add as many users as you like to an Omeka site, even when you only have a free Basic plan on <a href="http://omeka.net" class="autohyperlink">omeka.net</a>. You can add users in four roles:</p>
+<ol>
+<li dir="ltr">
+<p dir="ltr">Super &#8211; can do everything</p>
+</li>
+<li dir="ltr">
+<p dir="ltr">Admin &#8211; can do everything with items and exhibits etc., but can’t access Settings</p>
+</li>
+<li dir="ltr">
+<p dir="ltr">Contributor &#8211; can add items and create exhibits, but can’t publish them, and can’t modify items added by other Contributors</p>
+</li>
+<li dir="ltr">
+<p dir="ltr">Researcher &#8211; can only see items, but can see all items, including private items that aren’t published to the web. Note that all items you add to Omeka are private by default; you must deliberately check a checkbox in order to publish an item to the web. This is useful when you want to include an item in your archive but don’t want to publish it to the web, as for instance when the copyright status of an item is unclear. Users who are logged in can see both private and public items in Omeka, so the “Researcher” role allows you to let selected individuals see but not edit your items.</p>
+</li>
+</ol>
+</li>
+<li dir="ltr">
+<p dir="ltr"><em><strong>Demonstration</strong></em>: Add an item</p>
+</li>
+</ol>
+</li>
+<li dir="ltr">
+<p dir="ltr"><strong>Exercises (10-20 minutes)</strong></p>
+<ol>
+<li dir="ltr">
+<p dir="ltr">Sign up for the free Basic plan on <a href="http://omeka.net" class="autohyperlink">omeka.net</a> if you haven’t already; when you submit the form at <a href="https://www.omeka.net/signup">www.omeka.net/signup</a> you will be emailed an activation link and a username and password. If you don’t get the email, check your spam folder.</p>
+</li>
+<li dir="ltr">
+<p dir="ltr">Log in to your hosted Omeka site on <a href="http://omeka.net">omeka.net</a> and create a site.</p>
+</li>
+<li dir="ltr">
+<p dir="ltr">Add an item.</p>
+</li>
+<li dir="ltr">
+<p dir="ltr">Create a collection.</p>
+</li>
+<li dir="ltr">
+<p dir="ltr">Begin creating an exhibit.</p>
+</li>
+<li dir="ltr">
+<p dir="ltr">Or try out any of the other features you like. Raise your hand if you have a question and I’ll come around to help.</p>
+</li>
+</ol>
+</li>
+<li dir="ltr">
+<p dir="ltr"><strong>Resources</strong></p>
+<ol>
+<li dir="ltr">
+<p dir="ltr"><a href="http://Omeka.net" class="autohyperlink">Omeka.net</a> help documentation &#8211; <a href="http://info.omeka.net/">info.omeka.net/</a></p>
+</li>
+<li dir="ltr">
+<p dir="ltr"><a href="http://Omeka.org" class="autohyperlink">Omeka.org</a> help documentation &#8211; <a href="http://omeka.org/codex/Documentation">omeka.org/codex/Documentation</a></p>
+</li>
+<li dir="ltr"><a href="http://Omeka.org" class="autohyperlink">Omeka.org</a> Forums &#8211; <a href="http://omeka.org/forums/">omeka.org/forums/</a></li>
+<li dir="ltr">The Dublin Core Usage Guide &#8211; <a href="http://www.dublincore.org/documents/usageguide/">www.dublincore.org/documents/usageguide/</a></li>
+</ol>
+</li>
+<hr />
+<p>&nbsp;</ol>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://amandafrench.net/2013/11/12/introduction-to-omeka-lesson-plan/feed/</wfw:commentRss>
+			<slash:comments>8</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Things My Computer Taught Me About Poems: An MLA 2014 Special Session Proposal</title>
+		<link>https://amandafrench.net/2013/03/28/things-my-computer-poems/</link>
+					<comments>https://amandafrench.net/2013/03/28/things-my-computer-poems/#comments</comments>
+		
+		<dc:creator><![CDATA[Amanda French]]></dc:creator>
+		<pubDate>Thu, 28 Mar 2013 20:05:13 +0000</pubDate>
+				<category><![CDATA[General]]></category>
+		<guid isPermaLink="false">http://amandafrench.net/?p=1129</guid>
+
+					<description><![CDATA[I&#8217;ve put together a special session with some special people for MLA 2014:  Dr. Natalie Houston, Dr. Julie Lein, Dr. Katharine Coles and I have proposed a formal panel titled &#8220;Things My Computer Taught Me About Poems.&#8221; Note that great mind Brian Croxall and I had the same impulse: to concentrate on results instead of<a class="more-link" href="https://amandafrench.net/2013/03/28/things-my-computer-poems/">Read more</a>]]></description>
+										<content:encoded><![CDATA[<p>I&#8217;ve put together a special session with some special people for <a title="MLA Convention" href="http://www.mla.org/convention">MLA 2014</a>:  Dr. Natalie Houston, Dr. Julie Lein, Dr. Katharine Coles and I have proposed a formal panel titled &#8220;Things My Computer Taught Me About Poems.&#8221; Note that great mind Brian Croxall and I <a href="http://www.briancroxall.net/2013/03/12/beyond-the-digital-pattern-recognition-and-interpretation-a-cfp-for-mla-2014/">had the same impulse: to concentrate on results instead of methods</a>. We&#8217;ll see what transpires!</p>
+<p>***<br />
+UPDATE 7/19/13: Our panel was accepted and has been scheduled for <strong>5:15pm, Thursday, January 9th</strong> &#8212; the first full day of sessions. Also, the eminent <a href="http://english.princeton.edu/people/meredith-martin">Dr. Meredith Martin</a> has agreed to preside. See you in Chicago!<br />
+***</p>
+<h3>Description</h3>
+<p dir="ltr" id="internal-source-marker_0.20396101698544644">Digital humanities has reached a point where its mere existence is no longer (or ought not to be) surprising, yet too often, digital humanities sessions wind up serving as apologia for digital methods of scholarship. As Ryan Cordell <a href="https://ryancordell.org/academic-profession/mea-culpa-on-conference-tweeting-politeness-and-community-building/">writes</a>, “Only a few years ago, [digital humanities] was still a fringe field, mostly ignored by academia more widely. DHers felt not like ‘the next big thing,’ but like an embattled minority.” This defensiveness has meant that digital humanities sessions have often concentrated on explaining, teaching, justifying, or critiquing digital methods in general rather than on presenting the results of those methods: of the digitally-oriented sessions at the 2013 meeting of the MLA <a href="http://www.samplereality.com/2012/10/17/digital-humanities-at-mla-2013/">listed by Mark Sample</a>, words such as “approaches,” “methods,” “modes,” “theories,” and “practices” abound. The proposed special session, “Things My Computer Taught Me About Poems,” explores how new digital methods can contribute to the study of poetry while at the same time deemphasizing method as much as possible. Conceived independently of and indeed prior to the publication of “<a href="http://www.briancroxall.net/2013/03/12/beyond-the-digital-pattern-recognition-and-interpretation-a-cfp-for-mla-2014/">Beyond the Digital</a>,” Brian Croxall’s Association for Computing in the Humanities panel proposal for MLA 2014, “Things My Computer Taught Me About Poems” nevertheless proceeds from exactly the same impulse: to remind ourselves and the MLA community that, as Croxall puts it, “the output of digital analysis is not itself the goal; rather, it is a means to an end, and that end is the interpretation of a text or corpus.” We therefore propose a formal panel session composed of three fifteen-minute presentations by scholars of poetry who have adopted a digital method: these scholars will respectively discuss their new insights into particular cases of poetic influence, poetic style, and poetic time.</p>
+<p dir="ltr">To begin, Dr. Amanda French (also the presider), will discuss intellectual and poetic influences on Edna St. Vincent Millay as revealed by her books. Scholars have not much considered Millay’s sources or influences, but when they have, the consensus has been that, as J. D. McClatchy put it in 2003, “Millay wrote from the bedroom, not the library” (52). Yet Millay did possess a library of more than a thousand books, and for all her reputation as an emotional rather than an intellectual poet, that very library shows her interest in classical Greek literature, socialism, Marxism, relativity, and astronomy. At the same time, analysis of the books Millay owned suggests that Millay’s most persistent intellectual influence came from the poets of her own generation, especially the lesser-known poets.</p>
+<p dir="ltr">Secondly, Dr. Natalie Houston will discuss the poetic styles of Elizabeth Barrett Browning and Christina Rossetti. When scholars describe the style of a particular poet, they typically identify features that support their description within that poet’s own oeuvre; in this tradition, Christina Rossetti’s language is famously “simple” and EBB’s “complex.” Dr. Houston’s paper will present a comparative analytics of four features of Victorian poetic style: rhyme, enjambment, vocabulary richness, and repetition. Examining these features within the works of Rossetti and Barrett Browning, but also suggesting how their works might be differently understood when compared against the larger backdrop of Victorian poetic production, Dr. Houston will provide concrete measures for understanding the two poets’ relative simplicity and complexity.</p>
+<p dir="ltr">Finally, Dr. Katharine Coles and Dr. Julie Lein will discuss their changed understanding of poetic time. It has been commonplace for critics and poets to refer to the “lyric moment,” to contrast the ostensibly typical “stillness” and atemporal “suspension” of poetry (most especially the lyric) with the action and (at times disrupted or multiplied) sequential movement(s) of narrative. As Drs. Coles and Lein will explain, their research has persuaded them on the contrary that poetic time is incredibly energetic and dynamic—characterized by at least as much multidimensional temporal movement as narrative prose.</p>
+<p dir="ltr">All four scholars could say much about their respective methods, which in themselves differ widely. Dr. French is creating a online catalog of the intact personal library of Edna St. Vincent Millay, and her method might justly be called the “epistemology of building,” in <a href="http://dhdebates.gc.cuny.edu/debates/text/11">Stephen Ramsay and Geoff Rockwell’s term</a>. Dr. Houston pays attention to pattern: she uses text analysis tools to help identify such patterns and compare them within and across poems, sequences, books, and oeuvres, not only among the works of canonical poets but also at the significantly larger scale now available through digitization. Drs. Coles and Lein, funded in the US by an NEH Digging Into Data Challenge grant, are working with computer scientists to develop poetry visualization software. Whether the particular insights of these four scholars could have been achieved by non-computational methods is open to debate, and debate of that kind will be welcome in the question and answer period (which we intend to ensure lasts at least twenty minutes). Nevertheless, it is our hope that “Things My Computer Taught Me About Poems” will also (or ideally, instead) generate debate about subjects such as poetic influence, poetic style, and poetic time.</p>
+<p dir="ltr">Cordell, Ryan. “Mea Culpa: On Conference Tweeting, Politeness, and Community Building | Ryan Cordell.” Ryan Cordell 26 Jan. 2013. 28 Mar. 2013. &lt;<a href="https://ryancordell.org/academic-profession/mea-culpa-on-conference-tweeting-politeness-and-community-building/">ryan.cordells.us/blog/2013/01/26/mea-culpa-on-conference-tweeting-politeness-and-community-building/</a>&gt;.</p>
+<p dir="ltr">Croxall, Brian. “Beyond the Digital: Pattern Recognition and Interpretation. A CFP for MLA 2014 from ACH.” 13 Mar. 2013. 28 Mar. 2013. &lt;<a href="http://www.briancroxall.net/2013/03/12/beyond-the-digital-pattern-recognition-and-interpretation-a-cfp-for-mla-2014/">www.briancroxall.net/2013/03/12/beyond-the-digital-pattern-recognition-and-interpretation-a-cfp-for-mla-2014/</a>&gt;.</p>
+<p dir="ltr">McClatchy, J. D. “Feeding on Havoc: The Poetics of Edna St. Vincent Millay.” The American Scholar 72.2 (2003) : 45–52. 2 Apr. 2013. &lt;<a href="https://www.jstor.org/stable/41221118">www.jstor.org/stable/41221118</a>&gt;.</p>
+<p dir="ltr">Ramsay, Stephen, and Geoffrey Rockwell. “Developing Things: Notes Toward an Epistemology of Building in the Digital Humanities.” Debates in the Digital Humanities. Open-access. Ed. Matthew K. Gold. University of Minnesota Press, 2012. 28 Mar. 2013. &lt;<a href="http://dhdebates.gc.cuny.edu/debates/text/11">dhdebates.gc.cuny.edu/debates/text/11</a>&gt;.</p>
+<p>Sample, Mark. “Digital Humanities at MLA 2013.” SAMPLE REALITY 17 Oct. 2012. 28 Mar. 2013. &lt;<a href="http://www.samplereality.com/2012/10/17/digital-humanities-at-mla-2013/">www.samplereality.com/2012/10/17/digital-humanities-at-mla-2013/</a>&gt;.</p>
+<p>&nbsp;</p>
+<h3 dir="ltr" id="internal-source-marker_0.20396101698544644">Abstracts</h3>
+<h4 dir="ltr">Millay and Her Books</h4>
+<p dir="ltr">Amanda French</p>
+<p dir="ltr">Scholars have not much considered Millay’s sources or influences, but when they have, the consensus has been that, as J. D. McClatchy put it in 2003, “Millay wrote from the bedroom, not the library.” Yet Millay did possess an extensive library of books, and for all her reputation as an emotional rather than an intellectual poet, that very library shows her interest in classical Greek literature, socialism, Marxism, relativity, and astronomy. At the same time, analysis of the books Millay owned suggests that Millay’s most persistent intellectual influence came from the poets of her own generation, especially the lesser-known poets.</p>
+<h4 dir="ltr">What Does Style Really Mean? A Comparative Analysis of the Poetry of Christina Rossetti and Elizabeth Barrett Browning</h4>
+<p dir="ltr">Natalie Houston</p>
+<p dir="ltr">Until recently, our readings of nineteenth-century poetry have been largely directed by what Foucault termed the “author function,” the classification schemes derived from a biographical approach to literary history.   Today, the digitization of public domain materials and the development of computational tools for analysis can lead us to new comparative studies across the widest range of Victorian print culture, beyond the traditional academic canon. This paper presents a comparative analysis of the poetic styles of Elizabeth Barrett Browning and Christina Rossetti and suggests how their works might be differently understood when compared against the larger backdrop of Victorian poetic production.</p>
+<p dir="ltr">When scholars describe the poetic style of a particular poet, (Christina Rossetti’s language is famously “simple,” and EBB’s “complex”), they typically identify features that support their description within the oeuvre of a particular poet.</p>
+<p dir="ltr">Computational analysis can help us look more carefully at the patterns of poetic language both within a particular writer’s works and across a larger textual corpus.</p>
+<p dir="ltr">Whether we are reading one sonnet or 100, a fundamental assumption in reading poetry is that the selection and arrangement of linguistic elements (words, clauses, sentences) bears an important relation to the meaning of the text. As Jerome McGann suggests:</p>
+<blockquote><p>In poems, however, “meaning” is mistakenly conceived if it is conceived as a “message.” Rather, “meaning” in poetry is part of the poetical medium . . . one textual level – Pound called it “logopoeia” – where the text’s communicative exchanges play themselves out. (The Textual Condition 15)</p></blockquote>
+<p dir="ltr">Our method, quite simply, is to pay attention to patterns.  Text analysis tools can help us identify such patterns and compare them within and across poems, sequences, books, and oeuvres.  Computational analysis is perhaps especially well suited to the study of poetry, given the mathematical elements always already embedded in poetic form.</p>
+<p dir="ltr">This paper presents a comparative computational analytics of four features of Victorian poetic style: rhyme, enjambment, vocabulary richness, and repetition. Examining these features within the works of Rossetti and Barrett Browning provides concrete measures for understanding their relative simplicity and complexity.  I explain how the metrics offered by this analysis can contribute to a new comparative analysis of Victorian poetics, both among the works of canonical poets and at the significantly larger scale now available through digitization.</p>
+<h4 dir="ltr">Turbulence and Temporality: (Re)visualizing Poetic Time</h4>
+<p dir="ltr">Katharine Coles and Julie Lein</p>
+<h3></h3>
+<p dir="ltr">In 2012 we embarked with computer scientists on a project to develop original poetry visualization software. This research, funded in the US by the NEH as part of a Digging Into Data Challenge grant, has led us to think about and approach poems differently than we ever have before. Most prominent among these new insights has been our changed understanding of poetic time. Each of us was initially drawn to the project in part by its promise to attend carefully to ways time is expressed and experienced in poems. But neither of us had anticipated how much this meticulous attention would transform our own views of poetry.</p>
+<p dir="ltr">It has been commonplace to refer to the “lyric moment,” to contrast the ostensibly typical “stillness” and atemporal “suspension” of poetry (most especially the lyric) with the action and (at times disrupted or multiplied) sequential movement(s) of narrative. As we will explain, though, our research has persuaded us on the contrary that poetic time is incredibly energetic and dynamic—characterized by at least as much multidimensional temporal movement as narrative prose.</p>
+<p dir="ltr">We have been working to visualize these multidimensional, multidirectional temporal movements via the metaphor of flow, adapting fluid simulation strategies to our perception of poems behaving as fluid (or fluids) moving via their linguistic elements, devices, and figures through a (self)defined space. This framework has helped us to articulate as turbulence places in poems where multiple flows (temporal, formal, affective, etc.) converge and interact to shape the poem as a whole. Focusing first on sound and then image, we will show how close readings, in conjunction with our collaborative research, directed us to ideas we would not otherwise have formed.</p>
+<h3 dir="ltr" id="internal-source-marker_0.20396101698544644">Panelist Information</h3>
+<h4 dir="ltr">Katharine Coles</h4>
+<p dir="ltr">Professor Katharine Coles’ fifth collection of poems, The Earth Is Not Flat, was released in March by Red Hen Press, which will also publish her sixth collection, Flight, in 2015.  Her poems, stories, and essays have appeared in Poetry, The Kenyon Review, The Seneca Review, Virginia Quarterly Review, and The Paris Review, among many other journals.  In 2009-10, she served as the inaugural director of the Harriet Monroe Poetry Institute for the Poetry Foundation; on stepping down, she traveled to Antarctica to write poems under the auspices of the National Science Foundation’s Antarctic Artists and Writers Program.  A 2012 Guggenheim Foundation Fellow, she in on the English faculty at the University of Utah, where she founded and co-directs the Utah Symposium in Science and Literature and will receive the Distinguished Creative and Research Award for 2013.  She served as the Utah State Poet Laureate from 2006 to 2012.</p>
+<h4 dir="ltr">Amanda French</h4>
+<p dir="ltr">Amanda French, a well-known figure in the digital humanities, is currently Research Assistant Professor and <a href="http://thatcamp.org">THATCamp</a> Coordinator at the Roy Rosenzweig<a href="http://chnm.gmu.edu"> Center for History and New Media</a> at George Mason University. In addition to her copious “meta” work supporting the digital humanities as an emerging scholarly practice, her scholarship on poetic genre has been substantial. Most recently, she contributed eight articles to the fourth edition of the Princeton Encyclopedia of Poetry and Poetics; in 2010, she published an article in Victorian Poetry titled “Edmund Gosse and the Stubborn Villanelle Blunder.” Her<a href="https://amandafrench.net//files/Dissertation.pdf"> dissertation</a> is a comprehensive history of the<a href="http://en.wikipedia.org/wiki/villanelle"> villanelle</a>, the poetic form of Dylan Thomas’s “Do not go gentle into that good night” and Elizabeth Bishop’s “One Art.” She is currently at work on creating an online catalog of Edna St. Vincent Millay’s personal library at Steepletop.</p>
+<h4 dir="ltr">Natalie Houston</h4>
+<p dir="ltr">Natalie Houston is an Associate Professor of English at the University of Houston. Her research on Victorian poetry and print culture has appeared in journals such as Victorian Studies, Victorian Poetry, Yale Journal of Criticism, Romanticism and Victorianism on the Net,  Essays and Studies, and Studies in the Literary Imagination, as well as in The Blackwell Companion to Victorian Poetry. She is the Project Director for the Visual Page, an NEH-funded project to develop a software application to identify and analyze visual features in digitized printed books. She is also a Co-Director and Technical Director for the Periodical Poetry Index, a research database of citations to English-language poems published in nineteenth-century periodicals.</p>
+<h4 dir="ltr">Julie Lein</h4>
+<p dir="ltr">Julie Lein earned her PhD in creative writing and literature from the University of Utah, where she also served as a poetry editor for Quarterly West and currently works as a postdoctoral research fellow. Her poetry, fiction, and scholarship have appeared in The Antioch Review, Best New Poets 2011, 100 Word Story, Colorado Review, Phoebe, <a href="http://Terrain.org" class="autohyperlink">Terrain.org</a>, Modernism/modernity and elsewhere. She is a recipient of the Larry Levis Poetry Prize.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://amandafrench.net/2013/03/28/things-my-computer-poems/feed/</wfw:commentRss>
+			<slash:comments>8</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Visual Arguments in the Digital Humanities</title>
+		<link>https://amandafrench.net/2013/03/26/visual-arguments-in-the-digital-humanities/</link>
+					<comments>https://amandafrench.net/2013/03/26/visual-arguments-in-the-digital-humanities/#comments</comments>
+		
+		<dc:creator><![CDATA[Amanda French]]></dc:creator>
+		<pubDate>Tue, 26 Mar 2013 16:51:49 +0000</pubDate>
+				<category><![CDATA[General]]></category>
+		<guid isPermaLink="false">http://amandafrench.net/?p=1115</guid>
+
+					<description><![CDATA[What is Digital Humanities &#8211; whatisdigitalhumanities.com THATCamp &#8211; thatcamp.org Tool Portals Bamboo DiRT &#8211; dirt.projectbamboo.org TaPOR &#8211; Text Analysis Portal &#8211; tapor.ca Project Portals Digital Humanities Now &#8211; digitalhumanitiesnow.org NEH ODH grants &#8211; securegrants.neh.gov/publicquery/main.aspx DH Commons &#8211; dhcommons.org &#8211; narrow by “design,” for instance Selected Tools and Projects Jason Mittell, Complex Television on MediaCommons mediacommons.futureofthebook.org/mcpress/complextelevision/<a class="more-link" href="https://amandafrench.net/2013/03/26/visual-arguments-in-the-digital-humanities/">Read more</a>]]></description>
+										<content:encoded><![CDATA[<p>What is Digital Humanities &#8211; <a href="http://whatisdigitalhumanities.com">whatisdigitalhumanities.com</a><br />
+THATCamp &#8211; <a href="http://thatcamp.org">thatcamp.org</a></p>
+<p>Tool Portals</p>
+<ul>
+<li>Bamboo DiRT &#8211; <a href="https://web.archive.org/web/20140701191528/http://dirt.projectbamboo.org/">dirt.projectbamboo.org</a></li>
+<li>TaPOR &#8211; Text Analysis Portal &#8211; <a href="http://tapor.ca">tapor.ca</a></li>
+</ul>
+<p>Project Portals</p>
+<ul>
+<li>Digital Humanities Now &#8211; <a href="http://digitalhumanitiesnow.org">digitalhumanitiesnow.org</a></li>
+<li>NEH ODH grants &#8211; <a href="https://securegrants.neh.gov/publicquery/main.aspx">securegrants.neh.gov/publicquery/main.aspx</a></li>
+<li>DH Commons &#8211; <a href="https://web.archive.org/web/20180628083949/http://dhcommons.org:80/">dhcommons.org</a> &#8211; narrow by “design,” for instance</li>
+</ul>
+<p>Selected Tools and Projects</p>
+<ul>
+<li><span style="line-height: 13px;">Jason Mittell, Complex Television on MediaCommons <a href="http://mediacommons.futureofthebook.org/mcpress/complextelevision">mediacommons.futureofthebook.org/mcpress/complextelevision/</a><br />
+</span></li>
+<li>Scalar &#8211; <a href="http://scalar.usc.edu/scalar/showcase/">scalar.usc.edu/scalar/showcase/</a></li>
+<li>ImagePlot (and Lev Manovich’s work in general) &#8211; <a href="http://lab.softwarestudies.com/p/imageplot.html">lab.softwarestudies.com/p/imageplot.html</a> </li>
+<li>ChronoZoom and other MS Research serious zoom projects &#8211; <a href="https://www.microsoft.com/en-us/research/blog/a-quilt-a-map-and-a-few-good-apps/">www.microsoft.com/en-us/research/blog/a-quilt-a-map-and-a-few-good-apps/</a></li>
+<li>Omeka &#8211; <a href="http://omeka.org">omeka.org</a> and <a href="http://omeka.net">omeka.net</a> &#8211; <a href="http://harlemcore.com">harlemcore.com</a> &#8211; <a href="http://exhibitions.europeana.eu">exhibitions.europeana.eu</a>/</li>
+<li>Gephi &#8211; <a href="https://gephi.org">gephi.org</a>/ and <a href="http://chnm2012.thatcamp.org/06/26/o-rocks-tell-it-to-us-in-plain-images-a-thatcampbloomsday-visualization/">chnm2012.thatcamp.org/06/26/o-rocks-tell-it-to-us-in-plain-images-a-thatcampbloomsday-visualization/</a></li>
+</ul>
+<p>Finally </p>
+<ul>
+<li>Matthew Kirschenbaum, <a href="http://digitalhumanities.org/companion/view?docId=blackwell/9781405103213/9781405103213.xml&amp;chunk.id=ss1-5-4&amp;toc.id=0&amp;brand=9781405103213_brand">&#8220;So the Colors Cover the Wires: Interface, Aesthetics, and Usability&#8221;</a> in A Companion to Digital Humanities
+</li>
+<li>Matthew K. Gold, ed., <a href="http://dhdebates.gc.cuny.edu/">Debates in the Digital Humanities</a></li>
+</ul>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://amandafrench.net/2013/03/26/visual-arguments-in-the-digital-humanities/feed/</wfw:commentRss>
+			<slash:comments>2</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Alexandria is a Port: The Digital Library in Physical Space</title>
+		<link>https://amandafrench.net/2012/05/09/alexandria-is-a-port-the-digital-library-in-physical-space/</link>
+					<comments>https://amandafrench.net/2012/05/09/alexandria-is-a-port-the-digital-library-in-physical-space/#comments</comments>
+		
+		<dc:creator><![CDATA[Amanda French]]></dc:creator>
+		<pubDate>Wed, 09 May 2012 15:14:40 +0000</pubDate>
+				<category><![CDATA[General]]></category>
+		<guid isPermaLink="false">http://amandafrench.net/?p=1056</guid>
+
+					<description><![CDATA[Remarks made at the Fredric M. Miller Memorial lecture, May 8, 2012, at the Historical Society of Pennsylvania. Many thanks especially to John Palfrey for his lucid and inspiring remarks about the aims and progress of the Digital Public Library of America. Note that I spoke previously about the National Digital Library of Korea; see<a class="more-link" href="https://amandafrench.net/2012/05/09/alexandria-is-a-port-the-digital-library-in-physical-space/">Read more</a>]]></description>
+										<content:encoded><![CDATA[<p>Remarks made at the Fredric M. Miller Memorial lecture, May 8, 2012, at the <a href="https://www.portal.hsp.org/">Historical Society of Pennsylvania</a>. Many thanks especially to <a href="http://blogs.law.harvard.edu/palfrey/">John Palfrey</a> for his lucid and inspiring remarks about the aims and progress of the <a href="http://dp.la">Digital Public Library of America.</a> Note that I <a href="https://amandafrench.net/blog/2011/03/01/imagine-a-national-digital-library-i-wonder-if-we-can/">spoke previously</a> about the National Digital Library of Korea; see that talk for photos of the &#8220;dibrary.&#8221; </p>
+<p>**</p>
+<p>There is no Frigate like a book<br />
+To take us lands away<br />
+Nor any Coursers like a Page<br />
+Of Prancing Poetry<br />
+This Traverse may the poorest take<br />
+Without oppress of Toll<br />
+How frugal is the Chariot<br />
+That bears a human Soul. </p>
+<p>&#8211;Emily Dickinson, <a href="http://www.poets.org/viewmedia.php/prmMID/19730"><code class="url">http://www.poets.org/viewmedia.php/prmMID/19730</code></a></p>
+<p>Alexandria is a port, the busiest seaport in Egypt. Of course it is: where else could the most famous library of antiquity have been built but in a city with a busy port? That&#8217;s almost a contradiction in terms, that phrase &quot;busy port&quot; &#8212; the safest, most sheltered waters are those that must inevitably be roiled by everyone&#8217;s embarkings and disembarkings. Such places earn the hubbub of a hub precisely through their initial state of calm repose. </p>
+<p>And if books and pages are ships and horses in Emily Dickinson&#8217;s formulation, then libraries too are busy seaports and coaching inns and highways &quot;without oppress of toll.&quot; Libraries and archives and museums, like ports, including airports, are still and primarily places we come to to get somewhere else, to be transported. And this is as true or even more true of digital libraries as it is of physical libraries: on the web, many sites are only as powerful as their ability to get you somewhere else as quickly as possible. Google, notably, does its utmost to get you off <a href="http://Google.com" class="autohyperlink">Google.com</a> as fast as it can: Google accrues power by giving it away. </p>
+<p>I have argued elsewhere &#8212; or, rather, elsewhere I have released a small balloon of an idea into the atmosphere &#8212; that the DPLA should or at least could be rooted in a physical space, a building. The genesis of that idea did not, in fact, come from my deep love of libraries as places, although that is a love that goes back to my childhood. Standing in a library, for me, is as heady as standing by the ocean, and in both places I always have similar vague impulses to escape to barely imagined islands just across the horizon. But no: the first notion I ever had that a digital library could be a physical library was sparked by nothing less than learning that one exists. </p>
+<p>The National Digital Library of Korea (also called the &quot;dibrary&quot;), which opened in 2009, is, in fact, a building. It took seven years to build, at a cost to the Korean government of about $112 million dollars US, and by some accounts it contains over 116 million “pieces of digital content,” which would make it almost eight times as large as the Europeana digital library, which claims 15 million items. That 116 million number, however, is probably based on a definition of “pieces of digital content” that includes (say) database records, and is therefore not measured in the same units as most digital libraries. But reports also testify, more believably, that the dibrary has digitized 380,000 books, and that is a very respectable number. </p>
+<p>The National Digital Library of Korea is an eight-story building (five of those stories underground) that seats 550 patrons, and it runs 300 TB of server space. The physical space and the equipment are so advanced as to seem almost fictional. On the main floor there are touch-screen help kiosks. There are 3D monitors that do not require viewers to wear 3D glasses. There is a Global Lounge running PCs in English, Chinese, Japanese, French, and Vietnamese. There are multimedia viewing and creation and editing spaces as well as meeting and café spaces. There is a permanent art installation that “displays customized videos based on a user recognition function.” There is an enormous screen reserved only for 3D text, including “user messages.” There is a Laptop Zone, and there is a “Productivity Computer Cluster” whose desktop computers have large monitors and multiple monitors. There are more touch-screen kiosks, these dedicated to the sole purpose of reading digital newspapers. There are electronic tables with touch-screen surfaces, and on those tables you can see digital surrogates of historic Korean books as they lie open flat before you, seemingly in the table rather than on it. There is a connecting bridge called the Way of Knowledge that connects the National Digital Library of Korea with the National Library of Korea, and projected on the walls of the Way of Knowledge are “motion-sensitive interactive contents.” And, of course, there are are D.to, N.to, and U.to, the dibrary&#8217;s adorable mascots.</p>
+<p>Regardless of whether the Digital Public Library of America ever realizes itself in a building, it is important, I think, to remember two things. First: library, archive, and museum buildings are no longer the only gateways to culture and ideas &#8212; but the new gateways are also physical. To put it in a sound bite, hardware is the new harbor. If nothing else, libraries, archives, and museums can provide everyone, especially &quot;the poorest,&quot; access to these new &quot;transportation&quot; devices; the Gates Foundation has already recognized this truth in its support for putting public computers in public libraries. Second: digital libraries <em>do</em> bring people to physical places, especially when those places have unique originals of digitally ubiquitous representations. Putting digital content online, as many of you doubtless know, increases rather than decreases visitors: representation is no subsitute for presence. </p>
+<p>I&#8217;m pleased that the DPLA seems to be leaning toward being primarily an aggregator of metadata and content for this very reason: the DPLA is likely to drive traffic to libraries, archives, and museums in both the digital and the physical spaces. And the DPLA is also likely to launch more than a few ships, some going exploring, and some returning home.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://amandafrench.net/2012/05/09/alexandria-is-a-port-the-digital-library-in-physical-space/feed/</wfw:commentRss>
+			<slash:comments>1</slash:comments>
+		
+		
+			</item>
+	</channel>
+</rss>
