@@ -121,13 +121,19 @@ $controller = $this->ctrl;
 						if ( $domain_status->HasAccount && $domain_usage ) {
 
                             $total_monthly_label = $is_our_cdn ? __( 'Total monthly traffic', 'shortpixel-adaptive-images' ) : __( 'Total monthly credits', 'shortpixel-adaptive-images' );
-                            $total_monthly = $is_our_cdn ? ShortPixelDomainTools::credits2bytes(min($domain_usage->quota->monthly->totalCDN, $domain_usage->quota->monthly->total)) : number_format($domain_usage->quota->monthly->available);
-                            $total_monthly_available = $is_our_cdn ? ShortPixelDomainTools::credits2bytes(min($domain_usage->quota->monthly->totalCDN, $domain_usage->quota->monthly->available)) : number_format($domain_usage->quota->monthly->available);
+                            $unlimited = ($domain_status->Unlimited == 'true');
+                            if($unlimited) {
+                                $total_monthly = __('Unlimited', 'shortpixel-adaptive-images');
+                                $total_monthly_available = '';
+                            } else {
+                                $total_monthly = $is_our_cdn ? ShortPixelDomainTools::credits2bytes(min($domain_usage->quota->monthly->totalCDN, $domain_usage->quota->monthly->total)) : number_format($domain_usage->quota->monthly->available);
+                                $total_monthly_available = $is_our_cdn ? ShortPixelDomainTools::credits2bytes(min($domain_usage->quota->monthly->totalCDN, $domain_usage->quota->monthly->available)) : number_format($domain_usage->quota->monthly->available);
+                                $total_onetime = $is_our_cdn ? ShortPixelDomainTools::credits2bytes($domain_usage->quota->oneTime->total) : number_format($domain_usage->quota->oneTime->available);
+                                $total_onetime_available = $is_our_cdn ? ShortPixelDomainTools::credits2bytes($domain_usage->quota->oneTime->available) : number_format($domain_usage->quota->oneTime->available);
+                                $total_onetime_used = $is_our_cdn ? ShortPixelDomainTools::credits2bytes($domain_usage->quota->oneTime->used) : number_format($domain_usage->quota->oneTime->used);
+                                $total_onetime_label = $is_our_cdn ? __( 'Total one-time traffic', 'shortpixel-adaptive-images' ) : __( 'Total one-time credits', 'shortpixel-adaptive-images' );
+                            }
                             $total_monthly_used = $is_our_cdn ? ShortPixelDomainTools::credits2bytes(min($domain_usage->quota->monthly->totalCDN, $domain_usage->quota->monthly->used)) : number_format($domain_usage->quota->monthly->used);
-                            $total_onetime_label = $is_our_cdn ? __( 'Total one-time traffic', 'shortpixel-adaptive-images' ) : __( 'Total one-time credits', 'shortpixel-adaptive-images' );
-                            $total_onetime = $is_our_cdn ? ShortPixelDomainTools::credits2bytes($domain_usage->quota->oneTime->total) : number_format($domain_usage->quota->oneTime->available);
-                            $total_onetime_available = $is_our_cdn ? ShortPixelDomainTools::credits2bytes($domain_usage->quota->oneTime->available) : number_format($domain_usage->quota->oneTime->available);
-                            $total_onetime_used = $is_our_cdn ? ShortPixelDomainTools::credits2bytes($domain_usage->quota->oneTime->used) : number_format($domain_usage->quota->oneTime->used);
 
 						    if(!preg_match('/_CHILD_[0-9]+$/s', $domain_usage->email)) {
                                 $login_link = ShortPixelAI::DEFAULT_MAIN_DOMAIN. "/login/" . ( $spai_key ?: '_' ) . '/dashboard';
@@ -147,22 +153,25 @@ $controller = $this->ctrl;
 
 							<p><?= $total_monthly_label . ': <strong>' . $total_monthly . '</strong>'; ?></p>
 							<div class="progress_wrap">
-								<div class="available"><?= $total_monthly_available . ' ' . __( 'available', 'shortpixel-adaptive-images' ); ?></div>
+								<div class="available"><?= $total_monthly_available ? $total_monthly_available . ' ' . __( 'available', 'shortpixel-adaptive-images' ) : ''; ?></div>
 								<div class="used"><?= $total_monthly_used . ' ' . __( 'used', 'shortpixel-adaptive-images' ); ?></div>
 								<div class="progress">
 									<div class="used" style="width: <?= $domain_usage->quota->monthly->usedPercent; ?>%"></div>
 								</div>
-                                <div class="available">until <?= $domain_usage->quota->monthly->nextBillingDate->format($dFormat); ?></div>
+                                <?php if(!$unlimited) { ?>
+                                    <div class="available">until <?= $domain_usage->quota->monthly->nextBillingDate->format($dFormat); ?></div>
+                                <?php } ?>
 							</div>
-							<p><?= $total_onetime_label
-                                . ': <strong>' . $total_onetime . '</strong>'; ?></p>
-							<div class="progress_wrap">
-								<div class="available"><?= $total_onetime_available . ' ' . __( 'available', 'shortpixel-adaptive-images' ); ?></div>
-								<div class="used"><?= $total_onetime_used . ' ' . __( 'used', 'shortpixel-adaptive-images' ); ?></div>
-								<div class="progress">
-									<div class="used" style="width: <?= $domain_usage->quota->oneTime->usedPercent; ?>%"></div>
-								</div>
-							</div>
+                            <?php if(!$unlimited) { ?>
+                                <p><?= $total_onetime_label . ': <strong>' . $total_onetime . '</strong>'; ?></p>
+                                <div class="progress_wrap">
+                                    <div class="available"><?= $total_onetime_available . ' ' . __( 'available', 'shortpixel-adaptive-images' ); ?></div>
+                                    <div class="used"><?= $total_onetime_used . ' ' . __( 'used', 'shortpixel-adaptive-images' ); ?></div>
+                                    <div class="progress">
+                                        <div class="used" style="width: <?= $domain_usage->quota->oneTime->usedPercent; ?>%"></div>
+                                    </div>
+                                </div>
+                            <?php } ?>
 							<div class="chart-wrap">
 								<div class="toggle"></div>
 								<p>Daily:</p>
@@ -173,15 +182,17 @@ $controller = $this->ctrl;
                                 . ShortPixelDomainTools::formatBytes($domain_usage->cdn->used) . '</strong> '
                                 . __( 'since', 'shortpixel-adaptive-images' ) . ' '
                                 . $domain_usage->quota->monthly->lastBillingDate->format($dFormat); ?>.</p>
-                            <div class="progress_wrap">
-								<div class="available"><?= ShortPixelDomainTools::formatBytes($domain_usage->cdn->available) . ' ' . __( 'available', 'shortpixel-adaptive-images' ); ?></div>
-								<div class="used"><?=  ShortPixelDomainTools::formatBytes($domain_usage->cdn->used) . ' ' . __( 'used', 'shortpixel-adaptive-images' ); ?></div>
-								<div class="progress">
-									<div class="used" style="width: <?= $domain_usage->cdn->usedPercent; ?>%"></div>
-								</div>
-							</div>
+                                <?php if(!$unlimited) { ?>
+                                    <div class="progress_wrap">
+                                        <div class="available"><?= ShortPixelDomainTools::formatBytes($domain_usage->cdn->available) . ' ' . __( 'available', 'shortpixel-adaptive-images' ); ?></div>
+                                        <div class="used"><?=  ShortPixelDomainTools::formatBytes($domain_usage->cdn->used) . ' ' . __( 'used', 'shortpixel-adaptive-images' ); ?></div>
+                                        <div class="progress">
+                                            <div class="used" style="width: <?= $domain_usage->cdn->usedPercent; ?>%"></div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
                             <?php } ?>
-                            <p><span><?= __( 'Your monthly quota will reset on', 'shortpixel-adaptive-images' ) . ': <strong>'
+                            <p><span><?= __( 'Your monthly consumption will reset on', 'shortpixel-adaptive-images' ) . ': <strong>'
                                     . $domain_usage->quota->monthly->nextBillingDate->format($dFormat); ?></strong>.</span></p>
 							<?php
 						}

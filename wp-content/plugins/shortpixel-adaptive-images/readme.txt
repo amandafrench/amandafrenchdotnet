@@ -4,7 +4,7 @@ Tags: image optimization, convert, webp, lazy load, avif, responsive images, ima
 Requires at least: 4.7
 Tested up to: 6.1
 Requires PHP: 5.6.40
-Stable tag: 3.5.3
+Stable tag: 3.5.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -221,6 +221,13 @@ The parameters of the rule are, in this order:
 6. Advanced settings page
 
 == Changelog ==
+
+= 3.5.4 =
+Release date: November 7, 2022
+* Fix: in certain situations the `noscript` tag was not added;
+* Compat: added another lazy-loading attribute handled by the plugin: `data-lazy`;
+* Tweak: minor updates to the settings layout for new plans that will be introduced soon;
+* Language: 1 new strings added, 1 updated, 0 fuzzed, and 0 deprecated.
 
 = 3.5.3 =
 Release date: October 20th, 2022

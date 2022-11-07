@@ -739,13 +739,14 @@ class ShortPixelRegexParser {
 	    return $processed_tag;
     }
 
-    protected function _replace_images($tag, $attr, $text, $url, $q = '', &$noresize = false) {
+    protected function _replace_images($tag, $attr, $text, $url, $q = '', &$eager = false) {
         SHORTPIXEL_AI_DEBUG && $this->logger->log("******** REPLACE IMAGE IN $tag ATTRIBUTE $attr: '" . $url . "'"
             . ($this->tagRule->mergeAttr ? ' AND MERGE ' . $this->tagRule->mergeAttr : ''));
 
 	    if (
 		    !$this->ctrl->lazyNoticeThrown && substr( $url, 0, 10 ) == 'data:image'
 		    && ( strpos( $text, 'data-lazy-src=' ) !== false
+                 || strpos( $text, 'data-lazy=' ) !== false
 		         || strpos( $text, 'data-layzr=' ) !== false
 		         || strpos( $text, 'data-src=' ) !== false
 		         || ( strpos( $text, 'data-orig-src=' ) !== false && strpos( $text, 'lazyload' ) ) //found for Avada theme with Fusion Builder
